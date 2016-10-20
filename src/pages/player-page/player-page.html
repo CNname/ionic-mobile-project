@@ -3,17 +3,15 @@
       <button ion-button menuToggle>
         <ion-icon name="menu"></ion-icon>
       </button>
-    <ion-title>
+    <!--<ion-title>
       Streamgull
     </ion-title>
-    <ion-buttons end>
+    <!--<ion-buttons end>
       <button ion-button color="darkGrey" class="larger">
         <ion-icon name="md-search"></ion-icon>
       </button>
-    </ion-buttons>
-    <!--  <button ion-button style="float:right;">
-        <ion-icon name="md-search"></ion-icon>
-      </button> -->
+    </ion-buttons> -->
+    <ion-searchbar (input)="getSongByName($event)"></ion-searchbar>
   </ion-toolbar>
   <ion-toolbar no-border-top color="primary">
       <ion-segment [(ngModel)]="playerNav" color="darkGrey">
@@ -26,6 +24,9 @@
         <ion-segment-button value="albums">
           <b>Albums</b>
         </ion-segment-button>
+        <ion-segment-button value="search">
+          <b>Search</b>
+        </ion-segment-button>
       </ion-segment>
   </ion-toolbar>
 </ion-header>
@@ -33,43 +34,35 @@
 <ion-content>
   <div [ngSwitch]="playerNav">
     <ion-list *ngSwitchCase="'playlists'">
-      <ion-item *ngFor="let item of playlist_items" (click)="goToDetails(item.id, item.name)">
+      <!--<ion-item *ngFor="let item of playlist_items" (click)="goToDetails(item.id, item.name)"> -->
+      <ion-item *ngFor="let item of playlist_items" (click)="getPlaylistById(item.owner.id, item.id)">
         <ion-thumbnail item-left>
           <img [src]="item?.images[0].url">
         </ion-thumbnail>
-        <h2>{{ item.name }}</h2>
+        <h2><b>{{ item.name }}</b></h2>
         <h3>{{ item.owner.id }}</h3>
         <ion-badge item-right>{{ item.tracks.total }}</ion-badge>
       </ion-item>
     </ion-list>
 
     <ion-list *ngSwitchCase="'artists'">
-      <ion-item>
-        <h2>Luna</h2>
-      </ion-item>
-      <ion-item>
-        <h2>Milo</h2>
-      </ion-item>
-      <ion-item>
-        <h2>Bandit</h2>
-      </ion-item>
-      <ion-item>
-        <h2>Nala</h2>
-      </ion-item>
+     <!-- artists -->
     </ion-list>
 
     <ion-list *ngSwitchCase="'albums'">
-      <ion-item>
-        <h2>Daffy</h2>
-      </ion-item>
-      <ion-item>
-        <h2>Huey</h2>
-      </ion-item>
-      <ion-item>
-        <h2>Dewey</h2>
-      </ion-item>
-      <ion-item>
-        <h2>Louie</h2>
+       <!-- albums -->
+    </ion-list>
+    
+    <ion-list *ngSwitchCase="'search'">
+      <ion-item *ngFor="let song of songs"  (click)="startPlayer(item.url)">
+        <ion-thumbnail item-left>
+          <img [src]="song._albumImage.large.url">
+        </ion-thumbnail>
+        <h3><b>{{ song._songTitle }}</b></h3>
+        <h3>{{ song._artists[0]._name }}</h3>
+        <h4>{{ song._albumTitle }}</h4>
+       
+        <!--<ion-badge item-right>{{ item.tracks.total }}</ion-badge> -->
       </ion-item>
     </ion-list>
   </div>

@@ -5,6 +5,7 @@ import { PlayerPage } from '../pages/player-page/player-page';
 import { SpotifyService } from '../providers/spotify-service';
 import { PlaylistDetails } from '../pages/playlist-details/playlist-details';
 
+
 @NgModule({
   declarations: [
     MyApp,
