@@ -19,6 +19,7 @@ export class PlayerPage {
   playlist_items: Array<Object>;
   timeout: any;
   songs: any[];
+  audioObject;
   private spotifyservice: SpotifyService;
 
 
@@ -27,17 +28,17 @@ export class PlayerPage {
     this.spotifyservice.loadPlaylist().subscribe(playlist => {
       console.log(playlist);
       this.playlist_items = playlist["items"];
-     
+
     });
   }
   goToDetails(playlist_id: string, playlist_title: string) {
     this.navCtrl.push(PlaylistDetails, {playlist_id, playlist_title});
  }
- 
+
  getPlaylistById(userId: string, playlistId: string){
    this.spotifyservice.getPlaylistById(userId, playlistId).subscribe(res => {
        console.time("Create playlist");
-       
+
         let tracks: Song[] = [];
         for (var i=0; i<res.items.length; i++) {
           let song: Song = new Song(res.items[i].id, res.items[i].name, res.items[i].isPlayable)
@@ -60,17 +61,17 @@ export class PlayerPage {
           }
 
           song.setArtists(artists);
-          
+
           tracks.push(song);
         }
         console.timeEnd("Create playlist")
-        console.log(tracks); 
+        console.log(tracks);
         return tracks;
-           
-     
+
+
     })
  }
- 
+
 getSongByName(event:any) {
 
     clearTimeout(this.timeout);
@@ -112,11 +113,16 @@ getSongByName(event:any) {
     }, 1000)
     }
 
-} 
+}
 
 startPlayer(url: string) {
-  
+  //if(this.audioObject.playing() != 'true'){
+    this.audioObject = new Audio(url);
+    this.audioObject.play();
+  //}else{
+  //    this.audioObject.stop();
+  //}
 }
- 
- 
+
+
 }

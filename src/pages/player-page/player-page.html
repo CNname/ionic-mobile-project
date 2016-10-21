@@ -52,16 +52,16 @@
     <ion-list *ngSwitchCase="'albums'">
        <!-- albums -->
     </ion-list>
-    
+
     <ion-list *ngSwitchCase="'search'">
-      <ion-item *ngFor="let song of songs"  (click)="startPlayer(item.url)">
+      <ion-item *ngFor="let item of songs" (click)="startPlayer(item._url)">
         <ion-thumbnail item-left>
-          <img [src]="song._albumImage.large.url">
+          <img [src]="item._albumImage.large.url">
         </ion-thumbnail>
-        <h3><b>{{ song._songTitle }}</b></h3>
-        <h3>{{ song._artists[0]._name }}</h3>
-        <h4>{{ song._albumTitle }}</h4>
-       
+        <h3><b>{{ item._songTitle }}</b></h3>
+        <h3>{{ item._artists[0]._name }}</h3>
+        <h4>{{ item._albumTitle }}</h4>
+
         <!--<ion-badge item-right>{{ item.tracks.total }}</ion-badge> -->
       </ion-item>
     </ion-list>
