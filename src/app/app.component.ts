@@ -4,7 +4,7 @@ import { Platform, MenuController, Nav } from 'ionic-angular';
 
 import { StatusBar } from 'ionic-native';
 
-import { PlayerPage } from '../pages/player-page/player-page';
+import { Library } from '../pages/library/library';
 
 
 
@@ -15,7 +15,7 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
   // make PlayerPage the root (or first) page
-  rootPage: any = PlayerPage;
+  rootPage: any = Library;
   pages: Array<{title: string, component: any}>;
 
   constructor(
@@ -26,7 +26,7 @@ export class MyApp {
 
     // set our app's pages
     this.pages = [
-      { title: 'Library', component: PlayerPage }
+      { title: 'Library', component: Library }
     ];
   }
 

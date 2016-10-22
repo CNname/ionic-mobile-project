@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, NavParams } from 'ionic-angular';
 
 /*
   Generated class for the Search page.
@@ -13,7 +13,9 @@ import { NavController } from 'ionic-angular';
 })
 export class Search {
 
-  constructor(public navCtrl: NavController) {}
+  constructor(public navCtrl: NavController, private navParams: NavParams) {
+    
+  }
 
   ionViewDidLoad() {
     console.log('Hello Search Page');

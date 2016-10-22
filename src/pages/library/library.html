@@ -6,7 +6,7 @@
     <!--<ion-title>
       Streamgull
     </ion-title>
-    <!--<ion-buttons end>
+    <ion-buttons end>
       <button ion-button color="darkGrey" class="larger">
         <ion-icon name="md-search"></ion-icon>
       </button>
@@ -33,7 +33,7 @@
 
 <ion-content>
   <div [ngSwitch]="playerNav">
-    <ion-list *ngSwitchCase="'playlists'">
+    <ion-list no-lines *ngSwitchCase="'playlists'">
       <!--<ion-item *ngFor="let item of playlist_items" (click)="goToDetails(item.id, item.name)"> -->
       <ion-item *ngFor="let item of playlist_items" (click)="getPlaylistById(item.owner.id, item.id)">
         <ion-thumbnail item-left>
@@ -53,16 +53,14 @@
        <!-- albums -->
     </ion-list>
 
-    <ion-list *ngSwitchCase="'search'">
-      <ion-item *ngFor="let item of songs" (click)="startPlayer(item._url)">
+    <ion-list no-lines *ngSwitchCase="'search'">
+      <ion-item *ngFor="let item of songs" (click)="startPlayerPage(item._url, item)">
         <ion-thumbnail item-left>
           <img [src]="item._albumImage.large.url">
         </ion-thumbnail>
         <h3><b>{{ item._songTitle }}</b></h3>
         <h3>{{ item._artists[0]._name }}</h3>
         <h4>{{ item._albumTitle }}</h4>
-
-        <!--<ion-badge item-right>{{ item.tracks.total }}</ion-badge> -->
       </ion-item>
     </ion-list>
   </div>
@@ -71,17 +69,11 @@
 <ion-footer>
   <ion-toolbar>
     <ion-buttons>
-      <button ion-button color="primary" >
-        <ion-icon name="skip-backward"></ion-icon>
-      </button>
       <button ion-button color="primary" class="larger" >
         <ion-icon name="pause"></ion-icon>
       </button>
-      <button ion-button color="primary" class="larger" >
+      <button ion-button color="primary" class="larger">
         <ion-icon name="play"></ion-icon>
-      </button>
-      <button ion-button color="primary" >
-        <ion-icon name="skip-forward"></ion-icon>
       </button>
     </ion-buttons>
     <!--<ion-title>player</ion-title> -->

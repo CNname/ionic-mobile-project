@@ -4,12 +4,15 @@ import { SpotifyService } from '../../providers/spotify-service';
 import { PlaylistDetails } from '../playlist-details/playlist-details';
 import { Song } from '../../classes/Song.class';
 import { Artist } from '../../classes/Artist.class';
+import { ModalController, ViewController } from 'ionic-angular';
+import { Search } from '../search/search';
+import { PlayerPage } from '../playerPage/playerPage';
 
 @Component({
-  selector: 'page-player-page',
-  templateUrl: 'player-page.html'
+  selector: 'library',
+  templateUrl: 'library.html'
 })
-export class PlayerPage {
+export class Library {
   // select the default tab
   playerNav: string = "playlists";
   playlist_id: string;
@@ -23,7 +26,7 @@ export class PlayerPage {
   private spotifyservice: SpotifyService;
 
 
-  constructor(public navCtrl: NavController, spotifyservice: SpotifyService) {
+  constructor(public navCtrl: NavController, spotifyservice: SpotifyService, public modalCtrl: ModalController) {
     this.spotifyservice = spotifyservice;
     this.spotifyservice.loadPlaylist().subscribe(playlist => {
       console.log(playlist);
@@ -75,7 +78,7 @@ export class PlayerPage {
 getSongByName(event:any) {
 
     clearTimeout(this.timeout);
-    console.log("pituus: " + event.target.value.length);
+    //console.log("pituus: " + event.target.value.length);
     if(event.target.value.length > 3){
     this.timeout = setTimeout(() => {
       this.spotifyservice.searchForItem(event.target.value).subscribe((res) => {
@@ -114,14 +117,13 @@ getSongByName(event:any) {
     }
 
 }
-
-startPlayer(url: string) {
-  //if(this.audioObject.playing() != 'true'){
-    this.audioObject = new Audio(url);
-    this.audioObject.play();
-  //}else{
-  //    this.audioObject.stop();
-  //}
+// open playerPage and play selected track
+startPlayerPage(url: string, item: Object){
+  //let modal = this.modalCtrl.create(PlayerPage);
+  this.navCtrl.push(PlayerPage, {url, item});
+  //this.audioObject = new Audio(url);
+  //this.audioObject.play();
+  //modal.present();
 }
 
 

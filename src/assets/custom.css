@@ -1,20 +1,25 @@
-.toolbar-background {
-  /*background-color: #c8dc59; */
-}
-.toolbar-background-md {
-/*    border-color: #b2b2b2;
-    background: #5E7189; */
-}
-.toolbar-title-md{
-   /*color: #251d20; */
-}
-.content-md {
-/*    color: #000;
-    background-color: #F0F4F3; */
-}
+
 .playlist-details{
    background-color: #5E7189;
 }
 .larger {
     font-size: 22px;
+}
+.playerButtons{
+  text-align: center;
+}
+.button-wrapper{
+  padding: 20px;
+}
+.art-wrapper{ }
+
+ion-thumbnail > img, .art-wrapper > img{
+  border-radius: 8px;
+  box-shadow: 2px 2px 3px #b6acac;
+}
+.bar-header {
+    border: 0px !important;
+    border-bottom-color: transparent !important;
+    background-image: none !important;
+    border-bottom: none !important;
 }
