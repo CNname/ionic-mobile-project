@@ -16,11 +16,13 @@ export class PlayerPage {
   playlist_title: string;
   playlist_length: number;
   playlist_owner: string;
-  playlist_items: Array<Object>;
+  playlist_items: any;
   timeout: any;
-  songs: any[];
+  trackItems: any[] = [];
+  artistItems: any[] = [];
   audioObject;
   private spotifyservice: SpotifyService;
+  searchCategory: string;
 
 
   constructor(public navCtrl: NavController, spotifyservice: SpotifyService) {
@@ -46,9 +48,9 @@ export class PlayerPage {
             small: res.items[i].album.images[2],
             medium: res.items[i].album.images[1],
             large: res.items[i].album.images[0]
-          })
-            //.setAlbumId(res.items[i].album.id)
-            //.setAlbumTitle(res.items[i].album.name);
+          });
+          song.setAlbumId(res.items[i].album.id)
+          song.setAlbumTitle(res.items[i].album.name);
 
           let artists: Artist[] = [];
 
@@ -72,19 +74,26 @@ export class PlayerPage {
     })
  }
 
-getSongByName(event:any) {
+getItemsByName(event:any) {
 
     clearTimeout(this.timeout);
     console.log("pituus: " + event.target.value.length);
     if(event.target.value.length > 3){
     this.timeout = setTimeout(() => {
+
+      // activate search segment if not active
+      if (this.playerNav !== "search") this.playerNav = "search";
+
       this.spotifyservice.searchForItem(event.target.value).subscribe((res) => {
-        this.songs = [];
+        this.trackItems = [];
+        this.artistItems = [];
 
-        for (var i=0; i<res.tracks.items.length; i++) {
+        console.log(res);
 
-          let song: Song = new Song(res.tracks.items[i].id, res.tracks.items[i].name, res.tracks.items[i].isPlayable)
+        for (let i=0; i<res.tracks.items.length; i++) {
 
+
+          let song: Song = new Song(res.tracks.items[i].id, res.tracks.items[i].name, res.tracks.items[i].isPlayable);
           song.setAlbumImage({
             small: res.tracks.items[i].album.images[2],
             medium: res.tracks.items[i].album.images[1],
@@ -96,18 +105,36 @@ getSongByName(event:any) {
 
           let artists: Artist[] = [];
 
-          for(var j=0; j<res.tracks.items[i].artists.length; j++) {
-              artists.push(new Artist(
-                res.tracks.items[i].artists[j].id,
-                res.tracks.items[i].artists[j].name,
-                res.tracks.items[i].artists[j].href
-              ))
+          for (var j = 0; j < res.tracks.items[i].artists.length; j++) {
+            artists.push(new Artist(
+              res.tracks.items[i].artists[j].id,
+              res.tracks.items[i].artists[j].name,
+              res.tracks.items[i].artists[j].href
+            ))
           }
 
           song.setArtists(artists);
-          this.songs.push(song);
+          this.trackItems.push(song);
+
         }
-        console.log(this.songs);
+
+        for (let i=0; i<res.artists.items.length; i++) {
+          let artist = new Artist(res.artists.items[i].id, res.artists.items[i].name, res.artists.items[i].href); // korjaa!
+          artist.setImages({
+            small: res.artists.items[i].images[2],
+            medium: res.artists.items[i].images[1],
+            large: res.artists.items[i].images[0]
+          });
+
+          this.artistItems.push(artist);
+        }
+
+        // activate segment if needed
+        if (this.trackItems.length>0) {
+          this.searchCategory = "tracks";
+        } else if (this.trackItems.length===0 && this.artistItems.length > 0) {
+          this.searchCategory = "artists";
+        }
 
       })
     }, 1000)
@@ -122,6 +149,20 @@ startPlayer(url: string) {
   //}else{
   //    this.audioObject.stop();
   //}
+}
+
+artistClickEvent(id: string) {
+  this.spotifyservice.getArtistById(id).subscribe((res) => {
+    let artist = new Artist(res.id, res.name);
+    artist.setImages({
+      small: res.images[2],
+      medium: res.images[1],
+      large: res.images[0]
+    });
+
+    return artist;
+
+  })
 }
 
 

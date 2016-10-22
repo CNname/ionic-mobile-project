@@ -1,9 +1,12 @@
+import {imageUrls} from "../interfaces/interfaces";
 
 export class Artist  {
 
+  private _type: string;
   private _name: string;
   private _id: string;
-  private _href?: string;
+  private _href: string;
+  private _images: imageUrls;
 
   constructor(id: string, name: string, href?: string) {
     this._name = name;
@@ -11,28 +14,44 @@ export class Artist  {
     this._href = href;
   }
 
-  get name(): string {
+  getType(): string {
+    return this._type;
+  }
+
+  setType(value: string) {
+    this._type = value;
+  }
+
+  getName(): string {
     return this._name;
   }
 
-  set name(value: string) {
+  setName(value: string) {
     this._name = value;
   }
 
-  get id(): string {
+  getId(): string {
     return this._id;
   }
 
-  set id(value: string) {
+  setId(value: string) {
     this._id = value;
   }
 
-  get href(): string {
+  getHref(): string {
     return this._href;
   }
 
-  set href(value: string) {
+  setHref(value: string) {
     this._href = value;
+  }
+
+  getImages(): imageUrls {
+    return this._images;
+  }
+
+  setImages(value: imageUrls) {
+    this._images = value;
   }
 
 }

@@ -1,11 +1,12 @@
-import { AlbumImageUrls } from '../interfaces/interfaces';
+import { imageUrls } from '../interfaces/interfaces';
 import { Artist } from './Artist.class';
 
 export class Song {
 
+  _type: string;
   _id: string;
   _albumId: string;
-  _albumImage: AlbumImageUrls;
+  _albumImage: imageUrls;
   _songTitle: string;
   _albumTitle: string;
   _artists: Artist[];
@@ -17,6 +18,14 @@ export class Song {
     this._id = id;
     this._songTitle = songTitle;
     this._isPlayable = isPlayable;
+  }
+
+  getType(): string {
+    return this._type;
+  }
+
+  setType(value: string) {
+    this._type = value;
   }
 
   getId(): string {
@@ -35,11 +44,11 @@ export class Song {
     this._albumId = value;
   }
 
-  getAlbumImage(): AlbumImageUrls {
+  getAlbumImage(): imageUrls {
     return this._albumImage;
   }
 
-  setAlbumImage(value: AlbumImageUrls) {
+  setAlbumImage(value: imageUrls) {
     this._albumImage = value;
   }
 
@@ -66,7 +75,7 @@ export class Song {
   setArtists(value: Artist[]) {
     this._artists = value;
   }
-  
+
   getDuration(): number {
     return this._duration;
   }
@@ -82,11 +91,11 @@ export class Song {
   setIsPlayable(value: boolean) {
     this._isPlayable = value;
   }
-  
+
   getUrl(): string{
     return this._url
   }
-  
+
   setUrl(value: string){
     this._url = value;
   }

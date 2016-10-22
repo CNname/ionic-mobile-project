@@ -11,7 +11,7 @@
         <ion-icon name="md-search"></ion-icon>
       </button>
     </ion-buttons> -->
-    <ion-searchbar (input)="getSongByName($event)"></ion-searchbar>
+    <ion-searchbar (input)="getItemsByName($event)"></ion-searchbar>
   </ion-toolbar>
   <ion-toolbar no-border-top color="primary">
       <ion-segment [(ngModel)]="playerNav" color="darkGrey">
@@ -54,16 +54,46 @@
     </ion-list>
 
     <ion-list *ngSwitchCase="'search'">
-      <ion-item *ngFor="let item of songs" (click)="startPlayer(item._url)">
-        <ion-thumbnail item-left>
-          <img [src]="item._albumImage.large.url">
-        </ion-thumbnail>
-        <h3><b>{{ item._songTitle }}</b></h3>
-        <h3>{{ item._artists[0]._name }}</h3>
-        <h4>{{ item._albumTitle }}</h4>
 
-        <!--<ion-badge item-right>{{ item.tracks.total }}</ion-badge> -->
-      </ion-item>
+      <ion-segment [(ngModel)]="searchCategory" padding>
+        <ion-segment-button value="tracks" [hidden]="trackItems.length === 0">
+          Tracks
+        </ion-segment-button>
+        <ion-segment-button value="artists" [hidden]="artistItems.length === 0">
+          Artists
+        </ion-segment-button>
+      </ion-segment>
+
+      <div [ngSwitch]="searchCategory">
+
+        <p [hidden]="trackItems.length > 0 || artistItems.length > 0" padding-left padding-right>Search results might come here...</p>
+
+        <div *ngSwitchCase="'tracks'">
+
+          <ion-item *ngFor="let item of trackItems" (click)="startPlayer(item.getUrl())">
+            <ion-thumbnail item-left>
+              <img [src]="item.getAlbumImage().large.url">
+            </ion-thumbnail>
+            <h3><b>{{ item.getSongTitle() }}</b></h3>
+            <h3>
+              <span *ngFor="let artist of item.getArtists()">
+                <a href="{{ artist.getHref() }}">{{ artist.getName() }}</a>
+              </span>
+            </h3>
+            <h4>{{ item.getAlbumTitle() }}</h4>
+          </ion-item>
+        </div>
+
+        <div *ngSwitchCase="'artists'">
+          <ion-item  *ngFor="let artist of artistItems" (click)="artistClickEvent(artist.getId())">
+            <ion-thumbnail item-left>
+              <img [src]="artist.getImages().large.url">
+            </ion-thumbnail>
+            <h3><b>{{ artist.getName() }}</b></h3>
+          </ion-item>
+          </div>
+        </div>
+
     </ion-list>
   </div>
 </ion-content>
