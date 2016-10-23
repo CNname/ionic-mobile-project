@@ -4,13 +4,15 @@ import { MyApp } from './app.component';
 import { PlayerPage } from '../pages/player-page/player-page';
 import { SpotifyService } from '../providers/spotify-service';
 import { PlaylistDetails } from '../pages/playlist-details/playlist-details';
+import { ArtistPage } from '../pages/artist-page/artist-page';
 
 
 @NgModule({
   declarations: [
     MyApp,
     PlayerPage,
-    PlaylistDetails
+    PlaylistDetails,
+    ArtistPage
   ],
   imports: [
     IonicModule.forRoot(MyApp)
@@ -19,7 +21,8 @@ import { PlaylistDetails } from '../pages/playlist-details/playlist-details';
   entryComponents: [
     MyApp,
     PlayerPage,
-    PlaylistDetails
+    PlaylistDetails,
+    ArtistPage
   ],
   providers: [ SpotifyService ]
 })

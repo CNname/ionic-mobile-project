@@ -76,8 +76,8 @@
             </ion-thumbnail>
             <h3><b>{{ item.getSongTitle() }}</b></h3>
             <h3>
-              <span *ngFor="let artist of item.getArtists()">
-                <a href="{{ artist.getHref() }}">{{ artist.getName() }}</a>
+              <span class="artist" *ngFor="let artist of item.getArtists(); let i = index" (click)="artistClickEvent(artist.getId())">
+                <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
               </span>
             </h3>
             <h4>{{ item.getAlbumTitle() }}</h4>

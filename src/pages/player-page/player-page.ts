@@ -4,6 +4,8 @@ import { SpotifyService } from '../../providers/spotify-service';
 import { PlaylistDetails } from '../playlist-details/playlist-details';
 import { Song } from '../../classes/Song.class';
 import { Artist } from '../../classes/Artist.class';
+import {ArtistPage} from "../artist-page/artist-page";
+import {Handling} from "../../namespaces/handling";
 
 @Component({
   selector: 'page-player-page',
@@ -78,67 +80,30 @@ getItemsByName(event:any) {
 
     clearTimeout(this.timeout);
     console.log("pituus: " + event.target.value.length);
-    if(event.target.value.length > 3){
     this.timeout = setTimeout(() => {
 
-      // activate search segment if not active
-      if (this.playerNav !== "search") this.playerNav = "search";
+      this.trackItems = [];
+      this.artistItems = [];
 
-      this.spotifyservice.searchForItem(event.target.value).subscribe((res) => {
-        this.trackItems = [];
-        this.artistItems = [];
+      if(event.target.value.length >= 3){
+        // activate search segment if not active
+        if (this.playerNav !== "search") this.playerNav = "search";
 
-        console.log(res);
+        this.spotifyservice.searchForItem(event.target.value).subscribe((res) => {
 
-        for (let i=0; i<res.tracks.items.length; i++) {
+          this.trackItems = Handling.HandleJson.tracks(res.tracks.items);
+          this.artistItems = Handling.HandleJson.artists(res.artists.items);
 
-
-          let song: Song = new Song(res.tracks.items[i].id, res.tracks.items[i].name, res.tracks.items[i].isPlayable);
-          song.setAlbumImage({
-            small: res.tracks.items[i].album.images[2],
-            medium: res.tracks.items[i].album.images[1],
-            large: res.tracks.items[i].album.images[0]
-          });
-          song.setAlbumId(res.tracks.items[i].album.id);
-          song.setAlbumTitle(res.tracks.items[i].album.name);
-          song.setUrl(res.tracks.items[i].preview_url);
-
-          let artists: Artist[] = [];
-
-          for (var j = 0; j < res.tracks.items[i].artists.length; j++) {
-            artists.push(new Artist(
-              res.tracks.items[i].artists[j].id,
-              res.tracks.items[i].artists[j].name,
-              res.tracks.items[i].artists[j].href
-            ))
+          // activate segment if needed
+          if (this.trackItems.length > 0) {
+            this.searchCategory = "tracks";
+          } else if (this.trackItems.length === 0 && this.artistItems.length > 0) {
+            this.searchCategory = "artists";
           }
 
-          song.setArtists(artists);
-          this.trackItems.push(song);
-
-        }
-
-        for (let i=0; i<res.artists.items.length; i++) {
-          let artist = new Artist(res.artists.items[i].id, res.artists.items[i].name, res.artists.items[i].href); // korjaa!
-          artist.setImages({
-            small: res.artists.items[i].images[2],
-            medium: res.artists.items[i].images[1],
-            large: res.artists.items[i].images[0]
-          });
-
-          this.artistItems.push(artist);
-        }
-
-        // activate segment if needed
-        if (this.trackItems.length>0) {
-          this.searchCategory = "tracks";
-        } else if (this.trackItems.length===0 && this.artistItems.length > 0) {
-          this.searchCategory = "artists";
-        }
-
-      })
+        })
+      }
     }, 1000)
-    }
 
 }
 
@@ -160,7 +125,9 @@ artistClickEvent(id: string) {
       large: res.images[0]
     });
 
-    return artist;
+    this.navCtrl.push(ArtistPage, {
+      item: artist
+    });
 
   })
 }
