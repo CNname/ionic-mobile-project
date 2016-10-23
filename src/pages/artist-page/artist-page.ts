@@ -4,6 +4,7 @@ import {SpotifyService} from "../../providers/spotify-service";
 import {Artist} from "../../classes/Artist.class";
 import {Song} from "../../classes/Song.class";
 import {Handling} from "../../namespaces/handling";
+import {imageUrls} from "../../interfaces/interfaces";
 
 /*
   Generated class for the Artist page.
@@ -36,6 +37,7 @@ export class ArtistPage {
   getPopularSongs() {
     this.spotifyservice.getPopularSongsByArtist(this.artist.getId()).subscribe((res) => {
       this.popularTracks = Handling.HandleJson.tracks(res.tracks);
+      console.log(this.popularTracks);
     })
   }
 
@@ -52,11 +54,22 @@ export class ArtistPage {
   artistClickEvent(id: string) {
     this.spotifyservice.getArtistById(id).subscribe((res) => {
       let artist = new Artist(res.id, res.name);
-      artist.setImages({
-        small: res.images[2],
-        medium: res.images[1],
-        large: res.images[0]
-      });
+
+      let images: imageUrls = {
+        large: {
+          height: 600,
+          width: 600,
+          url: "../../assets/img/sg-placeholder.jpg"
+        }
+      };
+
+      for (let i=0; i<res.images.length; i++) {
+        if (i===0) images.large = res.images[i];
+        else if (i===1) images.medium = res.images[i];
+        else if (i===2) images.small = res.images[i];
+      }
+
+      artist.setImages(images);
 
       this.navCtrl.push(ArtistPage, {
         item: artist
