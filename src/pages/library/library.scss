@@ -1,3 +1,11 @@
 library {
-  
+ *ion-input-placeholder {
+  color: red !important;
+}
+*:-moz-placeholder {
+  color: red !important;
+}
+*:-ms-input-placeholder { /* IE10+ */
+  color: red !important;
+}
 }

@@ -10,6 +10,7 @@ import { PlayerPage } from '../playerPage/playerPage';
 import { ArtistPage } from "../artist-page/artist-page";
 import { Handling } from "../../namespaces/handling";
 import { imageUrls } from "../../interfaces/interfaces";
+import { MusicService } from '../../providers/MusicService';
 
 @Component({
   selector: 'library',
@@ -111,7 +112,6 @@ getItemsByName(event:any) {
         })
       }
     }, 1000);
-
 }
 
 artistClickEvent(id: string) {
@@ -140,16 +140,13 @@ artistClickEvent(id: string) {
     })
   }
 
-
-
 // open playerPage and play selected track
 startPlayerPage(item: Song){
   //let modal = this.modalCtrl.create(PlayerPage);
   this.playing = item;
   this.navCtrl.push(PlayerPage, {item: item});
   
-  if(this.isPlaying){ this.isPlaying = false;
-  } else { this.isPlaying = true; }
+   this.isPlaying = true; 
 }
 
 }

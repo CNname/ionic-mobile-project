@@ -3,7 +3,7 @@
       <button ion-button menuToggle>
         <ion-icon name="menu"></ion-icon>
       </button>
-    <ion-title [hidden]="hideElement">
+    <ion-title class="streamgull-title" [hidden]="hideElement">
       Streamgull
     </ion-title>
     <ion-buttons end>
@@ -47,6 +47,7 @@
         <ion-badge item-right>{{ item.tracks.total }}</ion-badge>
       </ion-item>
     </ion-list>
+    
     <ion-list *ngSwitchCase="'artists'">
      <!-- artists -->
     </ion-list>
@@ -68,7 +69,7 @@
 
       <div [ngSwitch]="searchCategory">
 
-        <p [hidden]="trackItems.length > 0 || artistItems.length > 0" padding-left padding-right>Search results might come here...</p>
+        <p class="searchPlaceholder" [hidden]="trackItems.length > 0 || artistItems.length > 0" padding-left padding-right>Search results might come here...</p>
 
         <div *ngSwitchCase="'tracks'">
 

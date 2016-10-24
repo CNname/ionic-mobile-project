@@ -17,6 +17,12 @@
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
 
+.streamgull-title{
+  div {
+    margin: 13px 8px;
+  }
+}
+
 .playlist-details{
    background-color: #5E7189;
 }
@@ -41,6 +47,15 @@
 }
 .button-wrapper > ion-toolbar, .button-wrapper > ion-toolbar > .toolbar-background-md {
   background-color: #f5f5f5 !important;
+}
+
+.art-wrapper {
+  
+  text-align: center;
+  
+  img{
+    display: inline-block;
+  }
 }
 
 .albumInfo{
@@ -99,3 +114,8 @@ span {
   }
 }
 
+.searchPlaceholder{
+  text-align: center;
+  font-size: 20px;
+  color: #999;
+}
