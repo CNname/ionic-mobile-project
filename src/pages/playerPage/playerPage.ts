@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { SpotifyService } from '../../providers/spotify-service';
+import { Song } from '../../classes/Song.class';
 
 
 @Component({
@@ -10,11 +11,12 @@ import { SpotifyService } from '../../providers/spotify-service';
 export class PlayerPage {
     audioObject = null;
     url: string;
-    item: Object;
+    item: Song;
 
   constructor(public navCtrl: NavController, private navParams: NavParams) {
-    this.url = navParams.get('url');
     this.item = navParams.get('item');
+    this.url = this.item.getUrl();
+    
     if(this.url.length > 0 && this.audioObject == null ){
         this.audioObject = new Audio(this.url);
     }

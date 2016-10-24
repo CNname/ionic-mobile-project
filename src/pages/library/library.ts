@@ -26,7 +26,7 @@ export class Library {
   playlist_length: number;
   playlist_owner: string;
   playlist_items: Array<Object>;
-  playing: any;
+  playing: Song;
   timeout: any;
   trackItems: any[] = [];
   artistItems: any[] = [];
@@ -140,20 +140,16 @@ artistClickEvent(id: string) {
     })
   }
 
-}
+
 
 // open playerPage and play selected track
-startPlayerPage(url: string, item: Object){
+startPlayerPage(item: Song){
   //let modal = this.modalCtrl.create(PlayerPage);
   this.playing = item;
-  this.navCtrl.push(PlayerPage, {url, item});
+  this.navCtrl.push(PlayerPage, {item: item});
+  
   if(this.isPlaying){ this.isPlaying = false;
   } else { this.isPlaying = true; }
 }
 
-// show and hide search
-toggleSearch(){
-  if(this.hideElement){ this.hideElement = false;
-  } else { this.hideElement = true; }
-}
 }
