@@ -7,7 +7,7 @@ import { PlaylistDetails } from '../pages/playlist-details/playlist-details';
 import { Search } from '../pages/search/search';
 import { PlayerPage } from '../pages/playerPage/playerPage';
 import { ArtistPage } from '../pages/artist-page/artist-page';
-import { MusicService } from '../providers/MusicService';
+import { MusicService } from '../providers/music-service';
 
 
 @NgModule({

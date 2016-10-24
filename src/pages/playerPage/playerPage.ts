@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { SpotifyService } from '../../providers/spotify-service';
 import { Song } from '../../classes/Song.class';
-
+import { MusicService } from '../../providers/music-service';
 
 @Component({
   selector: 'playerPage',
@@ -12,6 +12,7 @@ export class PlayerPage {
     audioObject = null;
     url: string;
     item: Song;
+    musicService: MusicService;
 
   constructor(public navCtrl: NavController, private navParams: NavParams) {
     this.item = navParams.get('item');
@@ -25,11 +26,13 @@ export class PlayerPage {
   }
 
   pausePlayback(){
-    this.audioObject.pause();
+   
+    //this.audioObject.pause();
   }
 
   startPlayback(){
-    this.audioObject.play();
+    this.musicService.startPlayback();
+    // this.audioObject.play();
   }
 
   setLoop(){

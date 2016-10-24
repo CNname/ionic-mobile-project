@@ -10,7 +10,7 @@ import { PlayerPage } from '../playerPage/playerPage';
 import { ArtistPage } from "../artist-page/artist-page";
 import { Handling } from "../../namespaces/handling";
 import { imageUrls } from "../../interfaces/interfaces";
-import { MusicService } from '../../providers/MusicService';
+import { MusicService } from '../../providers/music-service';
 
 @Component({
   selector: 'library',
