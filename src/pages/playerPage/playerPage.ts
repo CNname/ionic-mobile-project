@@ -8,14 +8,14 @@ import { SpotifyService } from '../../providers/spotify-service';
   templateUrl: 'playerPage.html'
 })
 export class PlayerPage {
-    audioObject;
+    audioObject = null;
     url: string;
     item: Object;
 
   constructor(public navCtrl: NavController, private navParams: NavParams) {
     this.url = navParams.get('url');
     this.item = navParams.get('item');
-    if(this.url.length > 0){
+    if(this.url.length > 0 && this.audioObject == null ){
         this.audioObject = new Audio(this.url);
     }
     this.startPlayback();

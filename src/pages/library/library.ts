@@ -13,6 +13,9 @@ import { PlayerPage } from '../playerPage/playerPage';
   templateUrl: 'library.html'
 })
 export class Library {
+  private hideElement: boolean = false;
+  private isPlaying: boolean = false;
+  private spotifyservice: SpotifyService;
   // select the default tab
   playerNav: string = "playlists";
   playlist_id: string;
@@ -20,11 +23,10 @@ export class Library {
   playlist_length: number;
   playlist_owner: string;
   playlist_items: Array<Object>;
+  playing;
   timeout: any;
   songs: any[];
   audioObject;
-  private spotifyservice: SpotifyService;
-
 
   constructor(public navCtrl: NavController, spotifyservice: SpotifyService, public modalCtrl: ModalController) {
     this.spotifyservice = spotifyservice;
@@ -120,11 +122,14 @@ getSongByName(event:any) {
 // open playerPage and play selected track
 startPlayerPage(url: string, item: Object){
   //let modal = this.modalCtrl.create(PlayerPage);
+  this.playing = item;
   this.navCtrl.push(PlayerPage, {url, item});
-  //this.audioObject = new Audio(url);
-  //this.audioObject.play();
-  //modal.present();
+  if(this.isPlaying){ this.isPlaying = false;
+  } else { this.isPlaying = true; }
 }
-
-
+// show and hide search
+toggleSearch(){
+  if(this.hideElement){ this.hideElement = false;
+  } else { this.hideElement = true; }
+}
 }
