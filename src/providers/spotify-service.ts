@@ -27,7 +27,6 @@ export class SpotifyService {
 
         return res.json()
       })
-      
   }
   
   getUserById(id: string): any {
@@ -36,16 +35,13 @@ export class SpotifyService {
       .map(res => {
         res.json()
       })
-
   }
-  
+
    searchForItem(query: string): any {
 
     return this.http.get('https://api.spotify.com/v1/search?q=' + query + '&type=track', {})
       .map(res => {
         return res.json()
       })
-
   }
-  
 }

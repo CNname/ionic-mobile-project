@@ -38,20 +38,15 @@
 <ion-content>
   <div [ngSwitch]="playerNav">
     <ion-list no-lines *ngSwitchCase="'playlists'" class="card-background-page">
-     <ion-item>
-      <ion-card *ngFor="let item of playlist_items" (click)="getPlaylistById(item.owner.id, item.id)" class="card-background-page">
-        <!--<ion-thumbnail item-left> -->
+     <ion-item *ngFor="let item of playlist_items" (click)="getPlaylistById(item.owner.id, item.id)">
+      <ion-thumbnail item-left>
           <img [src]="item?.images[0].url"/>
-      <!--  </ion-thumbnail>   -->
-      <ion-card-content>
-        <ion-card-title>{{ item.name }}</ion-card-title>
+      </ion-thumbnail>
+        <p>{{ item.name }}</p>
         <p>{{ item.owner.id }}</p>
-        <!--<ion-badge item-right>{{ item.tracks.total }}</ion-badge> -->
-        <p>{{ item.tracks.total }} songs</p>
-      </ion-card-content>
-      </ion-card>
-    </ion-item>
-</ion-list>
+        <ion-badge item-right>{{ item.tracks.total }}</ion-badge>
+      </ion-item>
+    </ion-list>
     <ion-list *ngSwitchCase="'artists'">
      <!-- artists -->
     </ion-list>
