@@ -29,9 +29,9 @@ export interface UserInterface {
   soundCloudAccountId?: number; // ? = ei pakollinen
 }
 
-export interface AlbumImageUrls {
-  small: any;
-  medium: any;
+export interface imageUrls {
+  small?: any;
+  medium?: any;
   large: any;
 }
 
@@ -44,7 +44,7 @@ export interface ArtistInterface {
 export interface SongInterface {
    _id: string;
    _albumId: string;
-   _albumImage: AlbumImageUrls;
+   _albumImage: imageUrls;
    _songTitle: string;
    _albumTitle: string;
    _artists: Artist[];

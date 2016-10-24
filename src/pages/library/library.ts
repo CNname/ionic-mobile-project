@@ -7,6 +7,9 @@ import { Artist } from '../../classes/Artist.class';
 import { ModalController, ViewController } from 'ionic-angular';
 import { Search } from '../search/search';
 import { PlayerPage } from '../playerPage/playerPage';
+import { ArtistPage } from "../artist-page/artist-page";
+import { Handling } from "../../namespaces/handling";
+import { imageUrls } from "../../interfaces/interfaces";
 
 @Component({
   selector: 'library',
@@ -23,10 +26,13 @@ export class Library {
   playlist_length: number;
   playlist_owner: string;
   playlist_items: Array<Object>;
-  playing;
+  playing: any;
   timeout: any;
-  songs: any[];
-  audioObject;
+  trackItems: any[] = [];
+  artistItems: any[] = [];
+  audioObject: any;
+  searchCategory: string;
+
 
   constructor(public navCtrl: NavController, spotifyservice: SpotifyService, public modalCtrl: ModalController) {
     this.spotifyservice = spotifyservice;
@@ -42,83 +48,100 @@ export class Library {
 
  getPlaylistById(userId: string, playlistId: string){
    this.spotifyservice.getPlaylistById(userId, playlistId).subscribe(res => {
-       console.time("Create playlist");
+     console.time("Create playlist");
 
-        let tracks: Song[] = [];
-        for (var i=0; i<res.items.length; i++) {
-          let song: Song = new Song(res.items[i].id, res.items[i].name, res.items[i].isPlayable)
-          song.setAlbumImage({
-            small: res.items[i].album.images[2],
-            medium: res.items[i].album.images[1],
-            large: res.items[i].album.images[0]
-          })
-            //.setAlbumId(res.items[i].album.id)
-            //.setAlbumTitle(res.items[i].album.name);
+      let tracks: Song[] = [];
+      for (var i=0; i<res.items.length; i++) {
+        let song: Song = new Song(res.items[i].id, res.items[i].name, res.items[i].isPlayable)
+        song.setAlbumImage({
+          small: res.items[i].album.images[2],
+          medium: res.items[i].album.images[1],
+          large: res.items[i].album.images[0]
+        });
+        song.setAlbumId(res.items[i].album.id)
+        song.setAlbumTitle(res.items[i].album.name);
 
-          let artists: Artist[] = [];
+        let artists: Artist[] = [];
 
-          for(var j=0; j<res.tracks.items[i].artists.length; j++) {
-              artists.push(new Artist(
-                res.tracks.items[i].artists[j].id,
-                res.tracks.items[i].artists[j].name,
-                res.tracks.items[i].artists[j].href
-              ));
-          }
-
-          song.setArtists(artists);
-
-          tracks.push(song);
+        for(var j=0; j<res.tracks.items[i].artists.length; j++) {
+            artists.push(new Artist(
+              res.tracks.items[i].artists[j].id,
+              res.tracks.items[i].artists[j].name,
+              res.tracks.items[i].artists[j].href
+            ));
         }
-        console.timeEnd("Create playlist")
-        console.log(tracks);
-        return tracks;
 
+        song.setArtists(artists);
+
+        tracks.push(song);
+      }
+      console.timeEnd("Create playlist")
+      console.log(tracks);
+      return tracks;
 
     })
  }
 
-getSongByName(event:any) {
+getItemsByName(event:any) {
 
-    clearTimeout(this.timeout);
-    //console.log("pituus: " + event.target.value.length);
-    if(event.target.value.length > 3){
-    this.timeout = setTimeout(() => {
-      this.spotifyservice.searchForItem(event.target.value).subscribe((res) => {
-        this.songs = [];
+  clearTimeout(this.timeout);
+  this.trackItems = [];
+  this.artistItems = [];
 
-        for (var i=0; i<res.tracks.items.length; i++) {
+  this.timeout = setTimeout(() => {
 
-          let song: Song = new Song(res.tracks.items[i].id, res.tracks.items[i].name, res.tracks.items[i].isPlayable)
+      let query = event.target.value;
 
-          song.setAlbumImage({
-            small: res.tracks.items[i].album.images[2],
-            medium: res.tracks.items[i].album.images[1],
-            large: res.tracks.items[i].album.images[0]
-          });
-          song.setAlbumId(res.tracks.items[i].album.id);
-          song.setAlbumTitle(res.tracks.items[i].album.name);
-          song.setUrl(res.tracks.items[i].preview_url);
+      if(query.length >= 3){
+        // activate search segment if not active
+        if (this.playerNav !== "search") this.playerNav = "search";
 
-          let artists: Artist[] = [];
+        this.spotifyservice.searchForItem(encodeURIComponent(query)).subscribe((res) => {
 
-          for(var j=0; j<res.tracks.items[i].artists.length; j++) {
-              artists.push(new Artist(
-                res.tracks.items[i].artists[j].id,
-                res.tracks.items[i].artists[j].name,
-                res.tracks.items[i].artists[j].href
-              ))
+          this.trackItems = Handling.HandleJson.tracks(res.tracks.items);
+          this.artistItems = Handling.HandleJson.artists(res.artists.items);
+
+          // activate segment if needed
+          if (this.trackItems.length > 0) {
+            this.searchCategory = "tracks";
+          } else if (this.trackItems.length === 0 && this.artistItems.length > 0) {
+            this.searchCategory = "artists";
           }
 
-          song.setArtists(artists);
-          this.songs.push(song);
-        }
-        console.log(this.songs);
-
-      })
-    }, 1000)
-    }
+        })
+      }
+    }, 1000);
 
 }
+
+artistClickEvent(id: string) {
+    this.spotifyservice.getArtistById(id).subscribe((res) => {
+      let artist = new Artist(res.id, res.name);
+      let images: imageUrls = {
+        large: {
+          height: 600,
+          width: 600,
+          url: "../../assets/img/sg-placeholder.jpg"
+        }
+      };
+
+      for (let i=0; i<res.images.length; i++) {
+        if (i===0) images.large = res.images[i];
+        else if (i===1) images.medium = res.images[i];
+        else if (i===2) images.small = res.images[i];
+      }
+
+      artist.setImages(images);
+
+      this.navCtrl.push(ArtistPage, {
+        item: artist
+      });
+
+    })
+  }
+
+}
+
 // open playerPage and play selected track
 startPlayerPage(url: string, item: Object){
   //let modal = this.modalCtrl.create(PlayerPage);
@@ -127,6 +150,7 @@ startPlayerPage(url: string, item: Object){
   if(this.isPlaying){ this.isPlaying = false;
   } else { this.isPlaying = true; }
 }
+
 // show and hide search
 toggleSearch(){
   if(this.hideElement){ this.hideElement = false;

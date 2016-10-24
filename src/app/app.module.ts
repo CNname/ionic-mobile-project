@@ -6,6 +6,8 @@ import { SpotifyService } from '../providers/spotify-service';
 import { PlaylistDetails } from '../pages/playlist-details/playlist-details';
 import { Search } from '../pages/search/search';
 import { PlayerPage } from '../pages/playerPage/playerPage';
+import { ArtistPage } from '../pages/artist-page/artist-page';
+
 
 
 @NgModule({
@@ -14,7 +16,8 @@ import { PlayerPage } from '../pages/playerPage/playerPage';
     Library,
     PlayerPage,
     PlaylistDetails,
-    Search
+    Search,
+    ArtistPage
   ],
   imports: [
     IonicModule.forRoot(MyApp)
@@ -25,7 +28,8 @@ import { PlayerPage } from '../pages/playerPage/playerPage';
     Library,
     PlayerPage,
     PlaylistDetails,
-    Search
+    Search,
+    ArtistPage
   ],
   providers: [ SpotifyService ]
 })

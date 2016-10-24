@@ -17,7 +17,6 @@
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
 
-
 .playlist-details{
    background-color: #5E7189;
 }
@@ -92,3 +91,11 @@ ion-footer{
     position: relative;
     text-align: center;
   }
+
+span {
+  &.artist {
+    cursor: pointer;
+    color: #5E7189;
+  }
+}
+

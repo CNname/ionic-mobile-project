@@ -26,6 +26,6 @@ export interface SongInterface {
   getDuration(): number;
   setIsPlayable(val: boolean): void; // private
   getIsPlayable(): boolean;
-//  setArtist(artist: Artist): void;
+//  setArtist(artist-page: Artist): void;
 //  getArtists(): Artist[];
 }
