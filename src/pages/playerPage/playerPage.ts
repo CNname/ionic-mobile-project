@@ -29,6 +29,7 @@ export class PlayerPage {
     this.startPlayback(this.url);
   }
   IonViewDidLoad(){
+    // this is loaded only once
       console.log("only once");
   }
   pausePlayback(){
