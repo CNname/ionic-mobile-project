@@ -16,10 +16,10 @@ import { MusicService } from '../../providers/music-service';
   templateUrl: 'library.html'
 })
 export class Library {
-  @ViewChild('input') input;
   private hideElement: boolean = false;
   private isPlaying: boolean = false;
   private spotifyservice: SpotifyService;
+  private musicService: MusicService;
   // select the default tab
   playerNav: string = "playlists";
   playlist_id: string;
@@ -33,20 +33,18 @@ export class Library {
   artistItems: any[] = [];
   audioObject: any;
   searchCategory: string;
-  playerInstance = false;
-  playerModal: any;
 
-
-  constructor(public navCtrl: NavController, spotifyservice: SpotifyService, public modalCtrl: ModalController ) {
+  constructor(public navCtrl: NavController, spotifyservice: SpotifyService, public modalCtrl: ModalController, musicService: MusicService  ) {
+    this.musicService = musicService;
     this.spotifyservice = spotifyservice;
     this.spotifyservice.loadPlaylist().subscribe(playlist => {
       console.log(playlist);
       this.playlist_items = playlist["items"];
     });
   }
-
-  setFocus() {
-    this.input.setFocus();
+  
+  ionViewDidLoad(){
+    console.log("start of the page");
   }
 
   goToDetails(playlist_id: string, playlist_title: string) {
@@ -120,59 +118,57 @@ getItemsByName(event:any) {
 }
 
 artistClickEvent(id: string) {
-    this.spotifyservice.getArtistById(id).subscribe((res) => {
-      let artist = new Artist(res.id, res.name);
-      let images: imageUrls = {
-        large: {
-          height: 600,
-          width: 600,
-          url: "../../assets/img/sg-placeholder.jpg"
-        }
-      };
-
-      for (let i=0; i<res.images.length; i++) {
-        if (i===0) images.large = res.images[i];
-        else if (i===1) images.medium = res.images[i];
-        else if (i===2) images.small = res.images[i];
+  this.spotifyservice.getArtistById(id).subscribe((res) => {
+    let artist = new Artist(res.id, res.name);
+    let images: imageUrls = {
+      large: {
+        height: 600,
+        width: 600,
+        url: "../../assets/img/sg-placeholder.jpg"
       }
+    };
 
-      artist.setImages(images);
+    for (let i=0; i<res.images.length; i++) {
+      if (i===0) images.large = res.images[i];
+      else if (i===1) images.medium = res.images[i];
+      else if (i===2) images.small = res.images[i];
+    }
 
-      this.navCtrl.push(ArtistPage, {
-        item: artist
-      });
+    artist.setImages(images);
 
-    })
+    this.navCtrl.push(ArtistPage, {
+      item: artist
+    });
+
+  })
+}
+
+startPlayer() {
+  if(this.musicService.isPlayerInit()){
+    this.musicService.startPlayback(); 
   }
+}
 
-// open playerPage and play selected track
-startPlayerPage(item: Song){
-
-  if(!(this.playerInstance)){
-      this.navCtrl.push(PlayerPage, {item: item}, { animate: true, direction: 'forward', duration: 10000 });
-      //this.playerModal = this.modalCtrl.create(PlayerPage, {item: item}, {animate: true, animation: 'slide-up'})
+startNewPlayer(item: Song){
+  
+  if(this.musicService.isPlayerInit()){
+      this.musicService.pausePlayback();
+      this.musicService.resetAudio();
+      this.musicService.setAudio(item.getUrl());
+      this.musicService.startPlayback();
       this.isPlaying = true;
-      //this.playerModal.present();
-      /*this.playerModal.onDidDismiss(data => {
-          console.log("on dismiss was called");
-          console.log(data);
-          //this.musicService = data;
-        }); */
-      this.playerInstance = true;
       this.playing = item;
- }else if(this.playerInstance){
-     console.log("did i stop");
-     this.navCtrl.push(PlayerPage, {item: item}, { animate: true, direction: 'forward', duration: 10000 });
-     //let playerModal = this.modalCtrl.create(PlayerPage, {item: item})
-     this.isPlaying = true;
-     //this.playerModal.present();
-     /*this.playerModal.onDidDismiss(data => {
-         console.log("on dismiss was called");
-         console.log(data);
-        // this.musicService = data;
-     });*/
+  } else {
+      this.musicService.setAudio(item.getUrl());
+      this.musicService.startPlayback();
+      this.isPlaying = true;
+      this.playing = item;
+  }    
+}
 
-     this.playing = item;
+pausePlayer(){
+  if(this.musicService.isPlayerInit()){
+    this.musicService.pausePlayback();
   }
 }
 

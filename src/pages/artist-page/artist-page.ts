@@ -44,8 +44,8 @@ export class ArtistPage {
   // should not be here!!! Create a namespace etc to control player
   startPlayer(url: string) {
     //if(this.audioObject.playing() != 'true'){
-    this.audioObject = new Audio(url);
-    this.audioObject.play();
+    //this.audioObject = new Audio(url);
+    //this.audioObject.play();
     //}else{
     //    this.audioObject.stop();
     //}

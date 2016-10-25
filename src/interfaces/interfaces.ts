@@ -36,20 +36,24 @@ export interface imageUrls {
 }
 
 export interface ArtistInterface {
-  name: string;
-  id: string;
-  href?: string;
+  getType(): string;
+  getName(): string;
+  getId(): string;
+  getHref(): string;
+  getImages(): imageUrls;
 }
 
 export interface SongInterface {
-   _id: string;
-   _albumId: string;
-   _albumImage: imageUrls;
-   _songTitle: string;
-   _albumTitle: string;
-   _artists: Artist[];
-   _duration: number; // in milliseconds
-   _isPlayable: boolean;
+  getType(): string;
+  getId(): string;
+  getAlbumId(): string;
+  getAlbumImage(): imageUrls;
+  getSongTitle(): string; 
+  getAlbumTitle(): string;
+  getArtists(): Artist[]; 
+  getDuration(): number; 
+  getIsPlayable(): boolean; 
+  getUrl(): string;
 }
 
 export interface CallHandlerInterface {

@@ -6,24 +6,25 @@ import { Song } from '../classes/Song.class';
 
 @Injectable()
 export class MusicService {
-  audioObject: any;
+  audioObject;
   song: Song;
-  public isPlaying = false;
+  isPlaying = false;
+
 
   constructor() { }
 
   setAudio(url: string){
     this.audioObject = new Audio(url);
   }
-  getPlayingAudio(){
-    return this.audioObject;
+  isPlayerInit(){
+    if (typeof this.audioObject === 'undefined') {
+        return false;
+    } else return true;
   }
+  
   startPlayback(){
     this.audioObject.play();
     this.isPlaying = true;
-    /*this.audioObject.addEventListener('ended', function () {
-                      this.pausePlayback();
-                });*/
   }
   pausePlayback(){
     this.audioObject.pause();
@@ -33,7 +34,9 @@ export class MusicService {
     return this.isPlaying;
   }
   resetAudio(){
+    this.audioObject.pause();
     this.audioObject = null;
+    this.isPlaying = false;
   }
 }
 // https://blog.budacode.com/2016/06/02/angular-2-services/
