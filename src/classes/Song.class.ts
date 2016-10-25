@@ -1,18 +1,18 @@
-import { imageUrls } from '../interfaces/interfaces';
+import { SongInterface, imageUrls } from '../interfaces/interfaces';
 import { Artist } from './Artist.class';
 
-export class Song {
+export class Song implements SongInterface {
 
-  _type: string;
-  _id: string;
-  _albumId: string;
-  _albumImage: imageUrls;
-  _songTitle: string;
-  _albumTitle: string;
-  _artists: Artist[];
-  _duration: number;
-  _isPlayable: boolean;
-  _url: string;
+  private _type: string;
+  private _id: string;
+  private _albumId: string;
+  private _albumImage: imageUrls;
+  private _songTitle: string;
+  private _albumTitle: string;
+  private _artists: Artist[];
+  private _duration: number;
+  private _isPlayable: boolean;
+  private _url: string;
 
   constructor(id: string, songTitle: string, isPlayable: boolean) {
     this._id = id;

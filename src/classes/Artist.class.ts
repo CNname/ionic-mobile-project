@@ -1,6 +1,6 @@
-import {imageUrls} from "../interfaces/interfaces";
+import {ArtistInterface, imageUrls} from "../interfaces/interfaces";
 
-export class Artist  {
+export class Artist implements ArtistInterface {
 
   private _type: string;
   private _name: string;

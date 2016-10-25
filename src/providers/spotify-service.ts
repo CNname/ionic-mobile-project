@@ -61,7 +61,7 @@ export class SpotifyService {
 
   searchForItem(query: string): Observable<any> {
 
-    return this.http.get('https://api.spotify.com/v1/search?q=' + query + '&type=track,artist&offset=0&limit=5', {})
+    return this.http.get('https://api.spotify.com/v1/search?q=' + query + '&type=track,artist&offset=0&limit=15', {})
       .map(res => {
         return res.json()
       })
