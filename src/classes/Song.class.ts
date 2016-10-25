@@ -93,7 +93,7 @@ export class Song implements SongInterface {
   }
 
   getUrl(): string{
-    return this._url
+    return this._url;
   }
 
   setUrl(value: string){

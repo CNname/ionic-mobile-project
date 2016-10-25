@@ -5,7 +5,7 @@ import { PlaylistDetails } from '../playlist-details/playlist-details';
 import { Song } from '../../classes/Song.class';
 import { Artist } from '../../classes/Artist.class';
 import { Search } from '../search/search';
-import { PlayerPage } from '../playerPage/playerPage';
+//import { PlayerPage } from '../playerPage/playerPage';
 import { ArtistPage } from "../artist-page/artist-page";
 import { Handling } from "../../namespaces/handling";
 import { imageUrls } from "../../interfaces/interfaces";
@@ -16,8 +16,8 @@ import { MusicService } from '../../providers/music-service';
   templateUrl: 'library.html'
 })
 export class Library {
-  private hideElement: boolean = false;
-  private isPlaying: boolean = false;
+  hideElement: boolean = false;
+  isPlaying: boolean = false;
   private spotifyservice: SpotifyService;
   private musicService: MusicService;
   // select the default tab
@@ -27,8 +27,8 @@ export class Library {
   playlist_length: number;
   playlist_owner: string;
   playlist_items: Array<Object>;
-  playing: Song;
   timeout: any;
+  playing: Song;
   trackItems: any[] = [];
   artistItems: any[] = [];
   audioObject: any;
@@ -42,7 +42,7 @@ export class Library {
       this.playlist_items = playlist["items"];
     });
   }
-  
+
   ionViewDidLoad(){
     console.log("start of the page");
   }
@@ -145,25 +145,24 @@ artistClickEvent(id: string) {
 
 startPlayer() {
   if(this.musicService.isPlayerInit()){
-    this.musicService.startPlayback(); 
+    this.musicService.startPlayback();
   }
 }
 
 startNewPlayer(item: Song){
-  
   if(this.musicService.isPlayerInit()){
+      this.playing = item;
       this.musicService.pausePlayback();
       this.musicService.resetAudio();
       this.musicService.setAudio(item.getUrl());
       this.musicService.startPlayback();
       this.isPlaying = true;
-      this.playing = item;
   } else {
+      this.playing = item;
       this.musicService.setAudio(item.getUrl());
       this.musicService.startPlayback();
       this.isPlaying = true;
-      this.playing = item;
-  }    
+  }
 }
 
 pausePlayer(){

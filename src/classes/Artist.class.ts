@@ -5,8 +5,8 @@ export class Artist implements ArtistInterface {
   private _type: string;
   private _name: string;
   private _id: string;
-  private _href: string;
-  private _images: imageUrls;
+  private   _href: string;
+  private   _images: imageUrls;
 
   constructor(id: string, name: string, href?: string) {
     this._name = name;
