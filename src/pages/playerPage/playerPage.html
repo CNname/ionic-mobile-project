@@ -1,8 +1,16 @@
 
 <ion-header>
-  <ion-navbar class="bar-header">
-   <ion-title>{{ item._artists[0]._name }}</ion-title>
-</ion-navbar>
+  <ion-toolbar (click)="goBack()">
+    <!-- <ion-navbar class="bar-header"> -->
+
+   <!--</ion-navbar> -->
+   <ion-buttons>
+   <button ion-button color="primary" class="larger" >
+     <ion-icon name="arrow-back"></ion-icon>
+   </button>
+   <!--<ion-title>{{ item._artists[0]._name }}</ion-title> -->
+ </ion-buttons>
+ </ion-toolbar>
 </ion-header>
 
 

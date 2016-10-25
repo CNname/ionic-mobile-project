@@ -1,10 +1,9 @@
-import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { NavController, ModalController, ViewController } from 'ionic-angular';
 import { SpotifyService } from '../../providers/spotify-service';
 import { PlaylistDetails } from '../playlist-details/playlist-details';
 import { Song } from '../../classes/Song.class';
 import { Artist } from '../../classes/Artist.class';
-import { ModalController, ViewController } from 'ionic-angular';
 import { Search } from '../search/search';
 import { PlayerPage } from '../playerPage/playerPage';
 import { ArtistPage } from "../artist-page/artist-page";
@@ -17,6 +16,7 @@ import { MusicService } from '../../providers/music-service';
   templateUrl: 'library.html'
 })
 export class Library {
+  @ViewChild('input') input;
   private hideElement: boolean = false;
   private isPlaying: boolean = false;
   private spotifyservice: SpotifyService;
@@ -33,16 +33,22 @@ export class Library {
   artistItems: any[] = [];
   audioObject: any;
   searchCategory: string;
+  playerInstance = false;
+  playerModal: any;
 
 
-  constructor(public navCtrl: NavController, spotifyservice: SpotifyService, public modalCtrl: ModalController) {
+  constructor(public navCtrl: NavController, spotifyservice: SpotifyService, public modalCtrl: ModalController ) {
     this.spotifyservice = spotifyservice;
     this.spotifyservice.loadPlaylist().subscribe(playlist => {
       console.log(playlist);
       this.playlist_items = playlist["items"];
-
     });
   }
+
+  setFocus() {
+    this.input.setFocus();
+  }
+
   goToDetails(playlist_id: string, playlist_title: string) {
     this.navCtrl.push(PlaylistDetails, {playlist_id, playlist_title});
  }
@@ -84,7 +90,6 @@ export class Library {
  }
 
 getItemsByName(event:any) {
-
   clearTimeout(this.timeout);
   this.trackItems = [];
   this.artistItems = [];
@@ -142,11 +147,33 @@ artistClickEvent(id: string) {
 
 // open playerPage and play selected track
 startPlayerPage(item: Song){
-  //let modal = this.modalCtrl.create(PlayerPage);
-  this.playing = item;
-  this.navCtrl.push(PlayerPage, {item: item});
-  
-   this.isPlaying = true; 
+
+  if(!(this.playerInstance)){
+      this.navCtrl.push(PlayerPage, {item: item}, { animate: true, direction: 'forward', duration: 10000 });
+      //this.playerModal = this.modalCtrl.create(PlayerPage, {item: item}, {animate: true, animation: 'slide-up'})
+      this.isPlaying = true;
+      //this.playerModal.present();
+      /*this.playerModal.onDidDismiss(data => {
+          console.log("on dismiss was called");
+          console.log(data);
+          //this.musicService = data;
+        }); */
+      this.playerInstance = true;
+      this.playing = item;
+ }else if(this.playerInstance){
+     console.log("did i stop");
+     this.navCtrl.push(PlayerPage, {item: item}, { animate: true, direction: 'forward', duration: 10000 });
+     //let playerModal = this.modalCtrl.create(PlayerPage, {item: item})
+     this.isPlaying = true;
+     //this.playerModal.present();
+     /*this.playerModal.onDidDismiss(data => {
+         console.log("on dismiss was called");
+         console.log(data);
+        // this.musicService = data;
+     });*/
+
+     this.playing = item;
+  }
 }
 
 }
