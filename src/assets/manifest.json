@@ -4,7 +4,7 @@
   "start_url": "index.html",
   "display": "standalone",
   "icons": [{
-    "src": "assets/sg-logo-drop-shadow.png",
+    "src": "assets/img/sg-logo-drop-shadow.png",
     "sizes": "600x600",
     "type": "image/png"
   }],

@@ -14,7 +14,7 @@
 
 
 <ion-content>
-  <img [src]="artist.getImages().large.url" padding>
+  <img [src]="artist.getImages().large.url">
   <ion-list>
     <ion-item *ngFor="let track of popularTracks" (click)="startPlayer(track.getUrl())">
       <ion-thumbnail item-left>
