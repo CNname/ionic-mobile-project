@@ -23,7 +23,7 @@
   <div class="button-wrapper">
     <ion-toolbar>
       <ion-buttons class="playerButtons">
-        <button ion-button color="primary" >
+        <button ion-button color="primary" (click)="previousSong()">
           <ion-icon name="skip-backward"></ion-icon>
         </button>
         <button ion-button color="peakColor" (click)="pausePlayback()" >
@@ -32,7 +32,7 @@
         <button ion-button color="peakColor" (click)="startPlayback()">
           <ion-icon name="play"></ion-icon>
         </button>
-        <button ion-button color="primary" >
+        <button ion-button color="primary" (click)="nextSong()">
           <ion-icon name="skip-forward"></ion-icon>
         </button>
       </ion-buttons>

@@ -39,6 +39,7 @@ export class Library {
     this.spotifyservice = spotifyservice;
     this.spotifyservice.loadPlaylist().subscribe(playlist => {
       console.log(playlist);
+      //noinspection TypeScriptValidateTypes
       this.playlist_items = playlist["items"];
     });
   }
@@ -150,7 +151,7 @@ startPlayer() {
 }
 
 openPagePlayer(item: Song){
-  this.navCtrl.push(PlayerPage, {item: item}).catch(()=> console.log('should I stay or should I go now'));
+  this.navCtrl.push(PlayerPage, {item: item, songs: this.trackItems }).catch(()=> console.log('should I stay or should I go now'));
 }
 
 startNewPlayer(item: Song){
