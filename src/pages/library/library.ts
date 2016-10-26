@@ -5,7 +5,7 @@ import { PlaylistDetails } from '../playlist-details/playlist-details';
 import { Song } from '../../classes/Song.class';
 import { Artist } from '../../classes/Artist.class';
 import { Search } from '../search/search';
-//import { PlayerPage } from '../playerPage/playerPage';
+import { PlayerPage } from '../playerPage/playerPage';
 import { ArtistPage } from "../artist-page/artist-page";
 import { Handling } from "../../namespaces/handling";
 import { imageUrls } from "../../interfaces/interfaces";
@@ -19,7 +19,7 @@ export class Library {
   hideElement: boolean = false;
   isPlaying: boolean = false;
   private spotifyservice: SpotifyService;
-  private musicService: MusicService;
+  public musicService: MusicService;
   // select the default tab
   playerNav: string = "playlists";
   playlist_id: string;
@@ -147,6 +147,10 @@ startPlayer() {
   if(this.musicService.isPlayerInit()){
     this.musicService.startPlayback();
   }
+}
+
+openPagePlayer(item: Song){
+  this.navCtrl.push(PlayerPage, {item: item}).catch(()=> console.log('should I stay or should I go now'));
 }
 
 startNewPlayer(item: Song){

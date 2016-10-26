@@ -1,0 +1,42 @@
+
+<ion-header>
+  <ion-navbar class="bar-header">
+
+   </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+
+  <div class="art-wrapper">
+    <img [src]="item?.getAlbumImage().large.url"/>
+  </div>
+  <div class="albumInfo">
+    <h3><b>{{ item?.getSongTitle() }}</b></h3>
+    <h3>
+      <span *ngFor="let item of item?.getArtists(); let i = index">
+        <span *ngIf="i > 0"> / </span> {{ item?.getName() }}
+      </span>
+    </h3>
+    <h4>{{ item?.getAlbumTitle() }}</h4>
+  </div>
+  <div class="button-wrapper">
+    <ion-toolbar>
+      <ion-buttons class="playerButtons">
+        <button ion-button color="primary" >
+          <ion-icon name="skip-backward"></ion-icon>
+        </button>
+        <button ion-button color="peakColor" (click)="pausePlayback()" >
+          <ion-icon name="pause"></ion-icon>
+        </button>
+        <button ion-button color="peakColor" (click)="startPlayback()">
+          <ion-icon name="play"></ion-icon>
+        </button>
+        <button ion-button color="primary" >
+          <ion-icon name="skip-forward"></ion-icon>
+        </button>
+      </ion-buttons>
+    </ion-toolbar>
+  </div>
+
+</ion-content>

@@ -99,7 +99,7 @@
   </div>
 </ion-content>
 
-  <ion-footer [hidden]="!isPlaying" (color)="primary">
+  <ion-footer [hidden]="!isPlaying">
     <ion-toolbar class="librarySmallPlayer">
         <ion-list class="librarySmallPlayer" no-lines>
           <ion-item>
@@ -117,6 +117,9 @@
             </button>
             <button ion-button color="primary" class="larger" (click)="startPlayer()">
               <ion-icon name="play"></ion-icon>
+            </button>
+            <button ion-button color="primary" class="larger" (click)="openPagePlayer(playing)">
+              <ion-icon name="arrow-up"></ion-icon>
             </button>
           </ion-buttons>
         </ion-item>
