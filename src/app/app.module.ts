@@ -8,6 +8,8 @@ import { Search } from '../pages/search/search';
 import { PlayerPage } from '../pages/playerPage/playerPage';
 import { ArtistPage } from '../pages/artist-page/artist-page';
 import { MusicService } from '../providers/music-service';
+import { SoundcloudService } from "../providers/soundcloud-service";
+import { AuthenticationService } from "../providers/authentication-service";
 
 
 @NgModule({
@@ -31,6 +33,6 @@ import { MusicService } from '../providers/music-service';
     Search,
     ArtistPage
   ],
-  providers: [ SpotifyService, MusicService ]
+  providers: [ SpotifyService, SoundcloudService, MusicService, AuthenticationService ]
 })
 export class AppModule {}
