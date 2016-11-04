@@ -10,6 +10,7 @@ import { ArtistPage } from '../pages/artist-page/artist-page';
 import { MusicService } from '../providers/music-service';
 import { SoundcloudService } from "../providers/soundcloud-service";
 import { AuthenticationService } from "../providers/authentication-service";
+import {LoginPage} from "../pages/login-page/login-page";
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { AuthenticationService } from "../providers/authentication-service";
     PlayerPage,
     PlaylistDetails,
     Search,
-    ArtistPage
+    ArtistPage,
+    LoginPage
   ],
   imports: [
     IonicModule.forRoot(MyApp)
@@ -31,7 +33,8 @@ import { AuthenticationService } from "../providers/authentication-service";
     PlayerPage,
     PlaylistDetails,
     Search,
-    ArtistPage
+    ArtistPage,
+    LoginPage
   ],
   providers: [ SpotifyService, SoundcloudService, MusicService, AuthenticationService ]
 })

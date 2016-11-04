@@ -1,0 +1,41 @@
+page-login-page {
+  .login {
+    text-align: center;
+    background: url("../../assets/img/sg-bg-1280.jpg");
+    background-size: cover;
+
+    .login-wrapper {
+      padding: 0 2rem;
+      max-width: 700px;
+      width: 100%;
+      margin: 0 auto;
+
+      button {
+        width: 100%;
+        max-width: 45%;
+        box-sizing: border-box;
+        margin-top: 2rem;
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      ion-buttons {
+        margin: 0;
+      }
+
+      .btn-left {
+        float: left;
+      }
+
+      .btn-right {
+        float: right;
+      }
+
+      .color-white {
+        color: #fff;
+      }
+
+    }
+
+  }
+}
