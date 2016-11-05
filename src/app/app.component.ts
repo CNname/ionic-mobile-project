@@ -6,6 +6,7 @@ import { StatusBar } from 'ionic-native';
 
 import { Library } from '../pages/library/library';
 import {LoginPage} from "../pages/login-page/login-page";
+import {AuthenticationService} from "../providers/authentication-service";
 
 
 
@@ -21,7 +22,8 @@ export class MyApp {
 
   constructor(
     public platform: Platform,
-    public menu: MenuController
+    public menu: MenuController,
+    private authenticationService: AuthenticationService
   ) {
     this.initializeApp();
 
@@ -45,4 +47,15 @@ export class MyApp {
     // navigate to the new page if it is not the current page
     this.nav.setRoot(page.component);
   }
+
+  logOut() {
+    this.authenticationService.logOut(()=>{
+      console.log("logout successful");
+    },()=>{
+      console.log("logout failed");
+    });
+  }
+
+
+
 }

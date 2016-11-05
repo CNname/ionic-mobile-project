@@ -9,38 +9,45 @@
   <img src="../../assets/img/sg-logo-drop-shadow.png" class="login-logo">
   <div [ngSwitch]="loginNav" class="login-wrapper">
 
-    <form (ngSubmit)="logIn()" *ngSwitchCase="'login'">
+    <div *ngSwitchCase="'login'">
       <ion-list inset>
         <ion-item>
-          <ion-input type="email" [(ngModel)]="loginEmail" name="email" placeholder="Email"></ion-input>
+          <ion-input type="email" [(ngModel)]="loginEmail" name="loginEmail" placeholder="Email" required></ion-input>
         </ion-item>
         <ion-item>
-          <ion-input type="password" [(ngModel)]="loginPassword" name="password" placeholder="Password"></ion-input>
+          <ion-input type="password" [(ngModel)]="loginPassword" name="loginPassword" placeholder="Password" required></ion-input>
         </ion-item>
+        <div *ngIf="loginError.length > 0" class="error color-white">
+          <p>{{ loginError }}</p>
+        </div>
         <ion-buttons>
-          <button type="reset" (click)="loginNav = 'register';" class="btn-left color-white" ion-button clear>Create account</button>
-          <button ion-button type="submit" class="btn-right">Login</button>
+          <button (click)="loginNav = 'register';" class="btn-left color-white half" ion-button clear>Create account</button><!--
+          --><button ion-button type="submit" class="btn-right half" (click)="logIn()">Login</button>
+          <button (click)="forgotPassword()" class="color-white" ion-button full clear>Forgot your password?</button>
         </ion-buttons>
       </ion-list>
-    </form>
+    </div>
 
-    <form (ngSubmit)="register()" *ngSwitchCase="'register'">
+    <div *ngSwitchCase="'register'">
       <ion-list inset>
         <ion-item>
-          <ion-input type="email" [(ngModel)]="loginEmail" name="email" placeholder="Email"></ion-input>
+          <ion-input type="email" [(ngModel)]="registerEmail" name="registerEmail" placeholder="Email" required></ion-input>
         </ion-item>
         <ion-item>
-          <ion-input type="password" [(ngModel)]="registerPassword" name="password" placeholder="Password"></ion-input>
+          <ion-input type="password" [(ngModel)]="registerPassword" name="registerPassword" placeholder="Password" required></ion-input>
         </ion-item>
         <ion-item>
-          <ion-input type="password" [(ngModel)]="registerPasswordAgain" name="password" placeholder="Password again"></ion-input>
+          <ion-input type="password" [(ngModel)]="registerPasswordAgain" name="registerPasswordAgain" placeholder="Password again" required></ion-input>
         </ion-item>
+        <div *ngIf="registerError.length > 0" class="error color-white">
+          <p>{{ registerError }}</p>
+        </div>
         <ion-buttons>
-          <button type="reset" (click)="loginNav = 'login';" class="btn-left color-white" ion-button clear>Login instead</button>
-          <button ion-button type="submit" class="btn-right">Register</button>
+          <button (click)="loginNav = 'login';" class="btn-left color-white half" ion-button clear>Login instead</button><!--
+          --><button ion-button type="submit" class="btn-right half" (click)="signUp()">Register</button>
         </ion-buttons>
       </ion-list>
-    </form>
+    </div>
 
 
 

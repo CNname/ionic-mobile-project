@@ -47,9 +47,12 @@ export class Library {
     });
   }
 
+  ionViewCanEnter(): boolean {
+    return this.authenticationservice.isUserLoggedIn();
+  }
+
   ionViewDidLoad(){
     console.log("start of the page");
-    this.authenticationservice.firebaseInit();
   }
 
   goToDetails(playlist_id: string, playlist_title: string) {
