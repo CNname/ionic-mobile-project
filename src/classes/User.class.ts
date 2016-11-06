@@ -1,49 +1,50 @@
+import {IUser} from "../interfaces/interfaces";
 
-export class User {
+export class User implements IUser {
 
+  id: string;
+  image: string;
   private _firstName: string;
   private _lastName: string;
-  private _id: string;
-  private _image: string;
-  private _spotifyAccountId?: number; // ? = ei pakollinen
-  private _soundCloudAccountId?: number; // ? = ei pakollinen
+  private _spotifyAccountId?: number;
+  private _soundCloudAccountId?: number;
 
   constructor(firstName: string, lastName: string, id: string) {
     this._firstName = firstName;
     this._lastName = lastName;
-    this._id = id;
+    this.id = id;
   }
 
-  get firstName(): string {
+  getFirstName(): string {
     return this._firstName;
   }
 
-  set firstName(value: string) {
+  setFirstName(value: string) {
     this._firstName = value;
   }
 
-  get lastName(): string {
+  getLastName(): string {
     return this._lastName;
   }
 
-  set lastName(value: string) {
+  setLastName(value: string) {
     this._lastName = value;
   }
 
-  get id(): string {
-    return this._id;
+  getId(): string {
+    return this.id;
   }
 
-  set id(value: string) {
-    this._id = value;
+  setId(value: string) {
+    this.id = value;
   }
 
-  get image(): string {
-    return this._image;
+  getImage(): string {
+    return this.image;
   }
 
-  set image(value: string) {
-    this._image = value;
+  setImage(value: string) {
+    this.image = value;
   }
 
   getSpotifyAccountId(): number {

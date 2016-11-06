@@ -10,6 +10,7 @@ import { ArtistPage } from "../artist-page/artist-page";
 import { Handling } from "../../namespaces/handling";
 import { imageUrls } from "../../interfaces/interfaces";
 import { MusicService } from '../../providers/music-service';
+import { AuthenticationService } from '../../providers/authentication-service';
 
 @Component({
   selector: 'library',
@@ -19,6 +20,7 @@ export class Library {
   hideElement: boolean = false;
   isPlaying: boolean = false;
   private spotifyservice: SpotifyService;
+  private authenticationservice: AuthenticationService;
   public musicService: MusicService;
   // select the default tab
   playerNav: string = "playlists";
@@ -34,13 +36,19 @@ export class Library {
   audioObject: any;
   searchCategory: string;
 
-  constructor(public navCtrl: NavController, spotifyservice: SpotifyService, public modalCtrl: ModalController, musicService: MusicService  ) {
+  constructor(public navCtrl: NavController, spotifyservice: SpotifyService, authservice: AuthenticationService, public modalCtrl: ModalController, musicService: MusicService  ) {
     this.musicService = musicService;
+    this.authenticationservice = authservice;
     this.spotifyservice = spotifyservice;
     this.spotifyservice.loadPlaylist().subscribe(playlist => {
       console.log(playlist);
+      //noinspection TypeScriptValidateTypes
       this.playlist_items = playlist["items"];
     });
+  }
+
+  ionViewCanEnter(): boolean {
+    return this.authenticationservice.isUserLoggedIn();
   }
 
   ionViewDidLoad(){
@@ -150,7 +158,7 @@ startPlayer() {
 }
 
 openPagePlayer(item: Song){
-  this.navCtrl.push(PlayerPage, {item: item}).catch(()=> console.log('should I stay or should I go now'));
+  this.navCtrl.push(PlayerPage, {item: item, songs: this.trackItems }).catch(()=> console.log('should I stay or should I go now'));
 }
 
 startNewPlayer(item: Song){
