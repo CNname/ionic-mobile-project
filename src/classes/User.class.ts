@@ -4,38 +4,18 @@ export class User implements IUser {
 
   id: string;
   image: string;
-  private _firstName: string;
-  private _lastName: string;
-  private _spotifyAccountId?: number;
-  private _soundCloudAccountId?: number;
+  private _spotifyAccountId?: string;
+  private _soundCloudAccountId?: string;
 
-  constructor(firstName: string, lastName: string, id: string) {
-    this._firstName = firstName;
-    this._lastName = lastName;
+  constructor(id: string) {
     this.id = id;
-  }
-
-  getFirstName(): string {
-    return this._firstName;
-  }
-
-  setFirstName(value: string) {
-    this._firstName = value;
-  }
-
-  getLastName(): string {
-    return this._lastName;
-  }
-
-  setLastName(value: string) {
-    this._lastName = value;
   }
 
   getId(): string {
     return this.id;
   }
 
-  setId(value: string) {
+   private setId(value: string) {
     this.id = value;
   }
 
@@ -47,19 +27,19 @@ export class User implements IUser {
     this.image = value;
   }
 
-  getSpotifyAccountId(): number {
+  getSpotifyAccountId(): string {
     return this._spotifyAccountId;
   }
 
-  private setSpotifyAccountId(value: number) {
+  private setSpotifyAccountId(value: string) {
     this._spotifyAccountId = value;
   }
 
-  getSoundCloudAccountId(): number {
+  getSoundCloudAccountId(): string {
     return this._soundCloudAccountId;
   }
 
-  private setSoundCloudAccountId(value: number) {
+  private setSoundCloudAccountId(value: string) {
     this._soundCloudAccountId = value;
   }
 

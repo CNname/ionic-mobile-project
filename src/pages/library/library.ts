@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, ModalController, ViewController } from 'ionic-angular';
+import {NavController, ModalController, ViewController, MenuController} from 'ionic-angular';
 import { SpotifyService } from '../../providers/spotify-service';
 import { PlaylistDetails } from '../playlist-details/playlist-details';
 import { Song } from '../../classes/Song.class';
@@ -11,6 +11,7 @@ import { Handling } from "../../namespaces/handling";
 import { imageUrls } from "../../interfaces/interfaces";
 import { MusicService } from '../../providers/music-service';
 import { AuthenticationService } from '../../providers/authentication-service';
+import {UserAccountService} from "../../providers/user-account-service";
 
 @Component({
   selector: 'library',
@@ -36,7 +37,14 @@ export class Library {
   audioObject: any;
   searchCategory: string;
 
-  constructor(public navCtrl: NavController, spotifyservice: SpotifyService, authservice: AuthenticationService, public modalCtrl: ModalController, musicService: MusicService  ) {
+  constructor(
+    public navCtrl: NavController,
+    spotifyservice: SpotifyService,
+    authservice: AuthenticationService,
+    public modalCtrl: ModalController,
+    musicService: MusicService,
+    private menu: MenuController,
+    private userAccountService: UserAccountService) {
     this.musicService = musicService;
     this.authenticationservice = authservice;
     this.spotifyservice = spotifyservice;
@@ -44,6 +52,7 @@ export class Library {
       console.log(playlist);
       //noinspection TypeScriptValidateTypes
       this.playlist_items = playlist["items"];
+      this.menu.enable(true);
     });
   }
 
@@ -53,6 +62,16 @@ export class Library {
 
   ionViewDidLoad(){
     console.log("start of the page");
+    this.userAccountService.saveImage("asd", snapshot => {
+      let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      console.log("Uploaded " + progress + "%");
+    }, err => {
+      // handle upload errors
+      console.error(err);
+    }, (url) => {
+      // after upload is complete
+      console.log(url);
+    });
   }
 
   goToDetails(playlist_id: string, playlist_title: string) {

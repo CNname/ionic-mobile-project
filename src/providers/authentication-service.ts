@@ -29,6 +29,7 @@ export class AuthenticationService {
   constructor(public http: Http/*, public navCtrl: NavController*/) {
     console.log('Hello AuthenticationService Provider');
     this.firebaseInit();
+
   }
 
   private firebaseInit() {
@@ -36,31 +37,19 @@ export class AuthenticationService {
     firebase.initializeApp(this.config);
   }
 
-  signUp(username: string, passwd: string, callback: Function) {
-    firebase.auth().createUserWithEmailAndPassword(username, passwd).then(() => {
-      // redirect user
-      this.authStateChange(callback);
-    }).catch(err => {
-      console.log(err.code);
-      console.log(err.message);
-    })
+  signUp(username: string, passwd: string, callback: Function, fail: Function) {
+    firebase.auth().createUserWithEmailAndPassword(username, passwd).then(callback).catch(fail);
   }
 
-  logIn(username: string, passwd: string, callback: Function) {
-    firebase.auth().signInWithEmailAndPassword(username, passwd).then(() => {
-      // redirect user
-      this.authStateChange(callback);
-    }).catch(err => {
-      console.log(err.code);
-      console.log(err.message);
-    })
+  logIn(username: string, passwd: string, callback: Function, fail: Function) {
+    firebase.auth().signInWithEmailAndPassword(username, passwd).then(callback).catch(fail);
   }
 
   logOut(success: Function, fail: Function) {
     firebase.auth().signOut().then(success).catch(fail);
   }
 
-  private authStateChange(callback: Function) {
+  authStateChange(callback: Function) {
     firebase.auth().onAuthStateChanged(callback);
   }
 
@@ -72,6 +61,42 @@ export class AuthenticationService {
    */
   sendForgotPasswordEmail(email: string, callback: Function, fail: Function) {
     firebase.auth().sendPasswordResetEmail(email).then(callback).catch(fail);
+  }
+
+  updateUserPassword(newPassword: string, callback: Function, fail: Function) {
+    let user = firebase.auth().currentUser;
+    user.updatePassword(newPassword).then(callback).catch(fail);
+  }
+
+  updateUserEmail(newEmail: string, callback: Function, fail: Function) {
+    let user = firebase.auth().currentUser;
+    user.updateEmail(newEmail).then(callback).catch(fail);
+  }
+
+  updateUserImageUrl(url: string, callback: Function, fail: Function) {
+    let user = firebase.auth().currentUser;
+    user.updateProfile({
+      photoUrl: url
+    }).then(callback).catch(fail);
+  }
+
+  // possibly not needed
+  getUserProfile(){
+    let user = firebase.auth().currentUser;
+    if (user != null) {
+      // ...
+    }
+  }
+
+  deleteUser(callback: Function, fail: Function) {
+    let user = firebase.auth().currentUser;
+    user.delete().then(callback).catch(fail);
+  }
+
+  reAuthenticateUser(callback: Function, fail: Function) {
+    let user = firebase.auth().currentUser;
+    let credential;
+    user.reauthenticate(credential).then(callback).catch(fail);
   }
 
   isUserLoggedIn(): boolean {

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {NavController, AlertController, ToastController} from 'ionic-angular';
+import {NavController, AlertController, ToastController, IonicApp, MenuController} from 'ionic-angular';
 import {AuthenticationService} from "../../providers/authentication-service";
 import {Library} from "../library/library";
 
@@ -26,13 +26,23 @@ export class LoginPage {
 
   constructor(
     public navCtrl: NavController,
+    private menu: MenuController,
     private authenticationService: AuthenticationService,
     public alertCtrl: AlertController,
     private toastCtrl: ToastController) {
+    this.menu.enable(false);
   }
 
   ionViewDidLoad() {
-
+    this.authenticationService.authStateChange(user => {
+      if (user) {
+        console.log(user);
+        // User is signed in.
+        this.navCtrl.push(Library).catch(()=> console.log('push failed'));
+      } else {
+        // No user is signed in.
+      }
+    });
   }
 
   private getLoginEmail(): string {
@@ -55,8 +65,9 @@ export class LoginPage {
           this.navCtrl.push(Library).catch(()=> console.log('push failed'));
         } else {
           // No user is signed in.
-          this.navCtrl.popToRoot().catch(()=> console.log('pop to root failed'));
         }
+      }, err => {
+        // handle errors here
       });
     } else {
       this.loginError = "Please fill all fields.";
@@ -79,6 +90,8 @@ export class LoginPage {
             // No user is signed in.
             this.navCtrl.popToRoot().catch(()=> console.log('pop to root failed'));
           }
+        }, err => {
+          // handle errors here
         });
       } else {
         this.registerError = "Passwords doesn't match.";

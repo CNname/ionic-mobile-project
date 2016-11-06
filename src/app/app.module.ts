@@ -11,6 +11,7 @@ import { MusicService } from '../providers/music-service';
 import { SoundcloudService } from "../providers/soundcloud-service";
 import { AuthenticationService } from "../providers/authentication-service";
 import {LoginPage} from "../pages/login-page/login-page";
+import {UserAccountService} from "../providers/user-account-service";
 
 
 @NgModule({
@@ -36,6 +37,6 @@ import {LoginPage} from "../pages/login-page/login-page";
     ArtistPage,
     LoginPage
   ],
-  providers: [ SpotifyService, SoundcloudService, MusicService, AuthenticationService ]
+  providers: [ SpotifyService, SoundcloudService, MusicService, AuthenticationService, UserAccountService ]
 })
 export class AppModule {}

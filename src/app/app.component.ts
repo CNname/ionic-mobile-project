@@ -51,6 +51,12 @@ export class MyApp {
   logOut() {
     this.authenticationService.logOut(()=>{
       console.log("logout successful");
+      this.menu.close().then(()=>{
+        this.menu.enable(false);
+        this.nav.popToRoot().catch(()=> console.log('pop to root failed'));
+      });
+
+
     },()=>{
       console.log("logout failed");
     });
