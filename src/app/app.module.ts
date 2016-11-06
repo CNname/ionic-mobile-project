@@ -10,13 +10,17 @@ import { ArtistPage } from '../pages/artist-page/artist-page';
 import { MusicService } from '../providers/music-service';
 import { SoundcloudService } from "../providers/soundcloud-service";
 import { AuthenticationService } from "../providers/authentication-service";
-import {LoginPage} from "../pages/login-page/login-page";
+import { LoginPage } from "../pages/login-page/login-page";
+import { SoundcloudLibrary } from '../pages/soundcloud-library/soundcloud-library';
+import { Settings } from '../pages/settings/settings';
 
 
 @NgModule({
   declarations: [
     MyApp,
     Library,
+    SoundcloudLibrary,
+    Settings,
     PlayerPage,
     PlaylistDetails,
     Search,
@@ -30,7 +34,9 @@ import {LoginPage} from "../pages/login-page/login-page";
   entryComponents: [
     MyApp,
     Library,
+    SoundcloudLibrary,
     PlayerPage,
+    Settings,
     PlaylistDetails,
     Search,
     ArtistPage,
