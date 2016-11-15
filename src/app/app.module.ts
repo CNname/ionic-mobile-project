@@ -12,12 +12,15 @@ import { SoundcloudService } from "../providers/soundcloud-service";
 import { AuthenticationService } from "../providers/authentication-service";
 import {LoginPage} from "../pages/login-page/login-page";
 import {UserAccountService} from "../providers/user-account-service";
-
+import { SoundcloudLibrary } from '../pages/soundcloud-library/soundcloud-library';
+import { Settings } from '../pages/settings/settings';
 
 @NgModule({
   declarations: [
     MyApp,
     Library,
+    SoundcloudLibrary,
+    Settings,
     PlayerPage,
     PlaylistDetails,
     Search,
@@ -31,7 +34,9 @@ import {UserAccountService} from "../providers/user-account-service";
   entryComponents: [
     MyApp,
     Library,
+    SoundcloudLibrary,
     PlayerPage,
+    Settings,
     PlaylistDetails,
     Search,
     ArtistPage,

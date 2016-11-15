@@ -45,15 +45,14 @@ export class Library {
     musicService: MusicService,
     private menu: MenuController,
     private userAccountService: UserAccountService) {
-    this.musicService = musicService;
-    this.authenticationservice = authservice;
-    this.spotifyservice = spotifyservice;
-    this.spotifyservice.loadPlaylist().subscribe(playlist => {
-      console.log(playlist);
-      //noinspection TypeScriptValidateTypes
-      this.playlist_items = playlist["items"];
-      this.menu.enable(true);
-    });
+      this.musicService = musicService;
+      this.authenticationservice = authservice;
+      this.spotifyservice = spotifyservice;
+      this.spotifyservice.loadPlaylist().subscribe(playlist => {
+        //noinspection TypeScriptValidateTypes
+        this.playlist_items = playlist["items"];
+        this.menu.enable(true);
+      });
   }
 
   ionViewCanEnter(): boolean {
@@ -62,7 +61,9 @@ export class Library {
 
   ionViewDidLoad(){
     console.log("start of the page");
-    this.userAccountService.saveImage("asd", snapshot => {
+
+    // test for uploading to firebase storage
+    /*this.userAccountService.saveImage("asd", snapshot => {
       let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
       console.log("Uploaded " + progress + "%");
     }, err => {
@@ -71,7 +72,7 @@ export class Library {
     }, (url) => {
       // after upload is complete
       console.log(url);
-    });
+    });*/
   }
 
   goToDetails(playlist_id: string, playlist_title: string) {

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 import {Library} from "../pages/library/library";
-import {NavController} from "ionic-angular";
+import {NavController, AlertController } from "ionic-angular";
 import {LoginPage} from "../pages/login-page/login-page";
 
 
@@ -26,8 +26,7 @@ export class AuthenticationService {
     messagingSenderId: "977961258413"
   };
 
-  constructor(public http: Http/*, public navCtrl: NavController*/) {
-    console.log('Hello AuthenticationService Provider');
+  constructor(public http: Http/*, public navCtrl: NavController*/ ,public alertCtrl: AlertController) {
     this.firebaseInit();
 
   }
@@ -37,12 +36,30 @@ export class AuthenticationService {
     firebase.initializeApp(this.config);
   }
 
-  signUp(username: string, passwd: string, callback: Function, fail: Function) {
-    firebase.auth().createUserWithEmailAndPassword(username, passwd).then(callback).catch(fail);
+  signUp(username: string, passwd: string, callback: Function) {
+    firebase.auth().createUserWithEmailAndPassword(username, passwd).then(callback).catch(err => {
+      let alert = this.alertCtrl.create({
+        title: err.code,
+        message: err.message,
+        buttons: ['Ok']
+      });
+      alert.present();
+      console.log(err.code);
+      console.log(err.message);
+    })
   }
 
-  logIn(username: string, passwd: string, callback: Function, fail: Function) {
-    firebase.auth().signInWithEmailAndPassword(username, passwd).then(callback).catch(fail);
+  logIn(username: string, passwd: string, callback: Function) {
+    firebase.auth().signInWithEmailAndPassword(username, passwd).then(callback).catch(err => {
+        let alert = this.alertCtrl.create({
+          title: err.code,
+          message: err.message,
+          buttons: ['Ok']
+        });
+      alert.present();
+      console.log(err.code);
+      console.log(err.message);
+    });
   }
 
   logOut(success: Function, fail: Function) {

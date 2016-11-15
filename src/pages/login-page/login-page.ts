@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {NavController, AlertController, ToastController, IonicApp, MenuController} from 'ionic-angular';
+import {NavController, AlertController, ToastController, MenuController} from 'ionic-angular';
 import {AuthenticationService} from "../../providers/authentication-service";
 import {Library} from "../library/library";
 
@@ -59,15 +59,7 @@ export class LoginPage {
       // register user if passwords match
       this.loginError = "";
       this.authenticationService.logIn(this.loginEmail, this.loginPassword, user => {
-        if (user) {
-          console.log(user);
-          // User is signed in.
-          this.navCtrl.push(Library).catch(()=> console.log('push failed'));
-        } else {
-          // No user is signed in.
-        }
-      }, err => {
-        // handle errors here
+        // possibly something here
       });
     } else {
       this.loginError = "Please fill all fields.";
@@ -90,8 +82,6 @@ export class LoginPage {
             // No user is signed in.
             this.navCtrl.popToRoot().catch(()=> console.log('pop to root failed'));
           }
-        }, err => {
-          // handle errors here
         });
       } else {
         this.registerError = "Passwords doesn't match.";

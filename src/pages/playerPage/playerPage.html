@@ -9,16 +9,16 @@
 <ion-content padding>
 
   <div class="art-wrapper">
-    <img [src]="item?.getAlbumImage().large.url"/>
+    <img [src]="song?.getAlbumImage().large.url"/>
   </div>
   <div class="albumInfo">
-    <h3><b>{{ item?.getSongTitle() }}</b></h3>
+    <h3><b>{{ song?.getSongTitle() }}</b></h3>
     <h3>
       <span *ngFor="let item of item?.getArtists(); let i = index">
-        <span *ngIf="i > 0"> / </span> {{ item?.getName() }}
+        <span *ngIf="i > 0"> / </span> {{ song?.getName() }}
       </span>
     </h3>
-    <h4>{{ item?.getAlbumTitle() }}</h4>
+    <h4>{{ song?.getAlbumTitle() }}</h4>
   </div>
   <div class="button-wrapper">
     <ion-toolbar>
