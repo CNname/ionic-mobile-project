@@ -2,17 +2,28 @@
 
   <ion-header>
     <ion-toolbar>
-      <ion-title>Menu</ion-title>
+      <ion-item no-lines>
+        <ion-avatar item-left>
+          <img src="assets/img/soundcloud-logo.jpg">
+        </ion-avatar>
+        <h2>Cher</h2>
+      </ion-item>
     </ion-toolbar>
   </ion-header>
 
   <ion-content>
-    <ion-list>
-      <button ion-item *ngFor="let p of pages" (click)="openPage(p)">
-        {{p.title}}
-      </button>
+    <ion-list no-lines>
+      <ion-item>
+        <button ion-item *ngFor="let p of pages" (click)="openPage(p)">
+          <ion-icon item-left name={{p.icon}}></ion-icon> <h2>{{p.title}}</h2>
+        </button>
+      </ion-item>
     </ion-list>
   </ion-content>
+
+  <ion-footer>
+    <ion-item><ion-icon item-left name="log-out"></ion-icon><h2 (click)="logOut()">Logout</h2></ion-item>
+  </ion-footer>
 
 </ion-menu>
 

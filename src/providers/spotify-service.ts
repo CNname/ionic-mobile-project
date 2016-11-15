@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
-import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Rx';
+import {ICallHandler} from "../interfaces/interfaces";
 
 @Injectable()
-export class SpotifyService {
+export class SpotifyService implements ICallHandler {
   playlist = "assets/json/userPlaylist.json";
   playlistcontent = "assets/json/playlist.json";
 

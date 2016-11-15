@@ -8,16 +8,24 @@ import { Search } from '../pages/search/search';
 import { PlayerPage } from '../pages/playerPage/playerPage';
 import { ArtistPage } from '../pages/artist-page/artist-page';
 import { MusicService } from '../providers/music-service';
-
+import { SoundcloudService } from "../providers/soundcloud-service";
+import { AuthenticationService } from "../providers/authentication-service";
+import {LoginPage} from "../pages/login-page/login-page";
+import {UserAccountService} from "../providers/user-account-service";
+import { SoundcloudLibrary } from '../pages/soundcloud-library/soundcloud-library';
+import { Settings } from '../pages/settings/settings';
 
 @NgModule({
   declarations: [
     MyApp,
     Library,
+    SoundcloudLibrary,
+    Settings,
     PlayerPage,
     PlaylistDetails,
     Search,
-    ArtistPage
+    ArtistPage,
+    LoginPage
   ],
   imports: [
     IonicModule.forRoot(MyApp)
@@ -26,11 +34,14 @@ import { MusicService } from '../providers/music-service';
   entryComponents: [
     MyApp,
     Library,
+    SoundcloudLibrary,
     PlayerPage,
+    Settings,
     PlaylistDetails,
     Search,
-    ArtistPage
+    ArtistPage,
+    LoginPage
   ],
-  providers: [ SpotifyService, MusicService ]
+  providers: [ SpotifyService, SoundcloudService, MusicService, AuthenticationService, UserAccountService ]
 })
 export class AppModule {}

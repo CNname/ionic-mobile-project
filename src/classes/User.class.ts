@@ -1,64 +1,45 @@
+import {IUser} from "../interfaces/interfaces";
 
-export class User {
+export class User implements IUser {
 
-  private _firstName: string;
-  private _lastName: string;
-  private _id: string;
-  private _image: string;
-  private _spotifyAccountId?: number; // ? = ei pakollinen
-  private _soundCloudAccountId?: number; // ? = ei pakollinen
+  id: string;
+  image: string;
+  private _spotifyAccountId?: string;
+  private _soundCloudAccountId?: string;
 
-  constructor(firstName: string, lastName: string, id: string) {
-    this._firstName = firstName;
-    this._lastName = lastName;
-    this._id = id;
+  constructor(id: string) {
+    this.id = id;
   }
 
-  get firstName(): string {
-    return this._firstName;
+  getId(): string {
+    return this.id;
   }
 
-  set firstName(value: string) {
-    this._firstName = value;
+   private setId(value: string) {
+    this.id = value;
   }
 
-  get lastName(): string {
-    return this._lastName;
+  getImage(): string {
+    return this.image;
   }
 
-  set lastName(value: string) {
-    this._lastName = value;
+  setImage(value: string) {
+    this.image = value;
   }
 
-  get id(): string {
-    return this._id;
-  }
-
-  set id(value: string) {
-    this._id = value;
-  }
-
-  get image(): string {
-    return this._image;
-  }
-
-  set image(value: string) {
-    this._image = value;
-  }
-
-  getSpotifyAccountId(): number {
+  getSpotifyAccountId(): string {
     return this._spotifyAccountId;
   }
 
-  private setSpotifyAccountId(value: number) {
+  private setSpotifyAccountId(value: string) {
     this._spotifyAccountId = value;
   }
 
-  getSoundCloudAccountId(): number {
+  getSoundCloudAccountId(): string {
     return this._soundCloudAccountId;
   }
 
-  private setSoundCloudAccountId(value: number) {
+  private setSoundCloudAccountId(value: string) {
     this._soundCloudAccountId = value;
   }
 

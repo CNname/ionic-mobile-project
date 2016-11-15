@@ -1,9 +1,8 @@
-import { SongInterface, imageUrls } from '../interfaces/interfaces';
+import { ISong, imageUrls } from '../interfaces/interfaces';
 import { Artist } from './Artist.class';
 
-export class Song implements SongInterface {
+export class Song implements ISong {
 
-  private _type: string;
   private _id: string;
   private _albumId: string;
   private _albumImage: imageUrls;
@@ -18,14 +17,6 @@ export class Song implements SongInterface {
     this._id = id;
     this._songTitle = songTitle;
     this._isPlayable = isPlayable;
-  }
-
-  getType(): string {
-    return this._type;
-  }
-
-  setType(value: string) {
-    this._type = value;
   }
 
   getId(): string {

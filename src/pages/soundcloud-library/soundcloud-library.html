@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar color="alt_orange">
+      <button ion-button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    <ion-title class="streamgull-title">
+      Soundcloud
+    </ion-title>
+  </ion-toolbar>
+  <ion-toolbar no-border-top color="alt_orange">
+      <ion-segment [(ngModel)]="playerNav" color="darkGrey">
+        <ion-segment-button value="feed">
+          <b>Feed</b>
+        </ion-segment-button>
+        <ion-segment-button value="playlists">
+          <b>Playlists</b>
+        </ion-segment-button>
+        <ion-segment-button value="search">
+          <b>Search</b>
+        </ion-segment-button>
+      </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <div [ngSwitch]="playerNav">
+    <ion-list *ngSwitchCase="'feed'">
+     <!-- feed -->
+    </ion-list>
+
+    <ion-list *ngSwitchCase="'playlists'">
+       <!-- albums -->
+    </ion-list>
+    <ion-list *ngSwitchCase="'search'">
+     <!-- artists -->
+    </ion-list>
+  </div>
+</ion-content>

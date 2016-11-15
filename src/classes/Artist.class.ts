@@ -1,25 +1,16 @@
-import {ArtistInterface, imageUrls} from "../interfaces/interfaces";
+import {IArtist, imageUrls} from "../interfaces/interfaces";
 
-export class Artist implements ArtistInterface {
+export class Artist implements IArtist {
 
-  private _type: string;
   private _name: string;
   private _id: string;
-  private   _href: string;
-  private   _images: imageUrls;
+  private _href: string;
+  private _images: imageUrls;
 
   constructor(id: string, name: string, href?: string) {
     this._name = name;
     this._id = id;
     this._href = href;
-  }
-
-  getType(): string {
-    return this._type;
-  }
-
-  setType(value: string) {
-    this._type = value;
   }
 
   getName(): string {

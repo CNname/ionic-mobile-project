@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, ModalController, ViewController } from 'ionic-angular';
+import {NavController, ModalController, ViewController, MenuController} from 'ionic-angular';
 import { SpotifyService } from '../../providers/spotify-service';
 import { PlaylistDetails } from '../playlist-details/playlist-details';
 import { Song } from '../../classes/Song.class';
@@ -10,6 +10,8 @@ import { ArtistPage } from "../artist-page/artist-page";
 import { Handling } from "../../namespaces/handling";
 import { imageUrls } from "../../interfaces/interfaces";
 import { MusicService } from '../../providers/music-service';
+import { AuthenticationService } from '../../providers/authentication-service';
+import {UserAccountService} from "../../providers/user-account-service";
 
 @Component({
   selector: 'library',
@@ -19,6 +21,7 @@ export class Library {
   hideElement: boolean = false;
   isPlaying: boolean = false;
   private spotifyservice: SpotifyService;
+  private authenticationservice: AuthenticationService;
   public musicService: MusicService;
   // select the default tab
   playerNav: string = "playlists";
@@ -34,17 +37,42 @@ export class Library {
   audioObject: any;
   searchCategory: string;
 
-  constructor(public navCtrl: NavController, spotifyservice: SpotifyService, public modalCtrl: ModalController, musicService: MusicService  ) {
-    this.musicService = musicService;
-    this.spotifyservice = spotifyservice;
-    this.spotifyservice.loadPlaylist().subscribe(playlist => {
-      console.log(playlist);
-      this.playlist_items = playlist["items"];
-    });
+  constructor(
+    public navCtrl: NavController,
+    spotifyservice: SpotifyService,
+    authservice: AuthenticationService,
+    public modalCtrl: ModalController,
+    musicService: MusicService,
+    private menu: MenuController,
+    private userAccountService: UserAccountService) {
+      this.musicService = musicService;
+      this.authenticationservice = authservice;
+      this.spotifyservice = spotifyservice;
+      this.spotifyservice.loadPlaylist().subscribe(playlist => {
+        //noinspection TypeScriptValidateTypes
+        this.playlist_items = playlist["items"];
+        this.menu.enable(true);
+      });
+  }
+
+  ionViewCanEnter(): boolean {
+    return this.authenticationservice.isUserLoggedIn();
   }
 
   ionViewDidLoad(){
     console.log("start of the page");
+
+    // test for uploading to firebase storage
+    /*this.userAccountService.saveImage("asd", snapshot => {
+      let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      console.log("Uploaded " + progress + "%");
+    }, err => {
+      // handle upload errors
+      console.error(err);
+    }, (url) => {
+      // after upload is complete
+      console.log(url);
+    });*/
   }
 
   goToDetails(playlist_id: string, playlist_title: string) {
@@ -150,7 +178,7 @@ startPlayer() {
 }
 
 openPagePlayer(item: Song){
-  this.navCtrl.push(PlayerPage, {item: item}).catch(()=> console.log('should I stay or should I go now'));
+  this.navCtrl.push(PlayerPage, {item: item, songs: this.trackItems }).catch(()=> console.log('should I stay or should I go now'));
 }
 
 startNewPlayer(item: Song){

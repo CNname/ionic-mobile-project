@@ -1,32 +1,32 @@
 import { Artist } from '../classes/Artist.class';
 import { Song } from '../classes/Song.class';
 import { User } from '../classes/User.class';
+import {MusicService} from "../providers/music-service";
+import {Observable} from "rxjs";
 
-export interface PlayerInterface {
-  playing: boolean;
-  song: any;
-  skin: string;
-  prevSong(): any;
-  nextSong(): any;
-  shuffle(): any;
-  play(): void;
-  pause(): void;
+export interface IPlayer {
+  musicService: MusicService;
+  song: Song;
+  songs: Song[];
+  previousSong(): void;
+  nextSong(): void;
+  shuffle(): void;
+  startPlayback(): void;
+  pausePlayback(): void;
 }
 
-export interface PlaylistInterface {
+export interface IPlaylist {
   name: string;
   ownerId: string;
-  currentSong: Song;
   songs: Song[];
+  getName(): string;
+  getOwnerId(): string;
+  getSongs(): Song[];
 }
 
-export interface UserInterface {
-  firstName: string;
-  lastName: string;
+export interface IUser {
   id: string;
   image: string;
-  spotifyAccountId?: number; // ? = ei pakollinen
-  soundCloudAccountId?: number; // ? = ei pakollinen
 }
 
 export interface imageUrls {
@@ -35,31 +35,29 @@ export interface imageUrls {
   large: any;
 }
 
-export interface ArtistInterface {
-  getType(): string;
+export interface IArtist {
   getName(): string;
   getId(): string;
   getHref(): string;
   getImages(): imageUrls;
 }
 
-export interface SongInterface {
-  getType(): string;
+export interface ISong {
   getId(): string;
   getAlbumId(): string;
   getAlbumImage(): imageUrls;
-  getSongTitle(): string; 
+  getSongTitle(): string;
   getAlbumTitle(): string;
-  getArtists(): Artist[]; 
-  getDuration(): number; 
-  getIsPlayable(): boolean; 
+  getArtists(): Artist[];
+  getDuration(): number;
+  getIsPlayable(): boolean;
   getUrl(): string;
 }
 
-export interface CallHandlerInterface {
-  callUrl: string;
-  apiKey: string;
-  getSongById(id: string): Song;
-  getPlaylistById(userId: string, playlistId: string): any;
-  getUserById(id: string): User;
+export interface ICallHandler {
+  getPlaylistById(userId: string, playlistId: string): Observable<any>;
+  getUserById(id: string): Observable<any>;
+  getArtistById(id: string): Observable<any>;
+  getPopularSongsByArtist(id: string, country: string): Observable<any>;
+  searchForItem(query: string): Observable<any>;
 }
