@@ -102,7 +102,7 @@ export class LoginPage {
       ],
       buttons: [
         {
-          text: 'Cancel',
+          text: 'Cancel', 
           handler: data => {
             console.log('Cancel clicked');
           }
