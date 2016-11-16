@@ -100,25 +100,25 @@
 </ion-content>
 
   <ion-footer [hidden]="!isPlaying">
-    <ion-toolbar class="librarySmallPlayer">
+    <ion-toolbar class="librarySmallPlayer player">
         <ion-list class="librarySmallPlayer" no-lines>
           <ion-item>
         <ion-thumbnail item-left class="playingThumbnail-wrapper">
             <img class="playingThumbnail" [src]="playing?.getAlbumImage().large.url">
           </ion-thumbnail>
-          <h3><b>{{ playing?.getSongTitle() }}</b></h3>
-          <h3><span *ngFor="let playing of playing?.getArtists(); let i = index">
+          <h3 color="white"><b>{{ playing?.getSongTitle() }}</b></h3>
+          <h3 color="white"><span *ngFor="let playing of playing?.getArtists(); let i = index">
             <span *ngIf="i > 0"> / </span> {{ playing?.getName() }}
           </span></h3>
 
           <ion-buttons end item-right>
-            <button ion-button color="primary" class="larger" (click)="pausePlayer()">
+            <button ion-button color="white" class="larger" (click)="pausePlayer()">
               <ion-icon name="pause"></ion-icon>
             </button>
-            <button ion-button color="primary" class="larger" (click)="startPlayer()">
+            <button ion-button color="white" class="larger" (click)="startPlayer()">
               <ion-icon name="play"></ion-icon>
             </button>
-            <button ion-button color="primary" class="larger" (click)="openPagePlayer(playing)">
+            <button ion-button color="white" class="larger" (click)="openPagePlayer(playing)">
               <ion-icon name="arrow-up"></ion-icon>
             </button>
           </ion-buttons>

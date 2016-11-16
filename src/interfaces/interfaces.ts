@@ -29,6 +29,11 @@ export interface IUser {
   image: string;
 }
 
+export interface firebaseUser {
+  email: string;
+  photoUrl?: any;
+}
+
 export interface imageUrls {
   small?: any;
   medium?: any;

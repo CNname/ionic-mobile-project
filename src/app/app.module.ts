@@ -10,10 +10,11 @@ import { ArtistPage } from '../pages/artist-page/artist-page';
 import { MusicService } from '../providers/music-service';
 import { SoundcloudService } from "../providers/soundcloud-service";
 import { AuthenticationService } from "../providers/authentication-service";
-import { LoginPage } from "../pages/login-page/login-page";
+import {LoginPage} from "../pages/login-page/login-page";
+import {UserAccountService} from "../providers/user-account-service";
 import { SoundcloudLibrary } from '../pages/soundcloud-library/soundcloud-library';
 import { Settings } from '../pages/settings/settings';
-
+import {ImageSelectionModalPage} from "../pages/image-selection-modal-page/image-selection-modal-page";
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { Settings } from '../pages/settings/settings';
     Library,
     SoundcloudLibrary,
     Settings,
+    ImageSelectionModalPage,
     PlayerPage,
     PlaylistDetails,
     Search,
@@ -37,11 +39,12 @@ import { Settings } from '../pages/settings/settings';
     SoundcloudLibrary,
     PlayerPage,
     Settings,
+    ImageSelectionModalPage,
     PlaylistDetails,
     Search,
     ArtistPage,
     LoginPage
   ],
-  providers: [ SpotifyService, SoundcloudService, MusicService, AuthenticationService ]
+  providers: [ SpotifyService, SoundcloudService, MusicService, AuthenticationService, UserAccountService ]
 })
 export class AppModule {}

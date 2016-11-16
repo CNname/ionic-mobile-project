@@ -5,14 +5,42 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-
   <ion-navbar>
     <ion-title>Settings</ion-title>
   </ion-navbar>
-
 </ion-header>
-
 
 <ion-content padding>
 
+  <ion-item no-lines>
+    <ion-avatar item-left>
+      <img [src]="userAccountService?.getCurrentUser()?.getImage()?.length > 0 ? userAccountService?.getCurrentUser()?.getImage() : 'assets/img/sg-egg.png'">
+    </ion-avatar>
+
+      <ion-buttons>
+        <button ion-button clear (click)="openProfileImageModal()">Change profile image</button>
+      </ion-buttons>
+
+  </ion-item>
+
+  <ion-list inset>
+    <ion-item>
+      <ion-input type="password" [(ngModel)]="oldPassword" name="oldPassword" placeholder="Old password"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input type="password" [(ngModel)]="newPassword" name="newPassword" placeholder="New password"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input type="password" [(ngModel)]="newPasswordAgain" name="newPasswordAgain" placeholder="New password again"></ion-input>
+    </ion-item>
+    <div *ngIf="passwordError.length > 0" class="error" color="white">
+      <p>{{ passwordError }}</p>
+    </div>
+    <ion-buttons end>
+      <button ion-button clear class="" (click)="changePassword()">Save</button>
+    </ion-buttons>
+    <ion-buttons start>
+      <button ion-button clear (click)="deleteUser()">Delete user</button>
+    </ion-buttons>
+  </ion-list>
 </ion-content>

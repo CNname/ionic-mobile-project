@@ -4,9 +4,9 @@
     <ion-toolbar>
       <ion-item no-lines>
         <ion-avatar item-left>
-          <img src="assets/img/soundcloud-logo.jpg">
+          <img [src]="userAccountService?.getCurrentUser()?.getImage()?.length > 0 ? userAccountService?.getCurrentUser()?.getImage() : 'assets/img/sg-egg.png'">
         </ion-avatar>
-        <h2>Cher</h2>
+        <h2>{{ userAccountService?.getCurrentUser()?.getId() }}</h2>
       </ion-item>
     </ion-toolbar>
   </ion-header>
