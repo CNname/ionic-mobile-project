@@ -6,6 +6,8 @@ import { SoundcloudLibrary } from '../pages/soundcloud-library/soundcloud-librar
 import { LoginPage } from "../pages/login-page/login-page";
 import { AuthenticationService } from "../providers/authentication-service";
 import { Settings } from '../pages/settings/settings';
+import {User} from "../classes/User.class";
+import {UserAccountService} from "../providers/user-account-service";
 
 
 @Component({
@@ -21,7 +23,8 @@ export class MyApp {
   constructor(
     public platform: Platform,
     public menu: MenuController,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private userAccountService: UserAccountService
   ) {
     this.initializeApp();
 
@@ -31,6 +34,7 @@ export class MyApp {
       { title: 'Soundcloud Library', component: SoundcloudLibrary, icon: "cloud"},
       { title: 'Settings', component: Settings, icon: "settings" }
     ];
+
   }
 
   initializeApp() {
@@ -45,7 +49,8 @@ export class MyApp {
     // close the menu when clicking a link from the menu
     this.menu.close();
     // navigate to the new page if it is not the current page
-    this.nav.setRoot(page.component);
+    if (page.title === "Settings") this.nav.push(page.component);
+    else this.nav.setRoot(page.component);
   }
 
   logOut() {

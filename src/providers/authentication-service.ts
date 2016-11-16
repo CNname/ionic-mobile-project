@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map';
 import {Library} from "../pages/library/library";
 import {NavController, AlertController } from "ionic-angular";
 import {LoginPage} from "../pages/login-page/login-page";
+import {firebaseUser} from "../interfaces/interfaces";
 
 
 /*
@@ -80,9 +81,11 @@ export class AuthenticationService {
     firebase.auth().sendPasswordResetEmail(email).then(callback).catch(fail);
   }
 
-  updateUserPassword(newPassword: string, callback: Function, fail: Function) {
+  updateUserPassword(newPassword: string, callback: Function) {
     let user = firebase.auth().currentUser;
-    user.updatePassword(newPassword).then(callback).catch(fail);
+    user.updatePassword(newPassword).then(callback).catch(err => {
+      this.createFirebaseAlert(err);
+    });
   }
 
   updateUserEmail(newEmail: string, callback: Function, fail: Function) {
@@ -97,12 +100,9 @@ export class AuthenticationService {
     }).then(callback).catch(fail);
   }
 
-  // possibly not needed
-  getUserProfile(){
+  getUserProfile(): firebaseUser {
     let user = firebase.auth().currentUser;
-    if (user != null) {
-      // ...
-    }
+    return user;
   }
 
   deleteUser(callback: Function, fail: Function) {
@@ -110,15 +110,37 @@ export class AuthenticationService {
     user.delete().then(callback).catch(fail);
   }
 
-  reAuthenticateUser(callback: Function, fail: Function) {
+  reAuthenticateUser(password: string, callback: Function) {
     let user = firebase.auth().currentUser;
-    let credential;
-    user.reauthenticate(credential).then(callback).catch(fail);
+    let credential = firebase.auth.EmailAuthProvider.credential(user.email, password);
+
+    if (credential === "") {
+      let alert = this.alertCtrl.create({
+        title: "Incorrect old password",
+        message: "Your old password is incorrect.",
+        buttons: ['Ok']
+      });
+      alert.present();
+
+    } else {
+      user.reauthenticate(credential).then(callback).catch(err => {
+        this.createFirebaseAlert(err);
+      });
+    }
   }
 
   isUserLoggedIn(): boolean {
     let user = firebase.auth().currentUser;
     return user != null;
+  }
+
+  private createFirebaseAlert(err) {
+    let alert = this.alertCtrl.create({
+      title: err.code,
+      message: err.message,
+      buttons: ['Ok']
+    });
+    alert.present();
   }
 
 }

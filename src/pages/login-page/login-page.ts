@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {NavController, AlertController, ToastController, MenuController} from 'ionic-angular';
 import {AuthenticationService} from "../../providers/authentication-service";
 import {Library} from "../library/library";
+import {UserAccountService} from "../../providers/user-account-service";
 
 /*
   Generated class for the LoginPage page.
@@ -28,6 +29,7 @@ export class LoginPage {
     public navCtrl: NavController,
     private menu: MenuController,
     private authenticationService: AuthenticationService,
+    private userAccountService: UserAccountService,
     public alertCtrl: AlertController,
     private toastCtrl: ToastController) {
     this.menu.enable(false);
@@ -36,7 +38,12 @@ export class LoginPage {
   ionViewDidLoad() {
     this.authenticationService.authStateChange(user => {
       if (user) {
-        console.log(user);
+        //console.log(user);
+        //if (this.userAccountService.getCurrentUser() == null) {
+          this.userAccountService.setCurrentUser(
+            this.authenticationService.getUserProfile()
+          );
+        //}
         // User is signed in.
         this.navCtrl.push(Library).catch(()=> console.log('push failed'));
       } else {

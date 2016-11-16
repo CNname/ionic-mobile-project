@@ -14,6 +14,7 @@ import {LoginPage} from "../pages/login-page/login-page";
 import {UserAccountService} from "../providers/user-account-service";
 import { SoundcloudLibrary } from '../pages/soundcloud-library/soundcloud-library';
 import { Settings } from '../pages/settings/settings';
+import {ImageSelectionModalPage} from "../pages/image-selection-modal-page/image-selection-modal-page";
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { Settings } from '../pages/settings/settings';
     Library,
     SoundcloudLibrary,
     Settings,
+    ImageSelectionModalPage,
     PlayerPage,
     PlaylistDetails,
     Search,
@@ -37,6 +39,7 @@ import { Settings } from '../pages/settings/settings';
     SoundcloudLibrary,
     PlayerPage,
     Settings,
+    ImageSelectionModalPage,
     PlaylistDetails,
     Search,
     ArtistPage,
