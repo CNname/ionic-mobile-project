@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
-import { Library } from '../library/library';
 import { SpotifyService } from '../../providers/spotify-service';
 
 @Component({

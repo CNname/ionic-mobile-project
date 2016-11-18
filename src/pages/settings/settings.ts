@@ -22,12 +22,12 @@ export class Settings {
   passwordError: string = "";
 
   constructor(
-    private authenticationService: AuthenticationService,
-    private userAccountService: UserAccountService,
+    public authenticationService: AuthenticationService,
+    public userAccountService: UserAccountService,
     public navCtrl: NavController,
-    private toastController: ToastController,
-    private alertCtrl: AlertController,
-    private modalController: ModalController
+    public toastController: ToastController,
+    public alertCtrl: AlertController,
+    public modalController: ModalController
   ) {}
 
   ionViewDidLoad() {
@@ -62,12 +62,53 @@ export class Settings {
   }
 
   deleteUser(){
+    let alert = this.alertCtrl.create({
+      title: 'Delete user?',
+      message: 'Are you really sure? If you delete your profile, it\'s gone forever.',
+      inputs: [
+        {
+          name: "password",
+          placeholder: "Password",
+          type: "password"
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+          }
+        },
+        {
+          text: 'Delete',
+          handler: data => {
+            this.authenticationService.reAuthenticateUser(data.password, ()=>{
+              this.authenticationService.deleteUser(() => {
+                // success
+                this.navCtrl.popToRoot();
+              },() => {
+                // error
+              });
+            });
 
+          }
+        }
+      ]
+    });
+    alert.present();
   }
 
   openProfileImageModal(){
     let imageModal = this.modalController.create(ImageSelectionModalPage);
     imageModal.present();
+  }
+
+  loginToSpotify(){
+
+  }
+
+  loginToSoundcloud(){
+
   }
 
 }

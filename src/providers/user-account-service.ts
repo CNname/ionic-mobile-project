@@ -30,8 +30,8 @@ export class UserAccountService {
   setCurrentUser(user: firebaseUser) {
     if (user != null) {
       this._currentUser = new User(user.email);
-      if (typeof user.photoUrl == "string") {
-        this._currentUser.setImage(user.photoUrl);
+      if (typeof user.photoURL == "string") {
+        this._currentUser.setImage(user.photoURL);
       }
     }
   }

@@ -31,7 +31,7 @@ export interface IUser {
 
 export interface firebaseUser {
   email: string;
-  photoUrl?: any;
+  photoURL?: string;
 }
 
 export interface imageUrls {

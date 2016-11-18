@@ -46,9 +46,9 @@ export class ImageSelectionModalPage {
       console.log(snapshot);
       let url = snapshot.downloadURL;
 
-      this.userAccountService.getCurrentUser().setImage(url);
       this.authenticationService.updateUserImageUrl(url, () => {
         console.log("update successful");
+        this.userAccountService.getCurrentUser().setImage(url);
       }, () => {
         console.log("update failed");
       });

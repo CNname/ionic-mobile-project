@@ -4,7 +4,6 @@ import { SpotifyService } from '../../providers/spotify-service';
 import { PlaylistDetails } from '../playlist-details/playlist-details';
 import { Song } from '../../classes/Song.class';
 import { Artist } from '../../classes/Artist.class';
-import { Search } from '../search/search';
 import { PlayerPage } from '../playerPage/playerPage';
 import { ArtistPage } from "../artist-page/artist-page";
 import { Handling } from "../../namespaces/handling";
@@ -14,10 +13,10 @@ import { AuthenticationService } from '../../providers/authentication-service';
 import {UserAccountService} from "../../providers/user-account-service";
 
 @Component({
-  selector: 'library',
-  templateUrl: 'library.html'
+  selector: 'spotify-library',
+  templateUrl: 'spotify-library.html'
 })
-export class Library {
+export class SpotifyLibrary {
   hideElement: boolean = false;
   isPlaying: boolean = false;
   private spotifyservice: SpotifyService;
@@ -25,10 +24,6 @@ export class Library {
   public musicService: MusicService;
   // select the default tab
   playerNav: string = "playlists";
-  playlist_id: string;
-  playlist_title: string;
-  playlist_length: number;
-  playlist_owner: string;
   playlist_items: Array<Object>;
   timeout: any;
   playing: Song;
@@ -59,21 +54,7 @@ export class Library {
     return this.authenticationservice.isUserLoggedIn();
   }
 
-  ionViewDidLoad(){
-    console.log("start of the page");
-
-    // test for uploading to firebase storage
-    /*this.userAccountService.saveImage("asd", snapshot => {
-      let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log("Uploaded " + progress + "%");
-    }, err => {
-      // handle upload errors
-      console.error(err);
-    }, (url) => {
-      // after upload is complete
-      console.log(url);
-    });*/
-  }
+  ionViewDidLoad(){ }
 
   goToDetails(playlist_id: string, playlist_title: string) {
     this.navCtrl.push(PlaylistDetails, {playlist_id, playlist_title});

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { IonicApp, IonicModule } from 'ionic-angular';
 import { MyApp } from './app.component';
-import { Library } from '../pages/library/library';
+import { SpotifyLibrary } from '../pages/spotify-library/spotify-library';
 import { SpotifyService } from '../providers/spotify-service';
 import { PlaylistDetails } from '../pages/playlist-details/playlist-details';
 import { Search } from '../pages/search/search';
@@ -19,7 +19,7 @@ import {ImageSelectionModalPage} from "../pages/image-selection-modal-page/image
 @NgModule({
   declarations: [
     MyApp,
-    Library,
+    SpotifyLibrary,
     SoundcloudLibrary,
     Settings,
     ImageSelectionModalPage,
@@ -35,7 +35,7 @@ import {ImageSelectionModalPage} from "../pages/image-selection-modal-page/image
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    Library,
+    SpotifyLibrary,
     SoundcloudLibrary,
     PlayerPage,
     Settings,

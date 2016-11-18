@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
-import {Library} from "../pages/library/library";
-import {NavController, AlertController } from "ionic-angular";
-import {LoginPage} from "../pages/login-page/login-page";
+import { AlertController } from "ionic-angular";
 import {firebaseUser} from "../interfaces/interfaces";
 
 
@@ -27,7 +25,7 @@ export class AuthenticationService {
     messagingSenderId: "977961258413"
   };
 
-  constructor(public http: Http/*, public navCtrl: NavController*/ ,public alertCtrl: AlertController) {
+  constructor(public http: Http, public alertCtrl: AlertController) {
     this.firebaseInit();
 
   }
@@ -93,10 +91,10 @@ export class AuthenticationService {
     user.updateEmail(newEmail).then(callback).catch(fail);
   }
 
-  updateUserImageUrl(url: string, callback: Function, fail: Function) {
+  updateUserImageUrl(newUrl: string, callback: Function, fail: Function) {
     let user = firebase.auth().currentUser;
     user.updateProfile({
-      photoUrl: url
+      photoURL: newUrl
     }).then(callback).catch(fail);
   }
 

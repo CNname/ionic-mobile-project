@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {NavController, AlertController, ToastController, MenuController} from 'ionic-angular';
 import {AuthenticationService} from "../../providers/authentication-service";
-import {Library} from "../library/library";
+import {SpotifyLibrary} from "../spotify-library/spotify-library";
 import {UserAccountService} from "../../providers/user-account-service";
 
 /*
@@ -45,7 +45,7 @@ export class LoginPage {
           );
         //}
         // User is signed in.
-        this.navCtrl.push(Library).catch(()=> console.log('push failed'));
+        this.navCtrl.push(SpotifyLibrary).catch(()=> console.log('push failed'));
       } else {
         // No user is signed in.
       }
@@ -84,7 +84,7 @@ export class LoginPage {
           if (user) {
             console.log(user);
             // User is signed in.
-            this.navCtrl.push(Library).catch(()=> console.log('push failed'));
+            this.navCtrl.push(SpotifyLibrary).catch(()=> console.log('push failed'));
           } else {
             // No user is signed in.
             this.navCtrl.popToRoot().catch(()=> console.log('pop to root failed'));
