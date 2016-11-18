@@ -1,8 +1,13 @@
 import { Component } from '@angular/core';
-import {NavController, ToastController, AlertController, ModalController} from 'ionic-angular';
+import {NavController, ToastController, AlertController, ModalController, Platform} from 'ionic-angular';
 import {AuthenticationService} from "../../providers/authentication-service";
 import {UserAccountService} from "../../providers/user-account-service";
 import {ImageSelectionModalPage} from "../image-selection-modal-page/image-selection-modal-page";
+import {spotifyAuthConfig} from "../../interfaces/interfaces";
+import {Observable} from "rxjs";
+
+// for cordova inappbrowser-plugin
+declare var window: any;
 
 /*
   Generated class for the Settings page.
@@ -27,7 +32,8 @@ export class Settings {
     public navCtrl: NavController,
     public toastController: ToastController,
     public alertCtrl: AlertController,
-    public modalController: ModalController
+    public modalController: ModalController,
+    private platform: Platform
   ) {}
 
   ionViewDidLoad() {
@@ -103,11 +109,99 @@ export class Settings {
     imageModal.present();
   }
 
-  loginToSpotify(){
+  loginToSpotify() {
+
+    let authConfig: spotifyAuthConfig = {
+      base: "https://accounts.spotify.com/authorize",
+      clientId: "2f27c1567f8d4774b936b1ae98e91214",
+      responseType: "token",
+      redirectUri: encodeURIComponent("http://localhost/spotify-callback"),
+      scope: "user-read-private",
+      state: this.generateNonce(32)
+    };
+
+    // generate nonce for a state parameter,
+    // so you can ensure that request and response belongs to same browser.
+    // This protects against cross-site request forgery
+    let state = this.generateNonce(32);
+
+    // save state value to localStorage for future api calls
+    window.localStorage.setItem("state", state);
+
+    let authref = authConfig.base +
+                  "?client_id=" + authConfig.clientId +
+                  "&response_type=" + authConfig.responseType +
+                  "&redirect_uri=" + authConfig.redirectUri +
+                  "&scope=" + authConfig.scope +
+                  "&state=" + authConfig.state;
+
+    this.platform.ready().then(() => {
+      this.spotifyLogin(authref).subscribe(res => {
+        console.log(res);
+      });
+    });
 
   }
 
+  private generateNonce(length: number){
+
+    let text: string = "";
+    let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // possible characters
+
+    for (let i=0;i<length;i++) {
+      text += chars.charAt(~~(Math.random()*chars.length));
+    }
+
+    return text;
+
+  }
+
+  private spotifyLogin(href: string): Observable<any> {
+    return new Observable(observer => {
+      let browserRef = window.cordova.inAppBrowser.open(href, "_blank", "location=no");
+      browserRef.addEventListener("loadstart", event => {
+
+        if ((event.url).indexOf("http://localhost/callback") === 0) {
+          browserRef.removeEventListener("exit", event => {});
+          browserRef.close();
+          let response = this.splitParamsToObject(event.url);
+
+          // check if needed parameters are in response
+          if (
+            response["access_token"] !== null && response["access_token"] !== undefined &&
+            response["token_type"] !== null && response["token_type"] !== undefined &&
+            response["expires_in"] !== null && response["expires_in"] !== undefined &&
+            response["state"] !== null && response["state"] !== undefined
+          ) {
+            observer.next(response);
+          } else {
+            Observable.throw("Something went wrong during authentication");
+          }
+
+        }
+
+      });
+      browserRef.addEventListener("exit", event => {
+        Observable.throw("Authentication was canceled");
+      });
+    });
+  }
+
+  splitParamsToObject(url: string): Object {
+
+    let params = {};
+    let splitParams = url.substr(url.indexOf("?")+1).split("&");
+
+    for (let i=0; i < splitParams.length; i++) {
+      params[splitParams[i].split("=")[0]] = splitParams[i].split("=")[1];
+    }
+
+    console.log(params);
+    return params;
+  }
+
   loginToSoundcloud(){
+
 
   }
 

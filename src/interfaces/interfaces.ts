@@ -34,6 +34,15 @@ export interface firebaseUser {
   photoURL?: string;
 }
 
+export interface spotifyAuthConfig {
+  base: string,
+  clientId: string;
+  responseType: string;
+  redirectUri: string;
+  scope?: string;
+  state?: string;
+}
+
 export interface imageUrls {
   small?: any;
   medium?: any;
