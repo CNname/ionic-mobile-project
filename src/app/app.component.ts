@@ -30,6 +30,7 @@ export class MyApp {
 
     // set our app's pages
     this.pages = [
+
       { title: ' Spotify Library', component: SpotifyLibrary, icon: "mic"},
       { title: 'Soundcloud Library', component: SoundcloudLibrary, icon: "cloud"},
       { title: 'Settings', component: Settings, icon: "settings" }

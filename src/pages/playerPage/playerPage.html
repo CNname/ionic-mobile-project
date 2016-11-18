@@ -14,7 +14,7 @@
   <div class="albumInfo">
     <h3><b>{{ song?.getSongTitle() }}</b></h3>
     <h3>
-      <span *ngFor="let item of item?.getArtists(); let i = index">
+      <span *ngFor="let song of song?.getArtists(); let i = index">
         <span *ngIf="i > 0"> / </span> {{ song?.getName() }}
       </span>
     </h3>
