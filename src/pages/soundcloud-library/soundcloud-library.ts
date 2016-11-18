@@ -4,21 +4,24 @@ import { Song } from '../../classes/Song.class';
 import { UserAccountService } from '../../providers/user-account-service'
 import { User } from '../../classes/User.class'
 import { SoundcloudService } from '../../providers/soundcloud-service'
-/*
-  Generated class for the SoundcloudLibrary page.
+import { Handling } from "../../namespaces/handling";
 
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
+
 @Component({
   selector: 'page-soundcloud-library',
   templateUrl: 'soundcloud-library.html'
 })
 export class SoundcloudLibrary {
+    hideElement: boolean = false;
     playerNav: string = "feed";
     private tracks: any[] = [];
     private playTrack: number = 0;
     public currentTrack: Song;
+    searchCategory: string;
+    trackItems: any;
+    artistItems: any[] = [];
+    timeout: any;
+    items: any[] = [];
     private userAccountService: UserAccountService
     private soundcloudService: SoundcloudService
     private user: User
@@ -28,7 +31,7 @@ export class SoundcloudLibrary {
       this.soundcloudService = soundcloudService;
   }
 
-  ionViewCanEnter(): boolean{
+  /*ionViewCanEnter(): boolean{
     this.user = this.userAccountService.getCurrentUser();
     if(this.user.getSoundCloudAccountId() == null){
       //console.log(this.user.getId());
@@ -41,14 +44,25 @@ export class SoundcloudLibrary {
       return false;
     } else { return true; }
 
-  }
+  }*/
+  getItemsByName(event){
+    clearTimeout(this.timeout);
 
-  fetchTracks(bpm: number, genre:string): void {
+    this.timeout = setTimeout(() => {
 
-  }
+        let query = event.target.value;
 
-  startStreaming(){
+        if(query.length >= 3){
+          // activate search segment if not active
+          if (this.playerNav !== "search") this.playerNav = "search";
 
+            this.soundcloudService.searchForItem(encodeURIComponent(query)).then(res => {
+                this.items = Handling.HandleJson.SoundCloudTracks(res);
+                console.log(this.items);
+            });
+
+          }
+        }, 3000);
   }
 
 }

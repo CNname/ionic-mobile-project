@@ -3,9 +3,17 @@
       <button ion-button menuToggle>
         <ion-icon name="menu"></ion-icon>
       </button>
-    <ion-title class="streamgull-title">
-      SoundCloud&reg; library
-    </ion-title>
+      <ion-title class="streamgull-title" [hidden]="hideElement" (click)="hideElement = !hideElement">
+        SoundCloud Library
+      </ion-title>
+      <ion-buttons end>
+        <button ion-button color="darkGrey" class="larger" (click)="hideElement = !hideElement">
+          <ion-icon name="md-search"></ion-icon>
+        </button>
+      </ion-buttons>
+      <div [hidden]="!hideElement">
+        <ion-input clearInput class="librarySearch" placeholder="Search songs and artists" (input)="getItemsByName($event)"></ion-input>
+      </div>
   </ion-toolbar>
   <ion-toolbar no-border-top color="alt_orange">
       <ion-segment [(ngModel)]="playerNav" color="darkGrey">
@@ -32,7 +40,18 @@
        <!-- albums -->
     </ion-list>
     <ion-list *ngSwitchCase="'search'">
-     <!-- artists -->
+      <ion-item *ngFor="let item of items" (click)="startNewPlayer(item)">
+        <ion-thumbnail item-left>
+          <img [src]="item.getAlbumImage().large.url">
+        </ion-thumbnail>
+        <h3><b>{{ item.getSongTitle() }}</b></h3>
+        <h3>
+          <span class="artist" *ngFor="let artist of item.getArtists(); let i = index">
+            <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
+          </span>
+        </h3>
+        <h4>{{ item.getAlbumTitle() }}</h4>
+      </ion-item>
     </ion-list>
   </div>
 </ion-content>

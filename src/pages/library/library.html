@@ -88,7 +88,7 @@
         <div *ngSwitchCase="'artists'">
           <ion-item  *ngFor="let artist of artistItems" (click)="artistClickEvent(artist.getId())">
             <ion-thumbnail item-left>
-              <img [src]="artist.getImages().large.url">
+              <img [src]="artist?.getImages().large.url">
             </ion-thumbnail>
             <h3><b>{{ artist.getName() }}</b></h3>
           </ion-item>

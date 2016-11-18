@@ -59,21 +59,7 @@ export class Library {
     return this.authenticationservice.isUserLoggedIn();
   }
 
-  ionViewDidLoad(){
-    console.log("start of the page");
-
-    // test for uploading to firebase storage
-    /*this.userAccountService.saveImage("asd", snapshot => {
-      let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log("Uploaded " + progress + "%");
-    }, err => {
-      // handle upload errors
-      console.error(err);
-    }, (url) => {
-      // after upload is complete
-      console.log(url);
-    });*/
-  }
+  ionViewDidLoad(){ }
 
   goToDetails(playlist_id: string, playlist_title: string) {
     this.navCtrl.push(PlaylistDetails, {playlist_id, playlist_title});
