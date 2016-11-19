@@ -58,44 +58,44 @@ export namespace Handling {
       let songs: Song[] = [];
 
       //console.log("id: "tracksArray.);
-      //console.log(tracksArray);
+      console.log(tracksArray);
 
       for (let i = 0; i < tracksArray.length; i++) {
 
-        let song: Song = new Song(tracksArray[i].id, tracksArray[i].title, true);
+        let song: Song = new Song(tracksArray[i].id, tracksArray[i].title, tracksArray[i].streamable);
+      //  console.log(song);
         let images: imageUrls = {
           large: {
+            height: 600,
+            width: 600,
             url: "../../assets/img/sg-placeholder.jpg"
           }
         };
 
-        /*for (let j=0; j<tracksArray[i].album.images.length; j++) {
-          if (j===0) images.large = tracksArray[i].album.images[j];
-          else if (j===1) images.medium = tracksArray[i].album.images[j];
-          else if (j===2) images.small = tracksArray[i].album.images[j];
-        }*/
-        images.large = tracksArray[i].artwork_url;
+        if(  tracksArray[i].artwork_url != null) {
+          images.large = tracksArray[i].artwork_url;
+        }
 
         song.setAlbumImage(images);
-        song.setAlbumId(tracksArray[i].album.id);
-        song.setAlbumTitle(tracksArray[i].album.name);
+        song.setAlbumId(tracksArray[i].id);
+        song.setAlbumTitle(tracksArray[i].title);
         song.setUrl(tracksArray[i].stream_url);
 
         let artists: Artist[] = [];
-
-        for (let j = 0; j < tracksArray[i].user.length; j++) {
+        //console.log(tracksArray[i].user.username);
+        //for (let j = 0; j < tracksArray[i].user.length; j++) {
           artists.push(new Artist(
-           tracksArray[i].artists[j].id,
-           tracksArray[i].artists[j].username,
-           tracksArray[i].artists[j].permalink_url
+           tracksArray[i].user_id,
+           tracksArray[i].user.username,
+           tracksArray[i].user.permalink_url
           ))
-         }
+         //}
 
         song.setArtists(artists);
         songs.push(song);
 
       }
-
+      //console.log(songs);
       return songs;
      }
 

@@ -42,7 +42,7 @@
     <ion-list *ngSwitchCase="'search'">
       <ion-item *ngFor="let item of items" (click)="startNewPlayer(item)">
         <ion-thumbnail item-left>
-          <img [src]="item.getAlbumImage().large.url">
+          <img [src]="item.getAlbumImage().large">
         </ion-thumbnail>
         <h3><b>{{ item.getSongTitle() }}</b></h3>
         <h3>
@@ -55,3 +55,25 @@
     </ion-list>
   </div>
 </ion-content>
+
+<ion-footer [hidden]="!isPlaying">
+  <ion-toolbar class="librarySmallPlayer player">
+      <ion-list class="librarySmallPlayer" no-lines>
+        <ion-item (click)='openPlayer()'>
+        <h3 color="black"><b>{{ playing?.getSongTitle() }}</b></h3>
+        <h3 color="black"><span *ngFor="let playing of playing?.getArtists(); let i = index">
+          <span *ngIf="i > 0"> / </span> {{ playing?.getName() }}
+        </span></h3>
+
+        <ion-buttons end item-right>
+          <button ion-button color="orange" [hidden]="!pauseButton" (click)="pauseButton = !pauseButton" class="larger" (click)="pausePlayer()">
+            <ion-icon name="pause"></ion-icon>
+          </button>
+          <button ion-button color="orange" class="larger" [hidden]="pauseButton" (click)="pauseButton = !pauseButton" (click)="resumePlayer()">
+            <ion-icon name="play"></ion-icon>
+          </button>
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+  </ion-toolbar>
+</ion-footer>

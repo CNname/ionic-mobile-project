@@ -14,6 +14,9 @@ import { Handling } from "../../namespaces/handling";
 export class SoundcloudLibrary {
     hideElement: boolean = false;
     playerNav: string = "feed";
+    isPlaying: boolean = false;
+    pauseButton: boolean = false;
+    playing: Song;
     private tracks: any[] = [];
     private playTrack: number = 0;
     public currentTrack: Song;
@@ -22,13 +25,16 @@ export class SoundcloudLibrary {
     artistItems: any[] = [];
     timeout: any;
     items: any[] = [];
-    private userAccountService: UserAccountService
-    private soundcloudService: SoundcloudService
-    private user: User
+    private userAccountService: UserAccountService;
+    private soundcloudService: SoundcloudService;
+    private user: User;
 
   constructor(public navCtrl: NavController, userAccountService: UserAccountService, soundcloudService: SoundcloudService, private toastController: ToastController) {
       this.userAccountService = userAccountService;
       this.soundcloudService = soundcloudService;
+      /*this.soundcloudService.getCharts("top", "indie").subscribe(charts => {
+        console.log(charts);
+      }); */
   }
 
   /*ionViewCanEnter(): boolean{
@@ -50,19 +56,34 @@ export class SoundcloudLibrary {
 
     this.timeout = setTimeout(() => {
 
-        let query = event.target.value;
+      let query = event.target.value;
 
-        if(query.length >= 3){
-          // activate search segment if not active
-          if (this.playerNav !== "search") this.playerNav = "search";
-
-            this.soundcloudService.searchForItem(encodeURIComponent(query)).then(res => {
-                this.items = Handling.HandleJson.SoundCloudTracks(res);
-                console.log(this.items);
-            });
-
-          }
-        }, 3000);
+      if(query.length >= 3){
+        // activate search segment if not active
+        if (this.playerNav !== "search") this.playerNav = "search";
+        this.soundcloudService.searchForItem(encodeURIComponent(query)).then(res => {
+            this.items = Handling.HandleJson.SoundCloudTracks(res);
+        });
+      }
+    }, 3000);
   }
 
+  openPlayer(){
+    console.log('player');
+  }
+
+  pausePlayer(){
+    this.soundcloudService.pauseStream();
+  }
+
+  resumePlayer(){
+    this.soundcloudService.resumeStream();
+  }
+
+  startNewPlayer(item: Song){
+    this.isPlaying = true;
+    this.pauseButton = true;
+    this.playing = item;
+    this.soundcloudService.startStreaming(item.getId());
+  }
 }

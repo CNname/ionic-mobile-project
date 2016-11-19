@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs/Rx';
 
 declare var SC;
 
@@ -9,6 +10,7 @@ export class SoundcloudService {
 
   private clientId: string = 'd51aa162fb2f62d2072b34da795b83a4';
   private redirect_uri: string = 'http://localhost/soundcloud-callback';
+  SCPlayer: any;
 
   constructor(public http: Http) {
     SC.initialize({
@@ -17,15 +19,36 @@ export class SoundcloudService {
     });
    }
 
-  startStreaming(){
-    SC.stream('/tracks/195454163').then(player => {
-      //console.log("you should hear something");
-      //player.play();
+  startStreaming(id: string){
+    SC.stream('/tracks/'+id).then(player => {
+      this.SCPlayer = player;
+
+      this.SCPlayer.play();
+
+      this.SCPlayer.on('buffering_start', () => { console.log('buffering...'); });
+
+      this.SCPlayer.on('buffering_end', () => { console.log('music'); });
     });
   }
 
+  pauseStream(){
+    this.SCPlayer.pause();
+  }
+
+  resumeStream(){
+    this.SCPlayer.play();
+  }
+
   searchForItem(query: string): any {
-    return SC.get('tracks', {  q: query, limit: 100, license: 'cc-by-sa' });
+    return SC.get('tracks', {  q: query, limit: 50 });
+  }
+
+  getCharts(type: string, genre: string ): Observable<any> {
+    return this.http.get('https://api-v2.soundcloud.com/charts?kind=top&genre=soundcloud%3Agenres%3Acountry&client_id=d51aa162fb2f62d2072b34da795b83a4', {})
+    .map(res =>{
+      console.log(res);
+      return res.json()
+    });
   }
 
 }
