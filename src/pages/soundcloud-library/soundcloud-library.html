@@ -30,28 +30,54 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content>
   <div [ngSwitch]="playerNav">
     <ion-list *ngSwitchCase="'feed'">
      <!-- feed -->
     </ion-list>
 
     <ion-list *ngSwitchCase="'playlists'">
-       <!-- albums -->
+
+      <ion-card class="playlist"  *ngFor="let item of playlists">
+       <ion-card-header>
+         {{ item.getName() }}
+       </ion-card-header>
+
+         <button ion-item>
+           <ion-icon name='person' item-left></ion-icon>
+           {{ item.getOwnerName() }}
+         </button>
+         <button ion-item>
+           <ion-icon name='play' item-left></ion-icon>
+           {{ item.getSongCount() }}
+         </button>
+
+
+       </ion-card>
     </ion-list>
-    <ion-list *ngSwitchCase="'search'">
-      <ion-item *ngFor="let item of items" (click)="startNewPlayer(item)">
-        <ion-thumbnail item-left>
-          <img [src]="item.getAlbumImage().large">
-        </ion-thumbnail>
-        <h3><b>{{ item.getSongTitle() }}</b></h3>
-        <h3>
-          <span class="artist" *ngFor="let artist of item.getArtists(); let i = index">
-            <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
-          </span>
-        </h3>
-        <h4>{{ item.getAlbumTitle() }}</h4>
-      </ion-item>
+    <ion-list *ngSwitchCase="'search'" no-lines>
+      <ion-item-sliding #item>
+        <ion-item *ngFor="let item of items" (click)="startNewPlayer(item)">
+          <ion-thumbnail item-left>
+            <img [src]="item.getAlbumImage().large">
+          </ion-thumbnail>
+          <h3><b>{{ item.getSongTitle() }}</b></h3>
+          <h3>
+            <span class="artist" *ngFor="let artist of item.getArtists(); let i = index">
+              <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
+            </span>
+          </h3>
+          <h4>{{ item.getAlbumTitle() }}</h4>
+        </ion-item>
+        <ion-item-options side="right">
+          <button ion-button (click)="addToPlaylist(item)">
+            <ion-icon name="add"></ion-icon>
+          </button>
+          <button ion-button color="danger" (click)="share(item)">
+            <ion-icon color="black" name="share-alt"></ion-icon>
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
     </ion-list>
   </div>
 </ion-content>
@@ -66,10 +92,10 @@
         </span></h3>
 
         <ion-buttons end item-right>
-          <button ion-button color="orange" [hidden]="!pauseButton" (click)="pauseButton = !pauseButton" class="larger" (click)="pausePlayer()">
+          <button ion-button color="alt_orange" [hidden]="!pauseButton" (click)="pauseButton = !pauseButton" class="larger" (click)="pausePlayer()">
             <ion-icon name="pause"></ion-icon>
           </button>
-          <button ion-button color="orange" class="larger" [hidden]="pauseButton" (click)="pauseButton = !pauseButton" (click)="resumePlayer()">
+          <button ion-button color="alt_orange" class="larger" [hidden]="pauseButton" (click)="pauseButton = !pauseButton" (click)="resumePlayer()">
             <ion-icon name="play"></ion-icon>
           </button>
         </ion-buttons>

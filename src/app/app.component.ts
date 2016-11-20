@@ -23,8 +23,8 @@ export class MyApp {
   constructor(
     public platform: Platform,
     public menu: MenuController,
-    private authenticationService: AuthenticationService,
-    private userAccountService: UserAccountService
+    public authenticationService: AuthenticationService,
+    public userAccountService: UserAccountService
   ) {
     this.initializeApp();
 

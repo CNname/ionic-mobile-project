@@ -1,5 +1,6 @@
-import {Song} from "../classes/Song.class";
-import {Artist} from "../classes/Artist.class";
+import { Song } from "../classes/Song.class";
+import { Artist } from "../classes/Artist.class";
+import { Playlist } from "../classes/Playlist.Class"
 import {imageUrls} from "../interfaces/interfaces";
 
 export namespace Handling {
@@ -98,6 +99,40 @@ export namespace Handling {
       //console.log(songs);
       return songs;
      }
+
+    static SoundCloudPlaylists(playlistArray: Array<any>): Playlist[] {
+      let playlists: Playlist[] = [];
+
+      //console.log("id: "tracksArray.);
+      console.log(playlistArray);
+
+      for (let i = 0; i < playlistArray.length; i++) {
+
+        let playlist: Playlist = new Playlist(playlistArray[i].id, playlistArray[i].title, playlistArray[i].track_count);
+
+        let images: imageUrls = {
+          large: {
+            height: 600,
+            width: 600,
+            url: "../../assets/img/sg-placeholder.jpg"
+          }
+        };
+
+
+        if(  playlistArray[i].artwork_url != null) {
+          images.large = playlistArray[i].artwork_url;
+        }
+
+        playlist.setPlaylistImage(images);
+        playlist.setOwnerName(playlistArray[i].user.username);
+        playlist.setOwnerId(playlistArray[i].user.id);
+
+        playlists.push(playlist);
+
+      }
+      //console.log(songs);
+      return playlists;
+    }
 
     static artists(artistsArray: Array<any>): Artist[] {
 

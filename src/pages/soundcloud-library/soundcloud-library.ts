@@ -25,6 +25,7 @@ export class SoundcloudLibrary {
     artistItems: any[] = [];
     timeout: any;
     items: any[] = [];
+    playlists: any[] = [];
     private userAccountService: UserAccountService;
     private soundcloudService: SoundcloudService;
     private user: User;
@@ -32,9 +33,9 @@ export class SoundcloudLibrary {
   constructor(public navCtrl: NavController, userAccountService: UserAccountService, soundcloudService: SoundcloudService, private toastController: ToastController) {
       this.userAccountService = userAccountService;
       this.soundcloudService = soundcloudService;
-      /*this.soundcloudService.getCharts("top", "indie").subscribe(charts => {
-        console.log(charts);
-      }); */
+      this.soundcloudService.getPlaylists().then(res =>{
+          this.playlists = Handling.HandleJson.SoundCloudPlaylists(res);
+      });
   }
 
   /*ionViewCanEnter(): boolean{
@@ -51,6 +52,11 @@ export class SoundcloudLibrary {
     } else { return true; }
 
   }*/
+
+  ionViewWillLeave(){
+    this.soundcloudService.pauseStream();
+  }
+
   getItemsByName(event){
     clearTimeout(this.timeout);
 

@@ -43,11 +43,21 @@ export class SoundcloudService {
     return SC.get('tracks', {  q: query, limit: 50 });
   }
 
+  getPlaylists(): any{
+    return SC.get('playlists', { q: 'rock', limit: 30 });
+  }
+
+  getPlaylistById(id: string): any{
+    return true;
+  }
+
+  //this doesnt work atm neither does SC.get('charts', { kind: 'top', genre: 'soundcloud:genres:all-music, limit: 30' })
   getCharts(type: string, genre: string ): Observable<any> {
-    return this.http.get('https://api-v2.soundcloud.com/charts?kind=top&genre=soundcloud%3Agenres%3Acountry&client_id=d51aa162fb2f62d2072b34da795b83a4', {})
+    return this.http.get('https://api-v2.soundcloud.com/charts?format=json&kind=top&genre=soundcloud%3Agenres%3Acountry&client_id=d51aa162fb2f62d2072b34da795b83a4', {})
     .map(res =>{
       console.log(res);
       return res.json()
+      //https://api-v2.soundcloud.com/charts?kind=top&genre=soundcloud%3Agenres%3Acountry&client_id=d51aa162fb2f62d2072b34da795b83a4
     });
   }
 
