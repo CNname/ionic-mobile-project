@@ -38,7 +38,7 @@
 
     <ion-list *ngSwitchCase="'playlists'">
 
-      <ion-card class="playlist"  *ngFor="let item of playlists">
+      <ion-card class="playlist"  *ngFor="let item of playlists" (click)="openPlaylist(item)" >
        <ion-card-header>
          {{ item.getName() }}
        </ion-card-header>

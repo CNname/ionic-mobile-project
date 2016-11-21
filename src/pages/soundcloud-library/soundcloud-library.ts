@@ -5,6 +5,8 @@ import { UserAccountService } from '../../providers/user-account-service'
 import { User } from '../../classes/User.class'
 import { SoundcloudService } from '../../providers/soundcloud-service'
 import { Handling } from "../../namespaces/handling";
+import { Playlist } from '../../classes/Playlist.Class'
+import { PlaylistDetails } from '../playlist-details/playlist-details'
 
 
 @Component({
@@ -33,6 +35,9 @@ export class SoundcloudLibrary {
   constructor(public navCtrl: NavController, userAccountService: UserAccountService, soundcloudService: SoundcloudService, private toastController: ToastController) {
       this.userAccountService = userAccountService;
       this.soundcloudService = soundcloudService;
+      /*this.soundcloudService.getCharts("asd", "asd").subscribe(res =>{
+        console.log(res);
+      })*/
       this.soundcloudService.getPlaylists().then(res =>{
           this.playlists = Handling.HandleJson.SoundCloudPlaylists(res);
       });
@@ -54,7 +59,7 @@ export class SoundcloudLibrary {
   }*/
 
   ionViewWillLeave(){
-    this.soundcloudService.pauseStream();
+    //this.soundcloudService.pauseStream();
   }
 
   getItemsByName(event){
@@ -74,6 +79,12 @@ export class SoundcloudLibrary {
     }, 3000);
   }
 
+
+
+  openPlaylist(item: Playlist){
+    this.navCtrl.push(PlaylistDetails, {item: item}).catch(()=> console.log('Something went wrong while opening playlist'));
+  }
+
   openPlayer(){
     console.log('player');
   }
@@ -91,5 +102,6 @@ export class SoundcloudLibrary {
     this.pauseButton = true;
     this.playing = item;
     this.soundcloudService.startStreaming(item.getId());
+
   }
 }

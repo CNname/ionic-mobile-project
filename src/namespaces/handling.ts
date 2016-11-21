@@ -123,6 +123,10 @@ export namespace Handling {
           images.large = playlistArray[i].artwork_url;
         }
 
+        if(playlistArray[i].tracks.length != 0){
+          let tracks: Song[] = this.SoundCloudTracks(playlistArray[i].tracks);
+          playlist.setSongs(tracks);
+        }
         playlist.setPlaylistImage(images);
         playlist.setOwnerName(playlistArray[i].user.username);
         playlist.setOwnerId(playlistArray[i].user.id);
