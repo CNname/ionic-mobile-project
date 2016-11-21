@@ -39,7 +39,7 @@ export class SpotifyLibrary {
     public modalCtrl: ModalController,
     musicService: MusicService,
     private menu: MenuController,
-    private userAccountService: UserAccountService) {
+    public userAccountService: UserAccountService) {
       this.musicService = musicService;
       this.authenticationservice = authservice;
       this.spotifyservice = spotifyservice;

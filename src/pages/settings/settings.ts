@@ -26,6 +26,9 @@ export class Settings {
   newPasswordAgain: string = "";
   passwordError: string = "";
 
+  loginTest: any;
+
+
   constructor(
     public authenticationService: AuthenticationService,
     public userAccountService: UserAccountService,
@@ -111,15 +114,6 @@ export class Settings {
 
   loginToSpotify() {
 
-    let authConfig: spotifyAuthConfig = {
-      base: "https://accounts.spotify.com/authorize",
-      clientId: "2f27c1567f8d4774b936b1ae98e91214",
-      responseType: "token",
-      redirectUri: encodeURIComponent("http://localhost/spotify-callback"),
-      scope: "user-read-private",
-      state: this.generateNonce(32)
-    };
-
     // generate nonce for a state parameter,
     // so you can ensure that request and response belongs to same browser.
     // This protects against cross-site request forgery
@@ -127,6 +121,15 @@ export class Settings {
 
     // save state value to localStorage for future api calls
     window.localStorage.setItem("state", state);
+
+    let authConfig: spotifyAuthConfig = {
+      base: "https://accounts.spotify.com/authorize",
+      clientId: "2f27c1567f8d4774b936b1ae98e91214",
+      responseType: "token",
+      redirectUri: encodeURIComponent("http://localhost/callback"),
+      scope: "user-read-private",
+      state: state
+    };
 
     let authref = authConfig.base +
                   "?client_id=" + authConfig.clientId +
@@ -137,7 +140,8 @@ export class Settings {
 
     this.platform.ready().then(() => {
       this.spotifyLogin(authref).subscribe(res => {
-        console.log(res);
+        this.loginTest = res.accessToken;
+        this.navCtrl.pop();
       });
     });
 
@@ -158,6 +162,8 @@ export class Settings {
 
   private spotifyLogin(href: string): Observable<any> {
     return new Observable(observer => {
+
+      // Cordova's inappbrowser plugin version
       let browserRef = window.cordova.inAppBrowser.open(href, "_blank", "location=no");
       browserRef.addEventListener("loadstart", event => {
 
@@ -173,7 +179,8 @@ export class Settings {
             response["expires_in"] !== null && response["expires_in"] !== undefined &&
             response["state"] !== null && response["state"] !== undefined
           ) {
-            observer.next(response);
+            //observer.next(response);
+            this.loginTest = response['access_token'];
           } else {
             Observable.throw("Something went wrong during authentication");
           }
@@ -182,15 +189,55 @@ export class Settings {
 
       });
       browserRef.addEventListener("exit", event => {
-        Observable.throw("Authentication was canceled");
+        Observable.throw("Authentication was cancelled");
       });
+
+      // own workaround
+
+     /* window.onload = () => {
+
+        if (window.location.href.search("#") !== -1) window.location.href = window.location.href.replace(/#/i, "?");
+
+
+        if (window.location.href.indexOf("http://localhost:8100") === 0) {
+
+          //window.location.port = ionicPort;
+          console.log("moi");
+
+          let response = this.splitParamsToObject(window.location.href);
+          window.onload = null; // reset onload function
+
+          // check if needed parameters are in response
+          if (
+            response["access_token"] !== null && response["access_token"] !== undefined &&
+            response["token_type"] !== null && response["token_type"] !== undefined &&
+            response["expires_in"] !== null && response["expires_in"] !== undefined &&
+            response["state"] !== null && response["state"] !== undefined
+          ) {
+
+            window.localStorage.setItem("access_token", response["access_token"]);
+            window.localStorage.setItem("token_type", response["token_type"]);
+            window.localStorage.setItem("expires_in", response["expires_in"]);
+            window.localStorage.setItem("state", response["state"]);
+
+            observer.next(response);
+          } else {
+            Observable.throw("Something went wrong during authentication");
+          }
+
+        }
+      };
+
+      window.location.href = href;*/
+
     });
+
   }
 
   splitParamsToObject(url: string): Object {
 
     let params = {};
-    let splitParams = url.substr(url.indexOf("?")+1).split("&");
+    let splitParams = url.substr(url.indexOf("#")+1).split("&"); // spotify separates parameters with hash
 
     for (let i=0; i < splitParams.length; i++) {
       params[splitParams[i].split("=")[0]] = splitParams[i].split("=")[1];
