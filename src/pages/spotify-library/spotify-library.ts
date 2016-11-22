@@ -54,7 +54,12 @@ export class SpotifyLibrary {
     return this.authenticationservice.isUserLoggedIn();
   }
 
-  ionViewDidLoad(){ }
+  ionViewDidLoad(){
+    console.log(document.referrer);
+
+    //if (document)
+
+  }
 
   goToDetails(playlist_id: string, playlist_title: string) {
     this.navCtrl.push(PlaylistDetails, {playlist_id, playlist_title});

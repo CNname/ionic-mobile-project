@@ -126,7 +126,7 @@ export class Settings {
       base: "https://accounts.spotify.com/authorize",
       clientId: "2f27c1567f8d4774b936b1ae98e91214",
       responseType: "token",
-      redirectUri: encodeURIComponent("http://localhost/callback"),
+      redirectUri: encodeURIComponent("http://localhost:8100/#/?spotify-callback"),
       scope: "user-read-private",
       state: state
     };
@@ -145,6 +145,8 @@ export class Settings {
       });
     });
 
+    //window.location.href = authref;
+
   }
 
   private generateNonce(length: number){
@@ -162,9 +164,9 @@ export class Settings {
 
   private spotifyLogin(href: string): Observable<any> {
     return new Observable(observer => {
-
+console.log(window.cordova.InAppBrowser);
       // Cordova's inappbrowser plugin version
-      let browserRef = window.cordova.inAppBrowser.open(href, "_blank", "location=no");
+      let browserRef = window.cordova.InAppBrowser.open(href, "_blank", "location=no");
       browserRef.addEventListener("loadstart", event => {
 
         if ((event.url).indexOf("http://localhost/callback") === 0) {
@@ -179,9 +181,11 @@ export class Settings {
             response["expires_in"] !== null && response["expires_in"] !== undefined &&
             response["state"] !== null && response["state"] !== undefined
           ) {
-            //observer.next(response);
+            alert(response["access_token"]);
+            observer.next(response);
             this.loginTest = response['access_token'];
           } else {
+            alert("fuuuuck...");
             Observable.throw("Something went wrong during authentication");
           }
 
