@@ -15,6 +15,7 @@ import {UserAccountService} from "../providers/user-account-service";
 import { SoundcloudLibrary } from '../pages/soundcloud-library/soundcloud-library';
 import { Settings } from '../pages/settings/settings';
 import {ImageSelectionModalPage} from "../pages/image-selection-modal-page/image-selection-modal-page";
+import {JsonpModule} from '@angular/http'
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import {ImageSelectionModalPage} from "../pages/image-selection-modal-page/image
     LoginPage
   ],
   imports: [
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    JsonpModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, Jsonp } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Rx';
-import { Playlist } from '../../classes/Playlist.Class'
+import { Playlist } from '../classes/Playlist.Class'
 
 declare var SC;
 
@@ -14,7 +14,7 @@ export class SoundcloudService {
   SCPlayer: any;
   playingItems: Playlist;
 
-  constructor(public http: Http) {
+  constructor(public http: Http, private jsonp: Jsonp) {
     SC.initialize({
       client_id:  this.clientId,
       //redirect_uri:  this.redirect_uri
@@ -60,10 +60,11 @@ export class SoundcloudService {
 
   //this doesnt work atm neither does SC.get('charts', { kind: 'top', genre: 'soundcloud:genres:all-music, limit: 30' })
   getCharts(type: string, genre: string ): Observable<any> {
-    return this.http.get('http://api.soundcloud.com/resolve?url=https://soundcloud.com/charts/top&client_id=d51aa162fb2f62d2072b34da795b83a4', {})
+    //return this.http.get('https://api-v2.soundcloud.com/charts?kind=top&genre=soundcloud%3Agenres%3Acountry&client_id=d51aa162fb2f62d2072b34da795b83a4', {})
+    return this.jsonp.get('https://api-v2.soundcloud.com/charts?kind=top&genre=soundcloud%3Agenres%3Acountry&client_id=d51aa162fb2f62d2072b34da795b83a4?callback=map', {})
     .map(res =>{
       console.log(res);
-      return res.json()
+      //return res.json()
       //https://api-v2.soundcloud.com/charts?kind=top&genre=soundcloud%3Agenres%3Acountry&client_id=d51aa162fb2f62d2072b34da795b83a4
     });
   }

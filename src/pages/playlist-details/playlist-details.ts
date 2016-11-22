@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { SoundcloudService } from '../../providers/soundcloud-service';
 import { Playlist } from '../../classes/Playlist.Class'
-import { Song } from '../../classes/Song.Class'
+import { Song } from '../../classes/Song.class'
 
 @Component({
   selector: 'page-playlist-details',

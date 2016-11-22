@@ -39,10 +39,9 @@
     <ion-list *ngSwitchCase="'playlists'">
 
       <ion-card class="playlist"  *ngFor="let item of playlists" (click)="openPlaylist(item)" >
-       <ion-card-header>
-         {{ item.getName() }}
-       </ion-card-header>
-
+         <ion-card-header>
+           {{ item.getName() }}
+         </ion-card-header>
          <button ion-item>
            <ion-icon name='person' item-left></ion-icon>
            {{ item.getOwnerName() }}
@@ -51,8 +50,6 @@
            <ion-icon name='play' item-left></ion-icon>
            {{ item.getSongCount() }}
          </button>
-
-
        </ion-card>
     </ion-list>
     <ion-list *ngSwitchCase="'search'" no-lines>
@@ -74,7 +71,7 @@
             <ion-icon name="add"></ion-icon>
           </button>
           <button ion-button color="danger" (click)="share(item)">
-            <ion-icon color="black" name="share-alt"></ion-icon>
+            <ion-icon (color)="primary" name="share-alt"></ion-icon>
           </button>
         </ion-item-options>
       </ion-item-sliding>

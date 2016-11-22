@@ -37,7 +37,7 @@ export class SoundcloudLibrary {
       this.soundcloudService = soundcloudService;
       /*this.soundcloudService.getCharts("asd", "asd").subscribe(res =>{
         console.log(res);
-      })*/
+      });*/
       this.soundcloudService.getPlaylists().then(res =>{
           this.playlists = Handling.HandleJson.SoundCloudPlaylists(res);
       });
