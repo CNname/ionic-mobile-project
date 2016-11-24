@@ -141,6 +141,10 @@ export class AuthenticationService {
                                         message = "The email address is already in use by another account.";
                                         break;
 
+      case "auth/user-not-found": title = "User not found";
+                                  message = "Couldn't find any accounts with this email.";
+                                  break;
+
       case "auth/network-request-failed": title = "Network error";
                                           message = "Network error occurred";
                                           break;
@@ -156,8 +160,6 @@ export class AuthenticationService {
 
     console.log(err.code);
     console.log(err.message);
-    console.log(title);
-
 
     let alert = this.alertCtrl.create({
       title: title,

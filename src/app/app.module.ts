@@ -15,6 +15,7 @@ import {UserAccountService} from "../providers/user-account-service";
 import { SoundcloudLibrary } from '../pages/soundcloud-library/soundcloud-library';
 import { Settings } from '../pages/settings/settings';
 import {ImageSelectionModalPage} from "../pages/image-selection-modal-page/image-selection-modal-page";
+import {LoadingPage} from "../pages/loading-page/loading-page";
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import {ImageSelectionModalPage} from "../pages/image-selection-modal-page/image
     PlaylistDetails,
     Search,
     ArtistPage,
-    LoginPage
+    LoginPage,
+    LoadingPage
   ],
   imports: [
     IonicModule.forRoot(MyApp)
@@ -43,7 +45,8 @@ import {ImageSelectionModalPage} from "../pages/image-selection-modal-page/image
     PlaylistDetails,
     Search,
     ArtistPage,
-    LoginPage
+    LoginPage,
+    LoadingPage
   ],
   providers: [ SpotifyService, SoundcloudService, MusicService, AuthenticationService, UserAccountService ]
 })

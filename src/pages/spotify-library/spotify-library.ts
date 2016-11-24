@@ -55,9 +55,16 @@ export class SpotifyLibrary {
   }
 
   ionViewDidLoad(){
-    console.log(document.referrer);
+  }
 
-    //if (document)
+  toggleSearchAndFocus(){
+    this.hideElement = !this.hideElement;
+
+    if (this.hideElement) {
+      let sgInput = document.querySelector("ion-input.librarySearch > input");
+      //sgInput.focus();
+      console.log(sgInput);
+    }
 
   }
 

@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
-import {NavController, ToastController, AlertController, ModalController, Platform} from 'ionic-angular';
+import {
+  NavController, ToastController, AlertController, ModalController, Platform,
+  MenuController
+} from 'ionic-angular';
 import {AuthenticationService} from "../../providers/authentication-service";
 import {UserAccountService} from "../../providers/user-account-service";
 import {ImageSelectionModalPage} from "../image-selection-modal-page/image-selection-modal-page";
@@ -33,6 +36,7 @@ export class Settings {
     public authenticationService: AuthenticationService,
     public userAccountService: UserAccountService,
     public navCtrl: NavController,
+    public menu: MenuController,
     public toastController: ToastController,
     public alertCtrl: AlertController,
     public modalController: ModalController,
@@ -40,7 +44,11 @@ export class Settings {
   ) {}
 
   ionViewDidLoad() {
-    console.log('Hello Settings Page');
+    this.menu.enable(false);
+  }
+
+  ionViewDidLeave() {
+    this.menu.enable(true);
   }
 
   changePassword() {

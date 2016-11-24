@@ -39,14 +39,14 @@
     <ion-buttons end>
       <button ion-button clear class="" (click)="changePassword()">Save</button>
     </ion-buttons>
-    <ion-buttons start>
-      <button ion-button (click)="loginToSoundcloud()">Login to Soundcloud</button>
-      <button ion-button (click)="loginToSpotify()">Login to Spotify</button>
+    <ion-buttons>
+      <button ion-button full (click)="loginToSoundcloud()">Login to Soundcloud</button>
+      <button ion-button full (click)="loginToSpotify()">Login to Spotify</button>
     </ion-buttons>
-    <ion-buttons start>
-      <button ion-button clear (click)="deleteUser()">Delete user</button>
-    </ion-buttons>
+
   </ion-list>
-  <p>{{ loginTest }}</p>
 
 </ion-content>
+<ion-footer>
+  <ion-item (click)="deleteUser()"><ion-icon item-left name="trash"></ion-icon><h2>Delete user</h2></ion-item>
+</ion-footer>
