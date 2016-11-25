@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Rx';
-import { Playlist } from '../../classes/Playlist.Class'
+import { Playlist } from '../classes/Playlist.Class'
 
 declare var SC;
 
