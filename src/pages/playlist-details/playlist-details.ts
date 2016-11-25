@@ -36,5 +36,16 @@ export class PlaylistDetails {
     this.soundcloudService.startStreaming(item.getId());
   }
 
+  addToPlaylist(item){
+    // Nothing
+  }
+
+  openPlayer(){
+    //nothing
+  }
+
+  share(item){
+      //nothing
+  }
 
 }

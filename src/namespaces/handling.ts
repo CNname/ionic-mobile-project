@@ -104,7 +104,7 @@ export namespace Handling {
       let playlists: Playlist[] = [];
 
       //console.log("id: "tracksArray.);
-      console.log(playlistArray);
+      //console.log(playlistArray);
 
       for (let i = 0; i < playlistArray.length; i++) {
 

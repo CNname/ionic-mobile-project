@@ -5,8 +5,8 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-  <ion-navbar class="playlist-details">
-      <ion-title>{{ playlist.getName() }}</ion-title>
+  <ion-navbar color="2nd_orange" class="playlist-details">
+      <ion-title color="light">{{ playlist.getName() }}</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -27,10 +27,10 @@
         <h4>{{ item.getAlbumTitle() }}</h4>
       </ion-item>
       <ion-item-options side="right">
-        <button ion-button (click)="addToPlaylist(item)">
+        <button ion-button >
           <ion-icon name="add"></ion-icon>
         </button>
-        <button ion-button color="danger" (click)="share(item)">
+        <button ion-button color="danger" >
           <ion-icon color="black" name="share-alt"></ion-icon>
         </button>
       </ion-item-options>

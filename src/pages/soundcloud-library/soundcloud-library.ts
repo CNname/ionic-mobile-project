@@ -61,6 +61,15 @@ export class SoundcloudLibrary {
   ionViewWillLeave(){
     //this.soundcloudService.pauseStream();
   }
+  // this does not work..
+  focusInput(input){
+
+    this.timeout = setTimeout(() =>{
+      input.setFocus();
+    }, 500);
+    console.log(input);
+
+  }
 
   getItemsByName(event){
     clearTimeout(this.timeout);
