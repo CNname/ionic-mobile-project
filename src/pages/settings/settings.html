@@ -25,26 +25,28 @@
   </ion-item>
 
   <ion-list>
-    <ion-item-group>
-      <ion-item-divider>
-        Change password
-      </ion-item-divider>
-      <ion-item>
-        <ion-input type="password" [(ngModel)]="oldPassword" name="oldPassword" placeholder="Old password"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-input type="password" [(ngModel)]="newPassword" name="newPassword" placeholder="New password"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-input type="password" [(ngModel)]="newPasswordAgain" name="newPasswordAgain" placeholder="New password again"></ion-input>
-      </ion-item>
-      <div *ngIf="passwordError.length > 0" class="error" color="white">
-        <p>{{ passwordError }}</p>
-      </div>
-      <ion-buttons end>
-        <button ion-button clear class="" (click)="changePassword()">Save</button>
-      </ion-buttons>
-    </ion-item-group>
+
+    <hr/>
+
+    <h4>
+      Change password
+    </h4>
+    <ion-item>
+      <ion-input type="password" [(ngModel)]="oldPassword" name="oldPassword" placeholder="Old password"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input type="password" [(ngModel)]="newPassword" name="newPassword" placeholder="New password"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input type="password" [(ngModel)]="newPasswordAgain" name="newPasswordAgain" placeholder="New password again"></ion-input>
+    </ion-item>
+    <div *ngIf="passwordError.length > 0" class="error" color="white">
+      <p>{{ passwordError }}</p>
+    </div>
+    <ion-buttons end>
+      <button ion-button clear class="" (click)="changePassword()">Save</button>
+    </ion-buttons>
+
 
     <hr/>
 

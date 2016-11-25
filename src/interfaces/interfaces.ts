@@ -16,12 +16,16 @@ export interface IPlayer {
 }
 
 export interface IPlaylist {
-  name: string;
+  /*name: string;
   ownerId: string;
   songs: Song[];
+  songCount: number;*/
   getName(): string;
   getOwnerId(): string;
   getSongs(): Song[];
+  getSongCount(): number;
+  getPlaylistImage(): imageUrls;
+  getOwnerName(): string;
 }
 
 export interface IUser {

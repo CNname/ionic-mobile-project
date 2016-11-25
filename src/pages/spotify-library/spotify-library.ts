@@ -19,6 +19,7 @@ import {UserAccountService} from "../../providers/user-account-service";
 export class SpotifyLibrary {
   hideElement: boolean = false;
   isPlaying: boolean = false;
+  pauseButton: boolean = false;
   private spotifyservice: SpotifyService;
   private authenticationservice: AuthenticationService;
   public musicService: MusicService;
@@ -29,7 +30,6 @@ export class SpotifyLibrary {
   playing: Song;
   trackItems: any[] = [];
   artistItems: any[] = [];
-  audioObject: any;
   searchCategory: string;
 
   constructor(
@@ -164,7 +164,10 @@ artistClickEvent(id: string) {
   })
 }
 
-startPlayer() {
+startPlayer(e: Event) {
+
+  e.stopPropagation();
+
   if(this.musicService.isPlayerInit()){
     this.musicService.startPlayback();
   }
@@ -182,15 +185,20 @@ startNewPlayer(item: Song){
       this.musicService.setAudio(item.getUrl());
       this.musicService.startPlayback();
       this.isPlaying = true;
+      this.pauseButton = true;
   } else {
       this.playing = item;
       this.musicService.setAudio(item.getUrl());
       this.musicService.startPlayback();
       this.isPlaying = true;
+      this.pauseButton = true;
   }
 }
 
-pausePlayer(){
+pausePlayer(e: Event){
+
+  e.stopPropagation();
+
   if(this.musicService.isPlayerInit()){
     this.musicService.pausePlayback();
   }
