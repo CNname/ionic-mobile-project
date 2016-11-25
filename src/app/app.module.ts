@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { IonicApp, IonicModule } from 'ionic-angular';
 import { MyApp } from './app.component';
-import { Library } from '../pages/library/library';
+import { SpotifyLibrary } from '../pages/spotify-library/spotify-library';
 import { SpotifyService } from '../providers/spotify-service';
 import { PlaylistDetails } from '../pages/playlist-details/playlist-details';
 import { Search } from '../pages/search/search';
@@ -14,33 +14,38 @@ import {LoginPage} from "../pages/login-page/login-page";
 import {UserAccountService} from "../providers/user-account-service";
 import { SoundcloudLibrary } from '../pages/soundcloud-library/soundcloud-library';
 import { Settings } from '../pages/settings/settings';
+import {LoadingPage} from "../pages/loading-page/loading-page";
+import {JsonpModule} from '@angular/http';
 
 @NgModule({
   declarations: [
     MyApp,
-    Library,
+    SpotifyLibrary,
     SoundcloudLibrary,
     Settings,
     PlayerPage,
     PlaylistDetails,
     Search,
     ArtistPage,
-    LoginPage
+    LoginPage,
+    LoadingPage
   ],
   imports: [
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    JsonpModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    Library,
+    SpotifyLibrary,
     SoundcloudLibrary,
     PlayerPage,
     Settings,
     PlaylistDetails,
     Search,
     ArtistPage,
-    LoginPage
+    LoginPage,
+    LoadingPage
   ],
   providers: [ SpotifyService, SoundcloudService, MusicService, AuthenticationService, UserAccountService ]
 })

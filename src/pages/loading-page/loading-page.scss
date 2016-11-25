@@ -1,0 +1,38 @@
+page-loading {
+  .bg {
+    background: url("/assets/img/sg-bg-1280.jpg");
+    background-size: cover;
+
+
+    .wrapper {
+
+      display: flex;
+      height: 100%;
+
+      .inner-wrapper {
+
+        margin: auto;
+
+        p, div {
+          text-align: center;
+          color: white;
+          font-size: 1.75rem;
+        }
+
+        ion-spinner {
+          stroke: #fff;
+          width: 3rem;
+          height: 3rem;
+
+          * {
+            stroke: #fff;
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+}

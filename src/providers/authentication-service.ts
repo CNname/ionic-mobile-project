@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
-import {Library} from "../pages/library/library";
-import {NavController, AlertController } from "ionic-angular";
-import {LoginPage} from "../pages/login-page/login-page";
+import { AlertController } from "ionic-angular";
+import {firebaseUser} from "../interfaces/interfaces";
 
 
 /*
@@ -26,7 +25,7 @@ export class AuthenticationService {
     messagingSenderId: "977961258413"
   };
 
-  constructor(public http: Http/*, public navCtrl: NavController*/ ,public alertCtrl: AlertController) {
+  constructor(public http: Http, public alertCtrl: AlertController) {
     this.firebaseInit();
 
   }
@@ -38,27 +37,13 @@ export class AuthenticationService {
 
   signUp(username: string, passwd: string, callback: Function) {
     firebase.auth().createUserWithEmailAndPassword(username, passwd).then(callback).catch(err => {
-      let alert = this.alertCtrl.create({
-        title: err.code,
-        message: err.message,
-        buttons: ['Ok']
-      });
-      alert.present();
-      console.log(err.code);
-      console.log(err.message);
-    })
+      this.createFirebaseAlert(err);
+    });
   }
 
   logIn(username: string, passwd: string, callback: Function) {
     firebase.auth().signInWithEmailAndPassword(username, passwd).then(callback).catch(err => {
-        let alert = this.alertCtrl.create({
-          title: err.code,
-          message: err.message,
-          buttons: ['Ok']
-        });
-      alert.present();
-      console.log(err.code);
-      console.log(err.message);
+      this.createFirebaseAlert(err);
     });
   }
 
@@ -80,29 +65,30 @@ export class AuthenticationService {
     firebase.auth().sendPasswordResetEmail(email).then(callback).catch(fail);
   }
 
-  updateUserPassword(newPassword: string, callback: Function, fail: Function) {
+  updateUserPassword(newPassword: string, callback: Function) {
     let user = firebase.auth().currentUser;
-    user.updatePassword(newPassword).then(callback).catch(fail);
+    user.updatePassword(newPassword).then(callback).catch(err => {
+      this.createFirebaseAlert(err);
+    });
   }
 
-  updateUserEmail(newEmail: string, callback: Function, fail: Function) {
+  updateUserEmail(newEmail: string, callback: Function) {
     let user = firebase.auth().currentUser;
-    user.updateEmail(newEmail).then(callback).catch(fail);
+    user.updateEmail(newEmail).then(callback).catch(err => {
+      this.createFirebaseAlert(err);
+    });
   }
 
-  updateUserImageUrl(url: string, callback: Function, fail: Function) {
+  updateUserImageUrl(newUrl: string, callback: Function, fail: Function) {
     let user = firebase.auth().currentUser;
     user.updateProfile({
-      photoUrl: url
+      photoURL: newUrl
     }).then(callback).catch(fail);
   }
 
-  // possibly not needed
-  getUserProfile(){
+  getUserProfile(): firebaseUser {
     let user = firebase.auth().currentUser;
-    if (user != null) {
-      // ...
-    }
+    return user;
   }
 
   deleteUser(callback: Function, fail: Function) {
@@ -110,15 +96,79 @@ export class AuthenticationService {
     user.delete().then(callback).catch(fail);
   }
 
-  reAuthenticateUser(callback: Function, fail: Function) {
+  reAuthenticateUser(password: string, callback: Function) {
     let user = firebase.auth().currentUser;
-    let credential;
-    user.reauthenticate(credential).then(callback).catch(fail);
+    let credential = firebase.auth.EmailAuthProvider.credential(user.email, password);
+
+    if (credential === "") {
+      let alert = this.alertCtrl.create({
+        title: "Incorrect old password",
+        message: "Your old password is incorrect.",
+        buttons: ['Ok']
+      });
+      alert.present();
+
+    } else {
+      user.reauthenticate(credential).then(callback).catch(err => {
+        this.createFirebaseAlert(err);
+      });
+    }
   }
 
   isUserLoggedIn(): boolean {
     let user = firebase.auth().currentUser;
     return user != null;
+  }
+
+  private createFirebaseAlert(err) {
+
+    let title: string,
+        message: string;
+
+    switch (err.code) {
+
+      case "auth/wrong-password": title = "Invalid password";
+                                  message = "Your password is invalid.";
+                                  break;
+
+      case "auth/invalid-email":  title = "Invalid email";
+                                  message = "Email is invalid.";
+                                  break;
+
+      case "auth/weak-password":  title = "Weak password";
+                                  message = "Your password appears to be too weak. Password should be at least 6 characters.";
+                                  break;
+
+      case "auth/email-already-in-use": title = "Email already in use";
+                                        message = "The email address is already in use by another account.";
+                                        break;
+
+      case "auth/user-not-found": title = "User not found";
+                                  message = "Couldn't find any accounts with this email.";
+                                  break;
+
+      case "auth/network-request-failed": title = "Network error";
+                                          message = "Network error occurred";
+                                          break;
+
+      case "auth/user-token-expired": title = "Login expired";
+                                      message = "Please login again.";
+                                      break;
+
+      default:  title = "Error";
+                message = "Something went wrong.";
+
+    }
+
+    console.log(err.code);
+    console.log(err.message);
+
+    let alert = this.alertCtrl.create({
+      title: title,
+      message: message,
+      buttons: ['Ok']
+    });
+    alert.present();
   }
 
 }

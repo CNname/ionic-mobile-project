@@ -5,14 +5,65 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-title>Settings</ion-title>
   </ion-navbar>
-
 </ion-header>
-
 
 <ion-content padding>
 
+  <ion-item no-lines>
+    <ion-avatar item-left>
+      <img [src]="userAccountService?.getCurrentUser()?.getImage()?.length > 0 ? userAccountService?.getCurrentUser()?.getImage() : 'assets/img/sg-egg.png'">
+    </ion-avatar>
+
+      <ion-buttons>
+        <button ion-button clear (click)="selectProfileImage()">Change profile image</button>
+        <input id="userImageField" type="file" name="userImage" accept="image/*" style="display: none;" (change)="changeProfileImage($event)">
+      </ion-buttons>
+
+  </ion-item>
+
+  <ion-list>
+
+    <hr/>
+
+    <h4>
+      Change password
+    </h4>
+    <ion-item>
+      <ion-input type="password" [(ngModel)]="oldPassword" name="oldPassword" placeholder="Old password"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input type="password" [(ngModel)]="newPassword" name="newPassword" placeholder="New password"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input type="password" [(ngModel)]="newPasswordAgain" name="newPasswordAgain" placeholder="New password again"></ion-input>
+    </ion-item>
+    <div *ngIf="passwordError.length > 0" class="error" color="white">
+      <p>{{ passwordError }}</p>
+    </div>
+    <ion-buttons end>
+      <button ion-button clear class="" (click)="changePassword()">Save</button>
+    </ion-buttons>
+
+
+    <hr/>
+
+    <ion-buttons>
+      <button ion-button full (click)="changeEmail()">Change email</button>
+    </ion-buttons>
+
+    <hr/>
+
+    <ion-buttons>
+      <button ion-button full (click)="loginToSoundcloud()">Login to Soundcloud</button>
+      <button ion-button full (click)="loginToSpotify()">Login to Spotify</button>
+    </ion-buttons>
+
+  </ion-list>
+
 </ion-content>
+<ion-footer>
+  <ion-item no-lines color="primary" (click)="deleteUser()"><ion-icon item-left name="trash"></ion-icon><h2>Delete user</h2></ion-item>
+</ion-footer>

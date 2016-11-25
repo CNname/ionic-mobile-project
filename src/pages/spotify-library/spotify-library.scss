@@ -1,4 +1,4 @@
-library {
+spotify-library {
  *ion-input-placeholder {
     color: red !important;
   }
@@ -8,13 +8,11 @@ library {
   *:-ms-input-placeholder { /* IE10+ */
     color: red !important;
   }
+
+  /*
+
   .player {
     padding-top: 2rem;
-    background: url("../../assets/img/player-bg.png");
-    background-size: cover;
-    background-position: top center;
-    overflow: visible;
-    border-top: none;
 
     .item-md {
       background-color: transparent;
@@ -33,6 +31,8 @@ library {
     }
 
   }
+
+  */
 
 
 }

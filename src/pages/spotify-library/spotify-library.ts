@@ -4,7 +4,6 @@ import { SpotifyService } from '../../providers/spotify-service';
 import { PlaylistDetails } from '../playlist-details/playlist-details';
 import { Song } from '../../classes/Song.class';
 import { Artist } from '../../classes/Artist.class';
-import { Search } from '../search/search';
 import { PlayerPage } from '../playerPage/playerPage';
 import { ArtistPage } from "../artist-page/artist-page";
 import { Handling } from "../../namespaces/handling";
@@ -14,27 +13,23 @@ import { AuthenticationService } from '../../providers/authentication-service';
 import {UserAccountService} from "../../providers/user-account-service";
 
 @Component({
-  selector: 'library',
-  templateUrl: 'library.html'
+  selector: 'spotify-library',
+  templateUrl: 'spotify-library.html'
 })
-export class Library {
+export class SpotifyLibrary {
   hideElement: boolean = false;
   isPlaying: boolean = false;
+  pauseButton: boolean = false;
   private spotifyservice: SpotifyService;
   private authenticationservice: AuthenticationService;
   public musicService: MusicService;
   // select the default tab
   playerNav: string = "playlists";
-  playlist_id: string;
-  playlist_title: string;
-  playlist_length: number;
-  playlist_owner: string;
   playlist_items: Array<Object>;
   timeout: any;
   playing: Song;
   trackItems: any[] = [];
   artistItems: any[] = [];
-  audioObject: any;
   searchCategory: string;
 
   constructor(
@@ -44,7 +39,7 @@ export class Library {
     public modalCtrl: ModalController,
     musicService: MusicService,
     private menu: MenuController,
-    private userAccountService: UserAccountService) {
+    public userAccountService: UserAccountService) {
       this.musicService = musicService;
       this.authenticationservice = authservice;
       this.spotifyservice = spotifyservice;
@@ -60,19 +55,17 @@ export class Library {
   }
 
   ionViewDidLoad(){
-    console.log("start of the page");
+  }
 
-    // test for uploading to firebase storage
-    /*this.userAccountService.saveImage("asd", snapshot => {
-      let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log("Uploaded " + progress + "%");
-    }, err => {
-      // handle upload errors
-      console.error(err);
-    }, (url) => {
-      // after upload is complete
-      console.log(url);
-    });*/
+  toggleSearchAndFocus(){
+    this.hideElement = !this.hideElement;
+
+    if (this.hideElement) {
+      let sgInput = document.querySelector("ion-input.librarySearch > input");
+      //sgInput.focus();
+      console.log(sgInput);
+    }
+
   }
 
   goToDetails(playlist_id: string, playlist_title: string) {
@@ -171,7 +164,10 @@ artistClickEvent(id: string) {
   })
 }
 
-startPlayer() {
+startPlayer(e: Event) {
+
+  e.stopPropagation();
+
   if(this.musicService.isPlayerInit()){
     this.musicService.startPlayback();
   }
@@ -189,15 +185,20 @@ startNewPlayer(item: Song){
       this.musicService.setAudio(item.getUrl());
       this.musicService.startPlayback();
       this.isPlaying = true;
+      this.pauseButton = true;
   } else {
       this.playing = item;
       this.musicService.setAudio(item.getUrl());
       this.musicService.startPlayback();
       this.isPlaying = true;
+      this.pauseButton = true;
   }
 }
 
-pausePlayer(){
+pausePlayer(e: Event){
+
+  e.stopPropagation();
+
   if(this.musicService.isPlayerInit()){
     this.musicService.pausePlayback();
   }

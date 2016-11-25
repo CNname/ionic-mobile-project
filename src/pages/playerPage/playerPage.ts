@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { Song } from '../../classes/Song.class';
 import { MusicService } from '../../providers/music-service';
-import { Library } from '../library/library';
 import {IPlayer} from "../../interfaces/interfaces";
 
 @Component({
@@ -12,10 +11,8 @@ import {IPlayer} from "../../interfaces/interfaces";
 export class PlayerPage implements IPlayer {
   song: Song;
   songs: Song[];
-  public musicService: MusicService;
 
-  constructor(public navCtrl: NavController, private navParams: NavParams, musicService: MusicService) {
-    this.musicService = musicService;
+  constructor(public navCtrl: NavController, private navParams: NavParams, public musicService: MusicService) {
     this.song = navParams.get('item');
     this.songs = navParams.get('songs');
   }
