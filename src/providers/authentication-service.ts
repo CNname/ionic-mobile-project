@@ -72,9 +72,11 @@ export class AuthenticationService {
     });
   }
 
-  updateUserEmail(newEmail: string, callback: Function, fail: Function) {
+  updateUserEmail(newEmail: string, callback: Function) {
     let user = firebase.auth().currentUser;
-    user.updateEmail(newEmail).then(callback).catch(fail);
+    user.updateEmail(newEmail).then(callback).catch(err => {
+      this.createFirebaseAlert(err);
+    });
   }
 
   updateUserImageUrl(newUrl: string, callback: Function, fail: Function) {
@@ -130,7 +132,7 @@ export class AuthenticationService {
                                   break;
 
       case "auth/invalid-email":  title = "Invalid email";
-                                  message = "Your email is invalid.";
+                                  message = "Email is invalid.";
                                   break;
 
       case "auth/weak-password":  title = "Weak password";

@@ -1,8 +1,8 @@
 <ion-menu [content]="content">
 
   <ion-header>
-    <ion-toolbar>
-      <ion-item no-lines>
+    <ion-toolbar color="primary">
+      <ion-item no-lines color="primary">
         <ion-avatar item-left>
           <img [src]="userAccountService?.getCurrentUser()?.getImage()?.length > 0 ? userAccountService?.getCurrentUser()?.getImage() : 'assets/img/sg-egg.png'">
         </ion-avatar>
@@ -22,7 +22,9 @@
   </ion-content>
 
   <ion-footer>
-    <ion-item><ion-icon item-left name="log-out"></ion-icon><h2 (click)="logOut()">Logout</h2></ion-item>
+    <ion-item (click)="logOut()" color="primary">
+      <ion-icon item-left name="log-out"></ion-icon><h2>Logout</h2>
+    </ion-item>
   </ion-footer>
 
 </ion-menu>

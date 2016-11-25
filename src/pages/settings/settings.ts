@@ -5,7 +5,6 @@ import {
 } from 'ionic-angular';
 import {AuthenticationService} from "../../providers/authentication-service";
 import {UserAccountService} from "../../providers/user-account-service";
-import {ImageSelectionModalPage} from "../image-selection-modal-page/image-selection-modal-page";
 import {spotifyAuthConfig} from "../../interfaces/interfaces";
 import {Observable} from "rxjs";
 
@@ -78,6 +77,54 @@ export class Settings {
 
   }
 
+  changeEmail(){
+
+    let prompt = this.alertCtrl.create({
+      title: 'Change your email',
+      //message: "Enter your email for a password recovery link.",
+      inputs: [
+        {
+          name: 'password',
+          placeholder: 'Password',
+          type: 'password'
+        },
+        {
+          name: 'newEmail',
+          placeholder: 'New email',
+          type: 'email'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel'
+        },
+        {
+          text: 'Change',
+          handler: data => {
+            console.log('Change clicked: ' + data);
+            console.log(data.newEmail);
+
+            this.authenticationService.reAuthenticateUser(data.password, ()=>{
+              this.authenticationService.updateUserEmail(data.newEmail, () => {
+                // success
+                let toast = this.toastController.create({
+                  message: 'Email changed successfully',
+                  duration: 3000,
+                  position: 'bottom'
+                });
+                toast.present();
+              });
+            });
+
+
+          }
+        }
+      ]
+    });
+    prompt.present();
+
+  }
+
   deleteUser(){
     let alert = this.alertCtrl.create({
       title: 'Delete user?',
@@ -113,11 +160,6 @@ export class Settings {
       ]
     });
     alert.present();
-  }
-
-  openProfileImageModal(){
-    let imageModal = this.modalController.create(ImageSelectionModalPage);
-    imageModal.present();
   }
 
   loginToSpotify() {
@@ -262,6 +304,61 @@ console.log(window.cordova.InAppBrowser);
   loginToSoundcloud(){
 
 
+  }
+
+
+  changeProfileImage(event){
+
+    let image = event.srcElement.files[0];
+
+    let loadingToast = this.toastController.create({
+      message: "Uploading..."
+    });
+    loadingToast.present();
+
+
+
+    this.userAccountService.saveImage(image, ()=> {
+      // state change events here
+      console.log("uploading");
+    }, ()=>{
+      // error
+      loadingToast.dismiss();
+
+      let toast = this.toastController.create({
+        message: 'Upload failed',
+        duration: 3000,
+        position: 'bottom'
+      });
+      toast.present();
+    }, snapshot => {
+      // success
+      console.log(snapshot);
+      let url = snapshot.downloadURL;
+
+      this.authenticationService.updateUserImageUrl(url, () => {
+        console.log("update successful");
+        this.userAccountService.getCurrentUser().setImage(url);
+      }, () => {
+        console.log("update failed");
+      });
+
+      loadingToast.dismiss();
+
+      let toast = this.toastController.create({
+        message: 'Uploaded an image successfully',
+        duration: 3000,
+        position: 'bottom'
+      });
+      toast.present();
+      //this.navCtrl.pop();
+    });
+
+  }
+
+  selectProfileImage(){
+    let selectField = document.getElementById("userImageField");
+    selectField.click();
   }
 
 }
