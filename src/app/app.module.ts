@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { IonicApp, IonicModule } from 'ionic-angular';
+import { IonicApp, IonicModule, DeepLinkConfig } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { SpotifyLibrary } from '../pages/spotify-library/spotify-library';
 import { SpotifyService } from '../providers/spotify-service';
@@ -17,6 +17,15 @@ import { Settings } from '../pages/settings/settings';
 import {LoadingPage} from "../pages/loading-page/loading-page";
 import {JsonpModule} from '@angular/http';
 
+// http://ionicframework.com/docs/v2/2.0.0-rc.1/api/navigation/DeepLinker/
+// https://forum.ionicframework.com/t/how-to-configure-deeplinks-in-appmodule-forroot/66058/15
+export const deepLinkConfig: DeepLinkConfig = {
+  links: [
+    //{ component: SoundcloudLibrary, name: 'Soundcloud', segment: 'soundcloud-callback' },
+    { component: SpotifyLibrary, name: 'Spotify', segment: 'spotify-callback' }
+  ]
+};
+
 @NgModule({
   declarations: [
     MyApp,
@@ -31,7 +40,8 @@ import {JsonpModule} from '@angular/http';
     LoadingPage
   ],
   imports: [
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(MyApp, {}, deepLinkConfig),
+    //IonicModule.forRoot(MyApp),
     JsonpModule
   ],
   bootstrap: [IonicApp],

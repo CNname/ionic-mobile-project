@@ -176,7 +176,7 @@ export class Settings {
       base: "https://accounts.spotify.com/authorize",
       clientId: "2f27c1567f8d4774b936b1ae98e91214",
       responseType: "token",
-      redirectUri: encodeURIComponent("http://localhost:8100/#/?spotify-callback"),
+      redirectUri: encodeURIComponent("http://localhost:8100?"),
       scope: "user-read-private",
       state: state
     };
@@ -188,14 +188,14 @@ export class Settings {
                   "&scope=" + authConfig.scope +
                   "&state=" + authConfig.state;
 
-    this.platform.ready().then(() => {
+    /*this.platform.ready().then(() => {
       this.spotifyLogin(authref).subscribe(res => {
         this.loginTest = res.accessToken;
         this.navCtrl.pop();
       });
-    });
+    });*/
 
-    //window.location.href = authref;
+    window.location.href = authref;
 
   }
 

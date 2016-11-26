@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Platform, MenuController, Nav } from 'ionic-angular';
+import {Platform, MenuController, Nav, NavParams} from 'ionic-angular';
 import { StatusBar } from 'ionic-native';
 import { SpotifyLibrary } from '../pages/spotify-library/spotify-library';
 import { SoundcloudLibrary } from '../pages/soundcloud-library/soundcloud-library';
@@ -20,7 +20,7 @@ export class MyApp {
   pages: Array<{title: string, component: any, icon: string}>;
 
   constructor(
-    public platform: Platform,
+    private platform: Platform,
     public menu: MenuController,
     public authenticationService: AuthenticationService,
     public userAccountService: UserAccountService

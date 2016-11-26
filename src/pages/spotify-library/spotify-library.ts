@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import {NavController, ModalController, ViewController, MenuController} from 'ionic-angular';
+import {NavController, ModalController, ViewController, MenuController, NavParams} from 'ionic-angular';
 import { SpotifyService } from '../../providers/spotify-service';
 import { PlaylistDetails } from '../playlist-details/playlist-details';
 import { Song } from '../../classes/Song.class';
@@ -39,7 +39,8 @@ export class SpotifyLibrary {
     public modalCtrl: ModalController,
     musicService: MusicService,
     private menu: MenuController,
-    public userAccountService: UserAccountService) {
+    public userAccountService: UserAccountService,
+    private params: NavParams) {
       this.musicService = musicService;
       this.authenticationservice = authservice;
       this.spotifyservice = spotifyservice;
@@ -48,11 +49,14 @@ export class SpotifyLibrary {
         this.playlist_items = playlist["items"];
         this.menu.enable(true);
       });
+
+      console.log(params.get('params'));
+
   }
 
-  ionViewCanEnter(): boolean {
+  /*ionViewCanEnter(): boolean {
     return this.authenticationservice.isUserLoggedIn();
-  }
+  }*/
 
   ionViewDidLoad(){
   }
@@ -67,6 +71,8 @@ export class SpotifyLibrary {
     }
 
   }
+
+
 
   goToDetails(playlist_id: string, playlist_title: string) {
     this.navCtrl.push(PlaylistDetails, {playlist_id, playlist_title});
@@ -135,7 +141,7 @@ getItemsByName(event:any) {
 
         })
       }
-    }, 1000);
+  }, 1000);
 }
 
 artistClickEvent(id: string) {

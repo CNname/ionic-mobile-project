@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import {Component, OnInit, OnDestroy} from '@angular/core';
+import {NavController, NavParams} from 'ionic-angular';
 import {AuthenticationService} from "../../providers/authentication-service";
 import {UserAccountService} from "../../providers/user-account-service";
 import {LoginPage} from "../login-page/login-page";
 import {SpotifyLibrary} from "../spotify-library/spotify-library";
 import {SoundcloudLibrary} from "../soundcloud-library/soundcloud-library";
+import {Subscription} from "rxjs";
+import {URLSearchParams} from "@angular/http";
 
 /*
   Generated class for the Loading page.
@@ -16,7 +18,7 @@ import {SoundcloudLibrary} from "../soundcloud-library/soundcloud-library";
   selector: 'page-loading',
   templateUrl: 'loading-page.html'
 })
-export class LoadingPage {
+export class LoadingPage implements OnInit {
 
   private loadingTexts: string[] = [
    '"Straightening feathers"',
@@ -30,8 +32,17 @@ export class LoadingPage {
   constructor(
     public navCtrl: NavController,
     public authenticationService: AuthenticationService,
-    public userAccountService: UserAccountService
-  ) {}
+    public userAccountService: UserAccountService,
+    private params: NavParams
+  ) {
+    console.log(params.get("access_token"));
+  }
+
+  ngOnInit(): void {
+    let param = new URLSearchParams(window.location.search);
+    console.log("test: " + param.get('test'));
+    console.log(param.rawParams);
+  }
 
   ionViewDidLoad() {
 
