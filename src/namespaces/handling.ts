@@ -58,9 +58,6 @@ export namespace Handling {
     static SoundCloudTracks(tracksArray: Array<any>): Song[]{
       let songs: Song[] = [];
 
-      //console.log("id: "tracksArray.);
-      console.log(tracksArray);
-
       for (let i = 0; i < tracksArray.length; i++) {
 
         let song: Song = new Song(tracksArray[i].id, tracksArray[i].title, tracksArray[i].streamable);
@@ -72,9 +69,10 @@ export namespace Handling {
             url: "../../assets/img/sg-placeholder.jpg"
           }
         };
-
         if(  tracksArray[i].artwork_url != null) {
           images.large = tracksArray[i].artwork_url;
+        } else{
+          images.large = "../../assets/img/soundcloud-logo.jpg";
         }
 
         song.setAlbumImage(images);
@@ -140,7 +138,7 @@ export namespace Handling {
 
     static artists(artistsArray: Array<any>): Artist[] {
 
-      console.log(artistsArray);
+      //console.log(artistsArray);
 
       let artistItems: Artist[] = [];
 
