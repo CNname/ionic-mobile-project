@@ -36,7 +36,7 @@ export class SoundcloudLibrary {
   constructor(public navCtrl: NavController, userAccountService: UserAccountService, soundcloudService: SoundcloudService, private toastController: ToastController) {
       this.userAccountService = userAccountService;
       this.soundcloudService = soundcloudService;
-      /*this.soundcloudService.getCharts("asd", "asd").then(res =>{
+      /*this.soundcloudService.getCharts("asd", "asd").subscribe(res =>{
         console.log(res);
       });*/
       this.soundcloudService.getPlaylists().then(res =>{

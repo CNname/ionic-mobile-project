@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Jsonp } from '@angular/http';
+import { Http, Jsonp, Response, RequestOptions, Headers, Request, RequestMethod } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Rx';
 import { Playlist } from '../classes/Playlist.Class'
@@ -70,8 +70,14 @@ export class SoundcloudService {
 
   //this doesnt work atm neither does SC.get('charts', { kind: 'top', genre: 'soundcloud:genres:all-music, limit: 30' })
   getCharts(type: string, genre: string ): any {
-    //return this.http.get('https://api-v2.soundcloud.com/charts?kind=top&genre=soundcloud%3Agenres%3Acountry&client_id=d51aa162fb2f62d2072b34da795b83a4', {})
-    return SC.get('https://api-v2.soundcloud.com/charts?kind=top&genre=soundcloud%3Agenres%3Acountry&client_id=d51aa162fb2f62d2072b34da795b83a4?callback=map', {});
+
+    let header = new Headers();
+    header.append("Content-Type", 'application/json');
+
+    
+    return this.http.get('https://api-v2.soundcloud.com/charts?kind=top&genre=soundcloud%3Agenres%3Acountry&client_id=d51aa162fb2f62d2072b34da795b83a4', {}).map(res => {
+      return res.json();
+    });
     //.map(res =>{
     //  console.log(res);
       //return res.json()

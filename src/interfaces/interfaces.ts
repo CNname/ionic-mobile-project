@@ -77,5 +77,5 @@ export interface ICallHandler {
   getUserById(id: string): Observable<any>;
   getArtistById(id: string): Observable<any>;
   getPopularSongsByArtist(id: string, country: string): Observable<any>;
-  searchForItem(query: string): Observable<any>;
+  searchForItem(query: string, offset:number ): Observable<any>;
 }

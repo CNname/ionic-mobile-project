@@ -24,6 +24,7 @@ export class SpotifyLibrary {
   private authenticationservice: AuthenticationService;
   public musicService: MusicService;
   // select the default tab
+  offset:number = 30;
   playerNav: string = "playlists";
   playlist_items: Array<Object>;
   timeout: any;
@@ -31,6 +32,7 @@ export class SpotifyLibrary {
   trackItems: any[] = [];
   artistItems: any[] = [];
   searchCategory: string;
+  query: string;
 
   constructor(
     public navCtrl: NavController,
@@ -68,13 +70,40 @@ export class SpotifyLibrary {
 
   }
 
+  doInfinite(infiniteScroll){
+    this.spotifyservice.searchForItem(this.query, this.offset).subscribe((res) => {
+
+      let trackitems:any[] = Handling.HandleJson.tracks(res.tracks.items);
+      let artistitems:any[] = Handling.HandleJson.artists(res.artists.items);
+      this.offset += 30;
+      if(trackitems.length == 0 && artistitems.length == 0){
+        infiniteScroll.enable(false);
+      } else { infiniteScroll.enable(true); }
+
+      for(let i= 0; i < trackitems.length; i++){
+        this.trackItems.push(trackitems[i]);
+      }
+
+      for(let i= 0; i < artistitems.length; i++){
+        this.artistItems.push(artistitems[i]);
+      }
+
+      // activate segment if needed
+      if (this.trackItems.length > 0) {
+        this.searchCategory = "tracks";
+      } else if (this.trackItems.length === 0 && this.artistItems.length > 0) {
+        this.searchCategory = "artists";
+      }
+    })
+  }
+
   goToDetails(playlist_id: string, playlist_title: string) {
     this.navCtrl.push(PlaylistDetails, {playlist_id, playlist_title});
- }
+  }
 
- getPlaylistById(userId: string, playlistId: string){
-   this.spotifyservice.getPlaylistById(userId, playlistId).subscribe(res => {
-     console.time("Create playlist");
+  getPlaylistById(userId: string, playlistId: string){
+    this.spotifyservice.getPlaylistById(userId, playlistId).subscribe(res => {
+      console.time("Create playlist");
 
       let tracks: Song[] = [];
       for (var i=0; i<res.items.length; i++) {
@@ -107,7 +136,7 @@ export class SpotifyLibrary {
 
     })
  }
-
+// this an oddly named search
 getItemsByName(event:any) {
   clearTimeout(this.timeout);
   this.trackItems = [];
@@ -115,13 +144,13 @@ getItemsByName(event:any) {
 
   this.timeout = setTimeout(() => {
 
-      let query = event.target.value;
+      this.query = event.target.value;
 
-      if(query.length >= 3){
+      if(this.query.length >= 3){
         // activate search segment if not active
         if (this.playerNav !== "search") this.playerNav = "search";
 
-        this.spotifyservice.searchForItem(encodeURIComponent(query)).subscribe((res) => {
+        this.spotifyservice.searchForItem(encodeURIComponent(this.query), 0).subscribe((res) => {
 
           this.trackItems = Handling.HandleJson.tracks(res.tracks.items);
           this.artistItems = Handling.HandleJson.artists(res.artists.items);
