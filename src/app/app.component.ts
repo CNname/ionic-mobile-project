@@ -7,7 +7,7 @@ import { AuthenticationService } from "../providers/authentication-service";
 import { Settings } from '../pages/settings/settings';
 import {UserAccountService} from "../providers/user-account-service";
 import {LoadingPage} from "../pages/loading-page/loading-page";
-
+import {Router} from "@angular/router";
 
 @Component({
   templateUrl: 'app.html'
