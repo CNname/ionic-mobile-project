@@ -1,13 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
-import { Platform, MenuController, Nav } from 'ionic-angular';
+import {Platform, MenuController, Nav, NavParams} from 'ionic-angular';
 import { StatusBar } from 'ionic-native';
 import { SpotifyLibrary } from '../pages/spotify-library/spotify-library';
 import { SoundcloudLibrary } from '../pages/soundcloud-library/soundcloud-library';
-import { LoginPage } from "../pages/login-page/login-page";
 import { AuthenticationService } from "../providers/authentication-service";
 import { Settings } from '../pages/settings/settings';
-import {User} from "../classes/User.class";
 import {UserAccountService} from "../providers/user-account-service";
+import {LoadingPage} from "../pages/loading-page/loading-page";
 
 
 @Component({
@@ -17,11 +16,11 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
   // make PlayerPage the root (or first) page
-  rootPage: any = LoginPage;
+  rootPage: any = LoadingPage;
   pages: Array<{title: string, component: any, icon: string}>;
 
   constructor(
-    public platform: Platform,
+    private platform: Platform,
     public menu: MenuController,
     public authenticationService: AuthenticationService,
     public userAccountService: UserAccountService
@@ -60,7 +59,8 @@ export class MyApp {
       console.log("logout successful");
       this.menu.close().then(()=>{
         this.menu.enable(false);
-        this.nav.popToRoot().catch(()=> console.log('pop to root failed'));
+        //this.nav.setRoot(LoadingPage);
+        //this.nav.popToRoot().catch(()=> console.log('pop to root failed'));
       });
 
 

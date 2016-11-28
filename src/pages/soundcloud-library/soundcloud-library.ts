@@ -5,6 +5,8 @@ import { UserAccountService } from '../../providers/user-account-service'
 import { User } from '../../classes/User.class'
 import { SoundcloudService } from '../../providers/soundcloud-service'
 import { Handling } from "../../namespaces/handling";
+import { Playlist } from '../../classes/Playlist.Class'
+import { PlaylistDetails } from '../playlist-details/playlist-details'
 
 
 @Component({
@@ -14,6 +16,9 @@ import { Handling } from "../../namespaces/handling";
 export class SoundcloudLibrary {
     hideElement: boolean = false;
     playerNav: string = "feed";
+    isPlaying: boolean = false;
+    pauseButton: boolean = false;
+    playing: Song;
     private tracks: any[] = [];
     private playTrack: number = 0;
     public currentTrack: Song;
@@ -22,13 +27,20 @@ export class SoundcloudLibrary {
     artistItems: any[] = [];
     timeout: any;
     items: any[] = [];
-    private userAccountService: UserAccountService
-    private soundcloudService: SoundcloudService
-    private user: User
+    playlists: any[] = [];
+    private userAccountService: UserAccountService;
+    private soundcloudService: SoundcloudService;
+    private user: User;
 
   constructor(public navCtrl: NavController, userAccountService: UserAccountService, soundcloudService: SoundcloudService, private toastController: ToastController) {
       this.userAccountService = userAccountService;
       this.soundcloudService = soundcloudService;
+      /*this.soundcloudService.getCharts("asd", "asd").subscribe(res =>{
+        console.log(res);
+      });*/
+      this.soundcloudService.getPlaylists().then(res =>{
+          this.playlists = Handling.HandleJson.SoundCloudPlaylists(res);
+      });
   }
 
   /*ionViewCanEnter(): boolean{
@@ -45,24 +57,60 @@ export class SoundcloudLibrary {
     } else { return true; }
 
   }*/
+
+  ionViewWillLeave(){
+    //this.soundcloudService.pauseStream();
+  }
+  // this does not work..
+  focusInput(input){
+
+    this.timeout = setTimeout(() =>{
+      input.setFocus();
+    }, 500);
+    console.log(input);
+
+  }
+
   getItemsByName(event){
     clearTimeout(this.timeout);
 
     this.timeout = setTimeout(() => {
 
-        let query = event.target.value;
+      let query = event.target.value;
 
-        if(query.length >= 3){
-          // activate search segment if not active
-          if (this.playerNav !== "search") this.playerNav = "search";
-
-            this.soundcloudService.searchForItem(encodeURIComponent(query)).then(res => {
-                this.items = Handling.HandleJson.SoundCloudTracks(res);
-                console.log(this.items);
-            });
-
-          }
-        }, 3000);
+      if(query.length >= 3){
+        // activate search segment if not active
+        if (this.playerNav !== "search") this.playerNav = "search";
+        this.soundcloudService.searchForItem(encodeURIComponent(query)).then(res => {
+            this.items = Handling.HandleJson.SoundCloudTracks(res);
+        });
+      }
+    }, 3000);
   }
 
+
+
+  openPlaylist(item: Playlist){
+    this.navCtrl.push(PlaylistDetails, {item: item}).catch(()=> console.log('Something went wrong while opening playlist'));
+  }
+
+  openPlayer(){
+    console.log('player');
+  }
+
+  pausePlayer(){
+    this.soundcloudService.pauseStream();
+  }
+
+  resumePlayer(){
+    this.soundcloudService.resumeStream();
+  }
+
+  startNewPlayer(item: Song){
+    this.isPlaying = true;
+    this.pauseButton = true;
+    this.playing = item;
+    this.soundcloudService.startStreaming(item.getId());
+
+  }
 }

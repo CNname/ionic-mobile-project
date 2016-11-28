@@ -1,23 +1,55 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
-import { SpotifyService } from '../../providers/spotify-service';
+import { SoundcloudService } from '../../providers/soundcloud-service';
+import { Playlist } from '../../classes/Playlist.Class'
+import { Song } from '../../classes/Song.class'
+import {SpotifyService} from "../../providers/spotify-service";
 
 @Component({
   selector: 'page-playlist-details',
   templateUrl: 'playlist-details.html'
 })
 export class PlaylistDetails {
-  playlist_id: string;
-  playlist_title: string
-  playlist: SpotifyService[];
+  playlist: Playlist;
+  isPlaying: boolean = false;
+  pauseButton: boolean = false;
+  playing: Song;
 
-  constructor(public navCtrl: NavController, private navParams: NavParams, private spotifyservice: SpotifyService) {
-    this.playlist_id = navParams.get('playlist_id');
-    this.playlist_title = navParams.get('playlist_title');
-    spotifyservice.loadPlaylistContent(this.playlist_id).subscribe(playlist => {
+
+  constructor(
+    private navParams: NavParams,
+    private soundcloudService: SoundcloudService,
+    private spotifyService: SpotifyService
+  ) {
+
+    this.playlist = navParams.get('item');
+    /*spotifyservice.loadPlaylistContent(this.playlist_id).subscribe(playlist => {
       console.log(playlist);
-  })
+  })*/
+  }
+  pausePlayer(){
+    this.soundcloudService.pauseStream();
+  }
+  resumePlayer(){
+    this.soundcloudService.resumeStream();
+  }
+  startNewPlayer(item: Song){
+    this.isPlaying = true;
+    this.pauseButton = true;
+    this.playing = item;
+    this.soundcloudService.startStreaming(item.getId());
+  }
 
+  addToPlaylist(item){
+    // Nothing
+  }
+
+  openPlayer(){
+    //nothing
+  }
+
+  share(item){
+      //nothing
   }
 
 }

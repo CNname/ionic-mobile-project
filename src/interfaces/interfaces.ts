@@ -16,12 +16,16 @@ export interface IPlayer {
 }
 
 export interface IPlaylist {
-  name: string;
+  /*name: string;
   ownerId: string;
   songs: Song[];
+  songCount: number;*/
   getName(): string;
   getOwnerId(): string;
   getSongs(): Song[];
+  getSongCount(): number;
+  getPlaylistImage(): imageUrls;
+  getOwnerName(): string;
 }
 
 export interface IUser {
@@ -41,6 +45,13 @@ export interface spotifyAuthConfig {
   redirectUri: string;
   scope?: string;
   state?: string;
+}
+
+export interface SpotifyParams {
+  accessToken: string;
+  expiresIn: string;
+  state: string;
+  tokenType: string;
 }
 
 export interface imageUrls {

@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
-import {NavController, ToastController, AlertController, ModalController, Platform} from 'ionic-angular';
+import {
+  NavController, ToastController, AlertController, ModalController, Platform,
+  MenuController
+} from 'ionic-angular';
 import {AuthenticationService} from "../../providers/authentication-service";
 import {UserAccountService} from "../../providers/user-account-service";
-import {ImageSelectionModalPage} from "../image-selection-modal-page/image-selection-modal-page";
 import {spotifyAuthConfig} from "../../interfaces/interfaces";
 import {Observable} from "rxjs";
 
@@ -33,6 +35,7 @@ export class Settings {
     public authenticationService: AuthenticationService,
     public userAccountService: UserAccountService,
     public navCtrl: NavController,
+    public menu: MenuController,
     public toastController: ToastController,
     public alertCtrl: AlertController,
     public modalController: ModalController,
@@ -40,7 +43,11 @@ export class Settings {
   ) {}
 
   ionViewDidLoad() {
-    console.log('Hello Settings Page');
+    this.menu.enable(false);
+  }
+
+  ionViewDidLeave() {
+    this.menu.enable(true);
   }
 
   changePassword() {
@@ -67,6 +74,54 @@ export class Settings {
     } else {
       this.passwordError = "Make sure to fill all fields correctly";
     }
+
+  }
+
+  changeEmail(){
+
+    let prompt = this.alertCtrl.create({
+      title: 'Change your email',
+      //message: "Enter your email for a password recovery link.",
+      inputs: [
+        {
+          name: 'password',
+          placeholder: 'Password',
+          type: 'password'
+        },
+        {
+          name: 'newEmail',
+          placeholder: 'New email',
+          type: 'email'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel'
+        },
+        {
+          text: 'Change',
+          handler: data => {
+            console.log('Change clicked: ' + data);
+            console.log(data.newEmail);
+
+            this.authenticationService.reAuthenticateUser(data.password, ()=>{
+              this.authenticationService.updateUserEmail(data.newEmail, () => {
+                // success
+                let toast = this.toastController.create({
+                  message: 'Email changed successfully',
+                  duration: 3000,
+                  position: 'bottom'
+                });
+                toast.present();
+              });
+            });
+
+
+          }
+        }
+      ]
+    });
+    prompt.present();
 
   }
 
@@ -108,11 +163,6 @@ export class Settings {
     alert.present();
   }
 
-  openProfileImageModal(){
-    let imageModal = this.modalController.create(ImageSelectionModalPage);
-    imageModal.present();
-  }
-
   loginToSpotify() {
 
     // generate nonce for a state parameter,
@@ -127,7 +177,7 @@ export class Settings {
       base: "https://accounts.spotify.com/authorize",
       clientId: "2f27c1567f8d4774b936b1ae98e91214",
       responseType: "token",
-      redirectUri: encodeURIComponent("http://localhost/callback"),
+      redirectUri: encodeURIComponent(window.location.protocol + "//" + window.location.host + "?"),
       scope: "user-read-private",
       state: state
     };
@@ -139,12 +189,16 @@ export class Settings {
                   "&scope=" + authConfig.scope +
                   "&state=" + authConfig.state;
 
-    this.platform.ready().then(() => {
+    /*this.platform.ready().then(() => {
       this.spotifyLogin(authref).subscribe(res => {
         this.loginTest = res.accessToken;
         this.navCtrl.pop();
       });
-    });
+    });*/
+
+
+
+    window.location.href = authref;
 
   }
 
@@ -163,9 +217,9 @@ export class Settings {
 
   private spotifyLogin(href: string): Observable<any> {
     return new Observable(observer => {
-
+console.log(window.cordova.InAppBrowser);
       // Cordova's inappbrowser plugin version
-      let browserRef = window.cordova.inAppBrowser.open(href, "_blank", "location=no");
+      let browserRef = window.cordova.InAppBrowser.open(href, "_blank", "location=no");
       browserRef.addEventListener("loadstart", event => {
 
         if ((event.url).indexOf("http://localhost/callback") === 0) {
@@ -181,9 +235,10 @@ export class Settings {
             response["state"] !== null && response["state"] !== undefined
           ) {
             alert("Toimii Suomessa!");
-            //observer.next(response);
+            observer.next(response);
             //this.loginTest = response['access_token'];
           } else {
+            alert("fuuuuck...");
             Observable.throw("Something went wrong during authentication");
             alert("Ei toimi Suomessa!");
           }
@@ -253,6 +308,61 @@ export class Settings {
   loginToSoundcloud(){
 
 
+  }
+
+
+  changeProfileImage(event){
+
+    let image = event.srcElement.files[0];
+
+    let loadingToast = this.toastController.create({
+      message: "Uploading..."
+    });
+    loadingToast.present();
+
+
+
+    this.userAccountService.saveImage(image, ()=> {
+      // state change events here
+      console.log("uploading");
+    }, ()=>{
+      // error
+      loadingToast.dismiss();
+
+      let toast = this.toastController.create({
+        message: 'Upload failed',
+        duration: 3000,
+        position: 'bottom'
+      });
+      toast.present();
+    }, snapshot => {
+      // success
+      console.log(snapshot);
+      let url = snapshot.downloadURL;
+
+      this.authenticationService.updateUserImageUrl(url, () => {
+        console.log("update successful");
+        this.userAccountService.getCurrentUser().setImage(url);
+      }, () => {
+        console.log("update failed");
+      });
+
+      loadingToast.dismiss();
+
+      let toast = this.toastController.create({
+        message: 'Uploaded an image successfully',
+        duration: 3000,
+        position: 'bottom'
+      });
+      toast.present();
+      //this.navCtrl.pop();
+    });
+
+  }
+
+  selectProfileImage(){
+    let selectField = document.getElementById("userImageField");
+    selectField.click();
   }
 
 }

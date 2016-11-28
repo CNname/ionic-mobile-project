@@ -5,12 +5,56 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-  <ion-navbar class="playlist-details">
-      <ion-title>{{playlist_title}}</ion-title>
+  <ion-navbar color="2nd_orange" class="playlist-details">
+      <ion-title color="light">{{ playlist.getName() }}</ion-title>
   </ion-navbar>
 </ion-header>
 
 
-<ion-content padding>
-
+<ion-content>
+  <ion-list no-lines>
+    <ion-item-sliding #item>
+      <ion-item *ngFor="let item of playlist.getSongs()" (click)="startNewPlayer(item)">
+        <ion-thumbnail item-left>
+          <img [src]="item.getAlbumImage().large">
+        </ion-thumbnail>
+        <h3><b>{{ item.getSongTitle() }}</b></h3>
+        <h3>
+          <span class="artist" *ngFor="let artist of item.getArtists(); let i = index">
+            <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
+          </span>
+        </h3>
+        <h4>{{ item.getAlbumTitle() }}</h4>
+      </ion-item>
+      <ion-item-options side="right">
+        <button ion-button >
+          <ion-icon name="add"></ion-icon>
+        </button>
+        <button ion-button color="danger" >
+          <ion-icon color="black" name="share-alt"></ion-icon>
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
 </ion-content>
+<ion-footer [hidden]="!isPlaying">
+  <ion-toolbar class="librarySmallPlayer player">
+      <ion-list class="librarySmallPlayer" no-lines>
+        <ion-item (click)='openPlayer()'>
+        <h3 color="black"><b>{{ playing?.getSongTitle() }}</b></h3>
+        <h3 color="black"><span *ngFor="let playing of playing?.getArtists(); let i = index">
+          <span *ngIf="i > 0"> / </span> {{ playing?.getName() }}
+        </span></h3>
+
+        <ion-buttons end item-right>
+          <button ion-button color="alt_orange" [hidden]="!pauseButton" (click)="pauseButton = !pauseButton" class="larger" (click)="pausePlayer()">
+            <ion-icon name="pause"></ion-icon>
+          </button>
+          <button ion-button color="alt_orange" class="larger" [hidden]="pauseButton" (click)="pauseButton = !pauseButton" (click)="resumePlayer()">
+            <ion-icon name="play"></ion-icon>
+          </button>
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+  </ion-toolbar>
+</ion-footer>

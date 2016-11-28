@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import {NavController, ModalController, ViewController, MenuController} from 'ionic-angular';
+import {NavController, ModalController, ViewController, MenuController, NavParams} from 'ionic-angular';
 import { SpotifyService } from '../../providers/spotify-service';
 import { PlaylistDetails } from '../playlist-details/playlist-details';
 import { Song } from '../../classes/Song.class';
@@ -11,6 +11,7 @@ import { imageUrls } from "../../interfaces/interfaces";
 import { MusicService } from '../../providers/music-service';
 import { AuthenticationService } from '../../providers/authentication-service';
 import {UserAccountService} from "../../providers/user-account-service";
+import {Playlist} from "../../classes/Playlist.Class";
 
 @Component({
   selector: 'spotify-library',
@@ -19,18 +20,19 @@ import {UserAccountService} from "../../providers/user-account-service";
 export class SpotifyLibrary {
   hideElement: boolean = false;
   isPlaying: boolean = false;
+  pauseButton: boolean = false;
   private spotifyservice: SpotifyService;
   private authenticationservice: AuthenticationService;
   public musicService: MusicService;
   // select the default tab
-  playerNav: string = "playlists";
+  playerNav: string = "spotify";
   playlist_items: Array<Object>;
   timeout: any;
   playing: Song;
   trackItems: any[] = [];
   artistItems: any[] = [];
-  audioObject: any;
   searchCategory: string;
+  spotifyUser: Object;
 
   constructor(
     public navCtrl: NavController,
@@ -39,26 +41,68 @@ export class SpotifyLibrary {
     public modalCtrl: ModalController,
     musicService: MusicService,
     private menu: MenuController,
-    public userAccountService: UserAccountService) {
+    public userAccountService: UserAccountService,
+    private params: NavParams) {
       this.musicService = musicService;
       this.authenticationservice = authservice;
       this.spotifyservice = spotifyservice;
-      this.spotifyservice.loadPlaylist().subscribe(playlist => {
+      /*this.spotifyservice.loadPlaylist().subscribe(playlist => {
         //noinspection TypeScriptValidateTypes
         this.playlist_items = playlist["items"];
         this.menu.enable(true);
-      });
+      });*/
+
+      console.log(params.get('params'));
+
   }
 
   ionViewCanEnter(): boolean {
     return this.authenticationservice.isUserLoggedIn();
   }
 
-  ionViewDidLoad(){ }
+  ionViewDidLoad(){
 
-  goToDetails(playlist_id: string, playlist_title: string) {
-    this.navCtrl.push(PlaylistDetails, {playlist_id, playlist_title});
- }
+    this.menu.enable(true);
+
+    let user = this.userAccountService.getSpotifyParams();
+
+    if (user) {
+      this.spotifyservice.getMe().subscribe(res => {
+        this.spotifyUser = res;
+      })
+
+      /*this.spotifyservice.getFeaturedPlaylists().subscribe(res => {
+        this.playlist_items = res['playlists']['items'];
+      });*/
+
+      this.spotifyservice.getFeaturedPlaylists().subscribe(res =>{
+        this.playlist_items = Handling.HandleJson.SpotifyPlaylists(res['playlists']['items']);
+        console.log(this.playlist_items);
+      });
+
+    }
+
+
+
+
+  }
+
+  toggleSearchAndFocus(){
+    this.hideElement = !this.hideElement;
+
+    if (this.hideElement) {
+      let sgInput = document.querySelector("ion-input.librarySearch > input");
+      //sgInput.focus();
+      console.log(sgInput);
+    }
+
+  }
+
+
+
+openPlaylist(item: Playlist){
+  this.navCtrl.push(PlaylistDetails, {item: item}).catch(()=> console.log('Something went wrong while opening playlist'));
+}
 
  getPlaylistById(userId: string, playlistId: string){
    this.spotifyservice.getPlaylistById(userId, playlistId).subscribe(res => {
@@ -123,7 +167,7 @@ getItemsByName(event:any) {
 
         })
       }
-    }, 1000);
+  }, 1000);
 }
 
 artistClickEvent(id: string) {
@@ -152,7 +196,10 @@ artistClickEvent(id: string) {
   })
 }
 
-startPlayer() {
+startPlayer(e: Event) {
+
+  e.stopPropagation();
+
   if(this.musicService.isPlayerInit()){
     this.musicService.startPlayback();
   }
@@ -170,15 +217,20 @@ startNewPlayer(item: Song){
       this.musicService.setAudio(item.getUrl());
       this.musicService.startPlayback();
       this.isPlaying = true;
+      this.pauseButton = true;
   } else {
       this.playing = item;
       this.musicService.setAudio(item.getUrl());
       this.musicService.startPlayback();
       this.isPlaying = true;
+      this.pauseButton = true;
   }
 }
 
-pausePlayer(){
+pausePlayer(e: Event){
+
+  e.stopPropagation();
+
   if(this.musicService.isPlayerInit()){
     this.musicService.pausePlayback();
   }

@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {NavController, AlertController, ToastController, MenuController} from 'ionic-angular';
 import {AuthenticationService} from "../../providers/authentication-service";
 import {SpotifyLibrary} from "../spotify-library/spotify-library";
 import {UserAccountService} from "../../providers/user-account-service";
+import {LoadingPage} from "../loading-page/loading-page";
 
 /*
   Generated class for the LoginPage page.
@@ -32,24 +33,11 @@ export class LoginPage {
     private userAccountService: UserAccountService,
     public alertCtrl: AlertController,
     private toastCtrl: ToastController) {
-    this.menu.enable(false);
+      this.menu.enable(false);
   }
 
   ionViewDidLoad() {
-    this.authenticationService.authStateChange(user => {
-      if (user) {
-        //console.log(user);
-        //if (this.userAccountService.getCurrentUser() == null) {
-          this.userAccountService.setCurrentUser(
-            this.authenticationService.getUserProfile()
-          );
-        //}
-        // User is signed in.
-        this.navCtrl.push(SpotifyLibrary).catch(()=> console.log('push failed'));
-      } else {
-        // No user is signed in.
-      }
-    });
+
   }
 
   private getLoginEmail(): string {
@@ -81,14 +69,7 @@ export class LoginPage {
       if (this.registerPassword === this.registerPasswordAgain) {
         this.registerError = "";
         this.authenticationService.signUp(this.registerEmail, this.registerPassword, user => {
-          if (user) {
-            console.log(user);
-            // User is signed in.
-            this.navCtrl.push(SpotifyLibrary).catch(()=> console.log('push failed'));
-          } else {
-            // No user is signed in.
-            this.navCtrl.popToRoot().catch(()=> console.log('pop to root failed'));
-          }
+          // possibly something here
         });
       } else {
         this.registerError = "Passwords doesn't match.";
@@ -112,7 +93,7 @@ export class LoginPage {
       ],
       buttons: [
         {
-          text: 'Cancel', 
+          text: 'Cancel',
           handler: data => {
             console.log('Cancel clicked');
           }
