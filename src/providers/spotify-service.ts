@@ -16,8 +16,7 @@ export class SpotifyService implements ICallHandler {
   }
 
   loadPlaylistContent(playlist_id: string): Observable<SpotifyService[]> {
-      return this.http.get(this.playlistcontent)
-        .map(res => <SpotifyService[]>res.json());
+      return this.http.get(this.playlistcontent).map(res => <SpotifyService[]>res.json());
   }
 
   getPlaylistById(userId: string, playlistId: string): Observable<any> {
