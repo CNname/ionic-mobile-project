@@ -15,7 +15,7 @@ import { PlaylistDetails } from '../playlist-details/playlist-details'
 })
 export class SoundcloudLibrary {
     hideElement: boolean = false;
-    playerNav: string = "feed";
+    playerNav: string = "home";
     isPlaying: boolean = false;
     pauseButton: boolean = false;
     playing: Song;
@@ -32,14 +32,20 @@ export class SoundcloudLibrary {
     private soundcloudService: SoundcloudService;
     private user: User;
     next_href: string;
+    trending: any[] = [];
 
-  constructor(public navCtrl: NavController, userAccountService: UserAccountService, soundcloudService: SoundcloudService, private toastController: ToastController) {
+  constructor(public navCtrl: NavController,
+    userAccountService: UserAccountService,
+    soundcloudService: SoundcloudService,
+    private toastController: ToastController) {
       this.userAccountService = userAccountService;
       this.soundcloudService = soundcloudService;
-      /*this.soundcloudService.getCharts("asd", "asd").subscribe(res =>{
+      this.soundcloudService.getCharts("top", encodeURIComponent("soundcloud:genres:"+"all-music")).subscribe(res =>{
         console.log(res);
-      });*/
+        this.trending = Handling.HandleJson.SoundCloudTrendingTracks(res.collection);
+      });
       this.soundcloudService.getPlaylists().then(res =>{
+        console.log(res);
           this.playlists = Handling.HandleJson.SoundCloudPlaylists(res);
       });
   }

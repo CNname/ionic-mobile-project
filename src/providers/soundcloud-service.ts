@@ -54,7 +54,6 @@ export class SoundcloudService {
   }
   getMore(query: string):any{
     return this.http.get(query).map(res => {
-      //console.log('vastaus');
       return res.json();
     });
   }
@@ -72,17 +71,12 @@ export class SoundcloudService {
   getCharts(type: string, genre: string ): any {
 
     let header = new Headers();
+    header.append("Accept", "*/*");
     header.append("Content-Type", 'application/json');
-
-    
-    return this.http.get('https://api-v2.soundcloud.com/charts?kind=top&genre=soundcloud%3Agenres%3Acountry&client_id=d51aa162fb2f62d2072b34da795b83a4', {}).map(res => {
-      return res.json();
-    });
-    //.map(res =>{
-    //  console.log(res);
-      //return res.json()
-      //https://api-v2.soundcloud.com/charts?kind=top&genre=soundcloud%3Agenres%3Acountry&client_id=d51aa162fb2f62d2072b34da795b83a4
-    //});
+    return this.http.get('https://api-v2.soundcloud.com/charts?kind=' + type + '&client_id=d51aa162fb2f62d2072b34da795b83a4', {
+        headers: header })
+      .map((res: Response) => res.json());
   }
 
+//  *://*/* 
 }

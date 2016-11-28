@@ -4,7 +4,7 @@
         <ion-icon name="menu"></ion-icon>
       </button>
       <ion-title class="streamgull-title" [hidden]="hideElement" (click)="hideElement = !hideElement" (click)="focusInput(input)">
-        SoundCloud Library
+        SoundCloud&copy; Library
       </ion-title>
       <ion-buttons end>
         <button ion-button color="darkGrey" class="larger" (click)="hideElement = !hideElement" (click)="focusInput(input)">
@@ -17,42 +17,88 @@
   </ion-toolbar>
   <ion-toolbar no-border-top color="2nd_orange">
       <ion-segment [(ngModel)]="playerNav" color="light">
-        <ion-segment-button value="feed">
-          <b>Feed</b>
+        <ion-segment-button value="home">
+          <ion-icon name="home"></ion-icon>
+        </ion-segment-button>
+        <ion-segment-button value="trending">
+           <ion-icon name="flame"></ion-icon>
         </ion-segment-button>
         <ion-segment-button value="playlists">
-          <b>Playlists</b>
+          <ion-icon name="list"></ion-icon>
         </ion-segment-button>
         <ion-segment-button value="search">
-          <b>Search</b>
+          <ion-icon name="search"></ion-icon>
         </ion-segment-button>
       </ion-segment>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+
   <div [ngSwitch]="playerNav">
-    <ion-list *ngSwitchCase="'feed'">
+
+    <ion-list *ngSwitchCase="'home'">
      <!-- feed -->
+    </ion-list>
+
+    <ion-list *ngSwitchCase="'trending'">
+      <ion-item-group>
+        <ion-item-divider color="light">Top 50</ion-item-divider>
+      <ion-item-sliding #item no-lines>
+        <ion-item *ngFor="let item of trending" (click)="startNewPlayer(item)">
+          <ion-thumbnail item-left>
+            <img [src]="item.getAlbumImage().large">
+          </ion-thumbnail>
+          <h3><b>{{ item.getSongTitle() }}</b></h3>
+          <h3>
+            <span class="artist" *ngFor="let artist of item?.getArtists(); let i = index">
+              <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
+            </span>
+          </h3>
+          <h4>{{ item.getAlbumTitle() }}</h4>
+        </ion-item>
+        <ion-item-options side="right">
+          <button ion-button (click)="addToPlaylist(item)">
+            <ion-icon name="add"></ion-icon>
+          </button>
+          <button ion-button color="danger" (click)="share(item)">
+            <ion-icon (color)="primary" name="share-alt"></ion-icon>
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-item-group>
     </ion-list>
 
     <ion-list *ngSwitchCase="'playlists'">
 
-      <ion-card class="playlist"  *ngFor="let item of playlists" (click)="openPlaylist(item)" >
-         <ion-card-header>
-           {{ item.getName() }}
-         </ion-card-header>
-         <button ion-item>
-           <ion-icon name='person' item-left></ion-icon>
-           {{ item.getOwnerName() }}
-         </button>
-         <button ion-item>
-           <ion-icon name='play' item-left></ion-icon>
-           {{ item.getSongCount() }}
-         </button>
-       </ion-card>
+      <ion-card class="playlist"  *ngFor="let item of playlists" (click)="openPlaylist(item)" no-padding>
+        <ion-grid>
+          <ion-row no-padding>
+            <ion-col width-33>
+              <ion-thumbnail item-left style="width:100px;">
+                <img [src]="item.getPlaylistImage().large" style="width:100px;max-width:none;height:100%">
+              </ion-thumbnail>
+            </ion-col>
+            <ion-col width-67>
+              <ion-card-header>
+                {{ item.getName() }}
+              </ion-card-header>
+                <button ion-item>
+                  <ion-avatar item-left>
+                    <img [src]="item.getOwnerImage()">
+                  </ion-avatar>
+                  {{ item.getOwnerName() }}
+                </button>
+              </ion-col>
+          </ion-row>
+       </ion-grid>
+      </ion-card>
     </ion-list>
     <ion-list no-lines *ngSwitchCase="'search'">
+
+
+      <p class="searchPlaceholder" [hidden]="items.length > 0" padding-left padding-right>Search results appear here... </p>
+
       <ion-item-sliding #item no-lines>
         <ion-item *ngFor="let item of items" (click)="startNewPlayer(item)">
           <ion-thumbnail item-left>

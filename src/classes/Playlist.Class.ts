@@ -9,6 +9,7 @@ export class Playlist implements IPlaylist {
   private _songs: Song[];
   private _albumImage: imageUrls;
   private _ownerName: string;
+  private _ownerImage : imageUrls;
 
   constructor(id: string, title: string, count: number){
     this._id = id;
@@ -50,6 +51,14 @@ export class Playlist implements IPlaylist {
 
   getOwnerName():string {
     return this._ownerName;
+  }
+
+  setOwnerImage(value: imageUrls){
+    this._ownerImage = value;
+  }
+
+  getOwnerImage():imageUrls{
+    return this._ownerImage;
   }
 
   getOwnerId(): string{
