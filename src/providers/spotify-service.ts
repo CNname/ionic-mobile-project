@@ -7,7 +7,6 @@ import {UserAccountService} from "./user-account-service";
 @Injectable()
 export class SpotifyService implements ICallHandler {
 
-
   constructor(public http: Http, public userAccountService: UserAccountService) { }
 
   getPlaylistById(userId: string, playlistId: string): Observable<any> {
@@ -44,12 +43,10 @@ export class SpotifyService implements ICallHandler {
         //.catch(this.spotifyErrorCatch);
   }
 
-  searchForItem(query: string): Observable<any> {
-
-    return this.http.get('https://api.spotify.com/v1/search?q=' + query + '&type=track,artist&offset=0&limit=15', {})
+  searchForItem(query: string, offset:number): Observable<any> {
+    return this.http.get('https://api.spotify.com/v1/search?q=' + query + '&type=track,artist&offset=' + offset + '&limit=30', {})
       .map(res => res.json())
       //.catch(this.spotifyErrorCatch);
-
   }
 
   getMe(): Observable<any> {

@@ -5,7 +5,6 @@ import {UserAccountService} from "../../providers/user-account-service";
 import {LoginPage} from "../login-page/login-page";
 import {SpotifyLibrary} from "../spotify-library/spotify-library";
 import {SoundcloudLibrary} from "../soundcloud-library/soundcloud-library";
-import {Router} from "@angular/router";
 
 /*
   Generated class for the Loading page.
@@ -32,7 +31,6 @@ export class LoadingPage implements OnInit {
     public navCtrl: NavController,
     public authenticationService: AuthenticationService,
     public userAccountService: UserAccountService,
-    public router: Router
   ) {}
 
   ngOnInit(): void {

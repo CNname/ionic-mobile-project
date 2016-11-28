@@ -58,9 +58,6 @@ export namespace Handling {
     static SoundCloudTracks(tracksArray: Array<any>): Song[]{
       let songs: Song[] = [];
 
-      //console.log("id: "tracksArray.);
-      console.log(tracksArray);
-
       for (let i = 0; i < tracksArray.length; i++) {
 
         let song: Song = new Song(tracksArray[i].id, tracksArray[i].title, tracksArray[i].streamable);
@@ -72,9 +69,10 @@ export namespace Handling {
             url: "../../assets/img/sg-placeholder.jpg"
           }
         };
-
         if(  tracksArray[i].artwork_url != null) {
           images.large = tracksArray[i].artwork_url;
+        } else{
+          images.large = "../../assets/img/soundcloud-logo.jpg";
         }
 
         song.setAlbumImage(images);
@@ -138,6 +136,51 @@ export namespace Handling {
       return playlists;
     }
 
+     // handle SoundCloud tracks and return Songs Array
+     static SoundCloudTrendingTracks(tracksArray: Array<any>): Song[]{
+
+       let songs: Song[] = [];
+
+       for (let i = 0; i < tracksArray.length; i++) {
+
+         let song: Song = new Song(tracksArray[i].track.id, tracksArray[i].track.title, tracksArray[i].track.streamable);
+       //  console.log(song);
+         let images: imageUrls = {
+           large: {
+             height: 600,
+             width: 600,
+             url: "../../assets/img/sg-placeholder.jpg"
+           }
+         };
+         if(  tracksArray[i].track.artwork_url != null) {
+           images.large = tracksArray[i].track.artwork_url;
+         } else{
+           images.large = "../../assets/img/soundcloud-logo.jpg";
+         }
+
+         song.setAlbumImage(images);
+         song.setAlbumId(tracksArray[i].track.id);
+         song.setAlbumTitle(tracksArray[i].track.title);
+         song.setUrl(tracksArray[i].track.stream_url);
+
+         let artists: Artist[] = [];
+         //console.log(tracksArray[i].user.username);
+         //for (let j = 0; j < tracksArray[i].user.length; j++) {
+           artists.push(new Artist(
+            tracksArray[i].track.user_id,
+            tracksArray[i].track.user.username,
+            tracksArray[i].track.user.permalink_url
+           ))
+          //}
+
+         song.setArtists(artists);
+         songs.push(song);
+
+       }
+       //console.log(songs);
+       return songs;
+    }
+
     static SoundCloudPlaylists(playlistArray: Array<any>): Playlist[] {
       let playlists: Playlist[] = [];
 
@@ -159,6 +202,8 @@ export namespace Handling {
 
         if(  playlistArray[i].artwork_url != null) {
           images.large = playlistArray[i].artwork_url;
+        }else if(playlistArray[i].tracks[0].artwork_url != null ){
+          images.large = playlistArray[i].tracks[0].artwork_url;
         }
 
         if(playlistArray[i].tracks.length != 0){
@@ -166,9 +211,9 @@ export namespace Handling {
           playlist.setSongs(tracks);
         }
         playlist.setPlaylistImage(images);
+        playlist.setOwnerImage(playlistArray[i].user.avatar_url);
         playlist.setOwnerName(playlistArray[i].user.username);
         playlist.setOwnerId(playlistArray[i].user.id);
-
         playlists.push(playlist);
 
       }
@@ -178,7 +223,7 @@ export namespace Handling {
 
     static artists(artistsArray: Array<any>): Artist[] {
 
-      console.log(artistsArray);
+      //console.log(artistsArray);
 
       let artistItems: Artist[] = [];
 

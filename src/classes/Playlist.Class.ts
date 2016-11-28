@@ -10,6 +10,8 @@ export class Playlist implements IPlaylist {
   private _albumImage: imageUrls;
   private _ownerName: string;
   private _service: string; // spotify or soundcloud
+  private _ownerImage : imageUrls;
+
 
   constructor(id: string, title: string, count: number, service: string){
     this._id = id;
@@ -52,6 +54,14 @@ export class Playlist implements IPlaylist {
 
   getOwnerName():string {
     return this._ownerName;
+  }
+
+  setOwnerImage(value: imageUrls){
+    this._ownerImage = value;
+  }
+
+  getOwnerImage():imageUrls{
+    return this._ownerImage;
   }
 
   getOwnerId(): string{

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Jsonp } from '@angular/http';
+import { Http, Jsonp, Response, RequestOptions, Headers, Request, RequestMethod } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Rx';
 import { Playlist } from '../classes/Playlist.Class'
@@ -46,10 +46,19 @@ export class SoundcloudService {
   }
 
   searchForItem(query: string): any {
-    return SC.get('tracks', {  q: query, limit: 50 });
+    return SC.get('tracks', {
+      q: query,
+      limit: 40,
+      linked_partitioning: 1 }
+    );
+  }
+  getMore(query: string):any{
+    return this.http.get(query).map(res => {
+      return res.json();
+    });
   }
 
-// id = 42090076
+  // id = 42090076
   getPlaylists(): any{
     return SC.get('playlists', { user_id: 42090076 });
   }
@@ -59,14 +68,15 @@ export class SoundcloudService {
   }
 
   //this doesnt work atm neither does SC.get('charts', { kind: 'top', genre: 'soundcloud:genres:all-music, limit: 30' })
-  getCharts(type: string, genre: string ): Observable<any> {
-    //return this.http.get('https://api-v2.soundcloud.com/charts?kind=top&genre=soundcloud%3Agenres%3Acountry&client_id=d51aa162fb2f62d2072b34da795b83a4', {})
-    return this.jsonp.get('https://api-v2.soundcloud.com/charts?kind=top&genre=soundcloud%3Agenres%3Acountry&client_id=d51aa162fb2f62d2072b34da795b83a4?callback=map', {})
-    .map(res =>{
-      console.log(res);
-      //return res.json()
-      //https://api-v2.soundcloud.com/charts?kind=top&genre=soundcloud%3Agenres%3Acountry&client_id=d51aa162fb2f62d2072b34da795b83a4
-    });
+  getCharts(type: string, genre: string ): any {
+
+    let header = new Headers();
+    header.append("Accept", "*/*");
+    header.append("Content-Type", 'application/json');
+    return this.http.get('https://api-v2.soundcloud.com/charts?kind=' + type + '&client_id=d51aa162fb2f62d2072b34da795b83a4', {
+        headers: header })
+      .map((res: Response) => res.json());
   }
 
+//  *://*/* 
 }
