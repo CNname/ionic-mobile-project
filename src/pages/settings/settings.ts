@@ -94,6 +94,7 @@ export class Settings {
             this.authenticationService.reAuthenticateUser(data.password, ()=>{
               this.authenticationService.deleteUser(() => {
                 // success
+
                 this.navCtrl.popToRoot();
               },() => {
                 // error
@@ -179,10 +180,12 @@ export class Settings {
             response["expires_in"] !== null && response["expires_in"] !== undefined &&
             response["state"] !== null && response["state"] !== undefined
           ) {
+            alert("Toimii Suomessa!");
             //observer.next(response);
-            this.loginTest = response['access_token'];
+            //this.loginTest = response['access_token'];
           } else {
             Observable.throw("Something went wrong during authentication");
+            alert("Ei toimi Suomessa!");
           }
 
         }
