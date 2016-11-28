@@ -14,8 +14,8 @@ import {LoginPage} from "../pages/login-page/login-page";
 import {UserAccountService} from "../providers/user-account-service";
 import { SoundcloudLibrary } from '../pages/soundcloud-library/soundcloud-library';
 import { Settings } from '../pages/settings/settings';
-import {ImageSelectionModalPage} from "../pages/image-selection-modal-page/image-selection-modal-page";
-import {JsonpModule} from '@angular/http'
+import {LoadingPage} from "../pages/loading-page/loading-page";
+import {JsonpModule} from '@angular/http';
 
 @NgModule({
   declarations: [
@@ -23,12 +23,12 @@ import {JsonpModule} from '@angular/http'
     SpotifyLibrary,
     SoundcloudLibrary,
     Settings,
-    ImageSelectionModalPage,
     PlayerPage,
     PlaylistDetails,
     Search,
     ArtistPage,
-    LoginPage
+    LoginPage,
+    LoadingPage
   ],
   imports: [
     IonicModule.forRoot(MyApp),
@@ -41,11 +41,11 @@ import {JsonpModule} from '@angular/http'
     SoundcloudLibrary,
     PlayerPage,
     Settings,
-    ImageSelectionModalPage,
     PlaylistDetails,
     Search,
     ArtistPage,
-    LoginPage
+    LoginPage,
+    LoadingPage
   ],
   providers: [ SpotifyService, SoundcloudService, MusicService, AuthenticationService, UserAccountService ]
 })

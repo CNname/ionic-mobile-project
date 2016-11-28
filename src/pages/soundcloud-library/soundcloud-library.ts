@@ -31,6 +31,7 @@ export class SoundcloudLibrary {
     private userAccountService: UserAccountService;
     private soundcloudService: SoundcloudService;
     private user: User;
+    next_href: string;
 
   constructor(public navCtrl: NavController, userAccountService: UserAccountService, soundcloudService: SoundcloudService, private toastController: ToastController) {
       this.userAccountService = userAccountService;
@@ -61,19 +62,55 @@ export class SoundcloudLibrary {
   ionViewWillLeave(){
     //this.soundcloudService.pauseStream();
   }
+  // this does not work..
+  focusInput(input){
+    this.timeout = setTimeout(() =>{
+      input.setFocus();
+    }, 500);
+    //console.log(input);
+  }
+
+  doInfinite(infiniteScroll){
+    //console.log("end of a list, call more");
+    if(this.next_href.length != 0){
+      //console.log(this.next_href);
+      this.soundcloudService.getMore(this.next_href).subscribe(res => {
+        if(res.next_href){
+          this.next_href = res.next_href;
+          infiniteScroll.enable(true);
+        }else{
+          this.next_href = "";
+          infiniteScroll.enable(false);
+        }
+        let items: any[] = Handling.HandleJson.SoundCloudTracks(res.collection);
+        for(let i= 0; i < items.length; i++){
+          this.items.push(items[i]);
+        }
+        //console.log(this.items);
+      });
+    } else{
+      console.log('no more');
+    }
+  }
 
   getItemsByName(event){
     clearTimeout(this.timeout);
 
     this.timeout = setTimeout(() => {
+      let query:string = event.target.value;
 
-      let query = event.target.value;
+    //  if(this.next_href.length == 0){ query = event.target.value;
+    //  } else { query = this.next_href; }
 
       if(query.length >= 3){
         // activate search segment if not active
         if (this.playerNav !== "search") this.playerNav = "search";
         this.soundcloudService.searchForItem(encodeURIComponent(query)).then(res => {
-            this.items = Handling.HandleJson.SoundCloudTracks(res);
+          //console.log(res);
+          if(res.next_href){
+            this.next_href = res.next_href;
+          }
+          this.items = Handling.HandleJson.SoundCloudTracks(res.collection);
         });
       }
     }, 3000);
@@ -85,15 +122,15 @@ export class SoundcloudLibrary {
     this.navCtrl.push(PlaylistDetails, {item: item}).catch(()=> console.log('Something went wrong while opening playlist'));
   }
 
-  openPlayer(){
-    console.log('player');
+  openPlayerPage(item){
+    //console.log('player');
   }
 
   pausePlayer(){
     this.soundcloudService.pauseStream();
   }
 
-  resumePlayer(){
+  startPlayer(){
     this.soundcloudService.resumeStream();
   }
 

@@ -3,11 +3,11 @@
       <button ion-button menuToggle>
         <ion-icon name="menu"></ion-icon>
       </button>
-    <ion-title class="streamgull-title" [hidden]="hideElement" (click)="hideElement = !hideElement">
+    <ion-title class="streamgull-title" [hidden]="hideElement" (click)="toggleSearchAndFocus()">
       Streamgull
     </ion-title>
     <ion-buttons end>
-      <button ion-button color="darkGrey" class="larger" (click)="hideElement = !hideElement">
+      <button ion-button color="darkGrey" class="larger" (click)="toggleSearchAndFocus()">
         <ion-icon name="md-search"></ion-icon>
       </button>
     </ion-buttons>
@@ -96,33 +96,35 @@
         </div>
 
     </ion-list>
+
+    <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="Loading more results">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
   </div>
 </ion-content>
 
-  <ion-footer [hidden]="!isPlaying">
-    <ion-toolbar class="librarySmallPlayer player">
-        <ion-list class="librarySmallPlayer" no-lines>
-          <ion-item>
-        <ion-thumbnail item-left class="playingThumbnail-wrapper">
-            <img *ngIf="playing != null" class="playingThumbnail" [src]="playing?.getAlbumImage().large.url">
-          </ion-thumbnail>
-          <h3 color="white"><b>{{ playing?.getSongTitle() }}</b></h3>
-          <h3 color="white"><span *ngFor="let playing of playing?.getArtists(); let i = index">
-            <span *ngIf="i > 0"> / </span> {{ playing?.getName() }}
-          </span></h3>
+<ion-footer [hidden]="!isPlaying">
+  <ion-toolbar class="librarySmallPlayer player" color="primary">
+    <ion-list class="librarySmallPlayer" no-lines>
+      <ion-item (click)='openPagePlayer(playing)' color="primary">
+        <h3><b>{{ playing?.getSongTitle() }}</b></h3>
+        <h3><span *ngFor="let playing of playing?.getArtists(); let i = index">
+          <span *ngIf="i > 0"> / </span> {{ playing?.getName() }}
+        </span></h3>
 
-          <ion-buttons end item-right>
-            <button ion-button color="white" class="larger" (click)="pausePlayer()">
-              <ion-icon name="pause"></ion-icon>
-            </button>
-            <button ion-button color="white" class="larger" (click)="startPlayer()">
-              <ion-icon name="play"></ion-icon>
-            </button>
-            <button ion-button color="white" class="larger" (click)="openPagePlayer(playing)">
-              <ion-icon name="arrow-up"></ion-icon>
-            </button>
-          </ion-buttons>
-        </ion-item>
-      </ion-list>
-    </ion-toolbar>
-  </ion-footer>
+        <ion-buttons end item-right>
+          <button ion-button color="white" [hidden]="!pauseButton" (click)="pauseButton = !pauseButton" class="larger" (click)="pausePlayer($event)">
+            <ion-icon name="pause"></ion-icon>
+          </button>
+          <button ion-button color="white" class="larger" [hidden]="pauseButton" (click)="pauseButton = !pauseButton" (click)="startPlayer($event)">
+            <ion-icon name="play"></ion-icon>
+          </button>
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+  </ion-toolbar>
+</ion-footer>

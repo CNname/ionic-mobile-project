@@ -37,27 +37,13 @@ export class AuthenticationService {
 
   signUp(username: string, passwd: string, callback: Function) {
     firebase.auth().createUserWithEmailAndPassword(username, passwd).then(callback).catch(err => {
-      let alert = this.alertCtrl.create({
-        title: err.code,
-        message: err.message,
-        buttons: ['Ok']
-      });
-      alert.present();
-      console.log(err.code);
-      console.log(err.message);
-    })
+      this.createFirebaseAlert(err);
+    });
   }
 
   logIn(username: string, passwd: string, callback: Function) {
     firebase.auth().signInWithEmailAndPassword(username, passwd).then(callback).catch(err => {
-        let alert = this.alertCtrl.create({
-          title: err.code,
-          message: err.message,
-          buttons: ['Ok']
-        });
-      alert.present();
-      console.log(err.code);
-      console.log(err.message);
+      this.createFirebaseAlert(err);
     });
   }
 
@@ -86,9 +72,11 @@ export class AuthenticationService {
     });
   }
 
-  updateUserEmail(newEmail: string, callback: Function, fail: Function) {
+  updateUserEmail(newEmail: string, callback: Function) {
     let user = firebase.auth().currentUser;
-    user.updateEmail(newEmail).then(callback).catch(fail);
+    user.updateEmail(newEmail).then(callback).catch(err => {
+      this.createFirebaseAlert(err);
+    });
   }
 
   updateUserImageUrl(newUrl: string, callback: Function, fail: Function) {
@@ -133,9 +121,51 @@ export class AuthenticationService {
   }
 
   private createFirebaseAlert(err) {
+
+    let title: string,
+        message: string;
+
+    switch (err.code) {
+
+      case "auth/wrong-password": title = "Invalid password";
+                                  message = "Your password is invalid.";
+                                  break;
+
+      case "auth/invalid-email":  title = "Invalid email";
+                                  message = "Email is invalid.";
+                                  break;
+
+      case "auth/weak-password":  title = "Weak password";
+                                  message = "Your password appears to be too weak. Password should be at least 6 characters.";
+                                  break;
+
+      case "auth/email-already-in-use": title = "Email already in use";
+                                        message = "The email address is already in use by another account.";
+                                        break;
+
+      case "auth/user-not-found": title = "User not found";
+                                  message = "Couldn't find any accounts with this email.";
+                                  break;
+
+      case "auth/network-request-failed": title = "Network error";
+                                          message = "Network error occurred";
+                                          break;
+
+      case "auth/user-token-expired": title = "Login expired";
+                                      message = "Please login again.";
+                                      break;
+
+      default:  title = "Error";
+                message = "Something went wrong.";
+
+    }
+
+    console.log(err.code);
+    console.log(err.message);
+
     let alert = this.alertCtrl.create({
-      title: err.code,
-      message: err.message,
+      title: title,
+      message: message,
       buttons: ['Ok']
     });
     alert.present();

@@ -19,18 +19,20 @@ import {UserAccountService} from "../../providers/user-account-service";
 export class SpotifyLibrary {
   hideElement: boolean = false;
   isPlaying: boolean = false;
+  pauseButton: boolean = false;
   private spotifyservice: SpotifyService;
   private authenticationservice: AuthenticationService;
   public musicService: MusicService;
   // select the default tab
+  offset:number = 30;
   playerNav: string = "playlists";
   playlist_items: Array<Object>;
   timeout: any;
   playing: Song;
   trackItems: any[] = [];
   artistItems: any[] = [];
-  audioObject: any;
   searchCategory: string;
+  query: string;
 
   constructor(
     public navCtrl: NavController,
@@ -39,7 +41,7 @@ export class SpotifyLibrary {
     public modalCtrl: ModalController,
     musicService: MusicService,
     private menu: MenuController,
-    private userAccountService: UserAccountService) {
+    public userAccountService: UserAccountService) {
       this.musicService = musicService;
       this.authenticationservice = authservice;
       this.spotifyservice = spotifyservice;
@@ -54,15 +56,54 @@ export class SpotifyLibrary {
     return this.authenticationservice.isUserLoggedIn();
   }
 
-  ionViewDidLoad(){ }
+  ionViewDidLoad(){
+  }
+
+  toggleSearchAndFocus(){
+    this.hideElement = !this.hideElement;
+
+    if (this.hideElement) {
+      let sgInput = document.querySelector("ion-input.librarySearch > input");
+      //sgInput.focus();
+      console.log(sgInput);
+    }
+
+  }
+
+  doInfinite(infiniteScroll){
+    this.spotifyservice.searchForItem(this.query, this.offset).subscribe((res) => {
+
+      let trackitems:any[] = Handling.HandleJson.tracks(res.tracks.items);
+      let artistitems:any[] = Handling.HandleJson.artists(res.artists.items);
+      this.offset += 30;
+      if(trackitems.length == 0 && artistitems.length == 0){
+        infiniteScroll.enable(false);
+      } else { infiniteScroll.enable(true); }
+
+      for(let i= 0; i < trackitems.length; i++){
+        this.trackItems.push(trackitems[i]);
+      }
+
+      for(let i= 0; i < artistitems.length; i++){
+        this.artistItems.push(artistitems[i]);
+      }
+
+      // activate segment if needed
+      if (this.trackItems.length > 0) {
+        this.searchCategory = "tracks";
+      } else if (this.trackItems.length === 0 && this.artistItems.length > 0) {
+        this.searchCategory = "artists";
+      }
+    })
+  }
 
   goToDetails(playlist_id: string, playlist_title: string) {
     this.navCtrl.push(PlaylistDetails, {playlist_id, playlist_title});
- }
+  }
 
- getPlaylistById(userId: string, playlistId: string){
-   this.spotifyservice.getPlaylistById(userId, playlistId).subscribe(res => {
-     console.time("Create playlist");
+  getPlaylistById(userId: string, playlistId: string){
+    this.spotifyservice.getPlaylistById(userId, playlistId).subscribe(res => {
+      console.time("Create playlist");
 
       let tracks: Song[] = [];
       for (var i=0; i<res.items.length; i++) {
@@ -95,7 +136,7 @@ export class SpotifyLibrary {
 
     })
  }
-
+// this an oddly named search
 getItemsByName(event:any) {
   clearTimeout(this.timeout);
   this.trackItems = [];
@@ -103,13 +144,13 @@ getItemsByName(event:any) {
 
   this.timeout = setTimeout(() => {
 
-      let query = event.target.value;
+      this.query = event.target.value;
 
-      if(query.length >= 3){
+      if(this.query.length >= 3){
         // activate search segment if not active
         if (this.playerNav !== "search") this.playerNav = "search";
 
-        this.spotifyservice.searchForItem(encodeURIComponent(query)).subscribe((res) => {
+        this.spotifyservice.searchForItem(encodeURIComponent(this.query), 0).subscribe((res) => {
 
           this.trackItems = Handling.HandleJson.tracks(res.tracks.items);
           this.artistItems = Handling.HandleJson.artists(res.artists.items);
@@ -152,7 +193,10 @@ artistClickEvent(id: string) {
   })
 }
 
-startPlayer() {
+startPlayer(e: Event) {
+
+  e.stopPropagation();
+
   if(this.musicService.isPlayerInit()){
     this.musicService.startPlayback();
   }
@@ -170,15 +214,20 @@ startNewPlayer(item: Song){
       this.musicService.setAudio(item.getUrl());
       this.musicService.startPlayback();
       this.isPlaying = true;
+      this.pauseButton = true;
   } else {
       this.playing = item;
       this.musicService.setAudio(item.getUrl());
       this.musicService.startPlayback();
       this.isPlaying = true;
+      this.pauseButton = true;
   }
 }
 
-pausePlayer(){
+pausePlayer(e: Event){
+
+  e.stopPropagation();
+
   if(this.musicService.isPlayerInit()){
     this.musicService.pausePlayback();
   }

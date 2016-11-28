@@ -57,9 +57,9 @@ export class SpotifyService implements ICallHandler {
         })
   }
 
-  searchForItem(query: string): Observable<any> {
+  searchForItem(query: string, offset:number): Observable<any> {
 
-    return this.http.get('https://api.spotify.com/v1/search?q=' + query + '&type=track,artist&offset=0&limit=15', {})
+    return this.http.get('https://api.spotify.com/v1/search?q=' + query + '&type=track,artist&offset=' + offset + '&limit=30', {})
       .map(res => {
         return res.json()
       })

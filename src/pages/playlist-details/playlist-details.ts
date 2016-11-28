@@ -26,7 +26,7 @@ export class PlaylistDetails {
   pausePlayer(){
     this.soundcloudService.pauseStream();
   }
-  resumePlayer(){
+  startPlayer(){
     this.soundcloudService.resumeStream();
   }
   startNewPlayer(item: Song){
@@ -36,5 +36,16 @@ export class PlaylistDetails {
     this.soundcloudService.startStreaming(item.getId());
   }
 
+  addToPlaylist(item){
+    // Nothing
+  }
+
+  openPlayerPage(item){
+    //nothing
+  }
+
+  share(item){
+      //nothing
+  }
 
 }

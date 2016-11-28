@@ -1,22 +1,22 @@
 <ion-header>
-  <ion-toolbar color="alt_orange">
+  <ion-toolbar color="2nd_orange">
       <button ion-button menuToggle>
         <ion-icon name="menu"></ion-icon>
       </button>
-      <ion-title class="streamgull-title" [hidden]="hideElement" (click)="hideElement = !hideElement">
+      <ion-title class="streamgull-title" [hidden]="hideElement" (click)="hideElement = !hideElement" (click)="focusInput(input)">
         SoundCloud Library
       </ion-title>
       <ion-buttons end>
-        <button ion-button color="darkGrey" class="larger" (click)="hideElement = !hideElement">
+        <button ion-button color="darkGrey" class="larger" (click)="hideElement = !hideElement" (click)="focusInput(input)">
           <ion-icon name="md-search"></ion-icon>
         </button>
       </ion-buttons>
       <div [hidden]="!hideElement">
-        <ion-input clearInput class="librarySearch" placeholder="Search songs and artists" (input)="getItemsByName($event)"></ion-input>
+          <ion-input #input class="librarySearch scSearch"  placeholder="Search songs and artists" (input)="getItemsByName($event)"></ion-input>
       </div>
   </ion-toolbar>
-  <ion-toolbar no-border-top color="alt_orange">
-      <ion-segment [(ngModel)]="playerNav" color="darkGrey">
+  <ion-toolbar no-border-top color="2nd_orange">
+      <ion-segment [(ngModel)]="playerNav" color="light">
         <ion-segment-button value="feed">
           <b>Feed</b>
         </ion-segment-button>
@@ -52,15 +52,15 @@
          </button>
        </ion-card>
     </ion-list>
-    <ion-list *ngSwitchCase="'search'" no-lines>
-      <ion-item-sliding #item>
+    <ion-list no-lines *ngSwitchCase="'search'">
+      <ion-item-sliding #item no-lines>
         <ion-item *ngFor="let item of items" (click)="startNewPlayer(item)">
           <ion-thumbnail item-left>
             <img [src]="item.getAlbumImage().large">
           </ion-thumbnail>
           <h3><b>{{ item.getSongTitle() }}</b></h3>
           <h3>
-            <span class="artist" *ngFor="let artist of item.getArtists(); let i = index">
+            <span class="artist" *ngFor="let artist of item?.getArtists(); let i = index">
               <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
             </span>
           </h3>
@@ -76,23 +76,31 @@
         </ion-item-options>
       </ion-item-sliding>
     </ion-list>
+
+    <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="Loading more results">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
   </div>
 </ion-content>
 
 <ion-footer [hidden]="!isPlaying">
-  <ion-toolbar class="librarySmallPlayer player">
-      <ion-list class="librarySmallPlayer" no-lines>
-        <ion-item (click)='openPlayer()'>
-        <h3 color="black"><b>{{ playing?.getSongTitle() }}</b></h3>
-        <h3 color="black"><span *ngFor="let playing of playing?.getArtists(); let i = index">
+  <ion-toolbar class="librarySmallPlayer player" color="2nd_dark">
+    <ion-list class="librarySmallPlayer" no-lines>
+      <ion-item (click)='openPlayerPage(playing)' color="2nd_dark">
+        <h3><b>{{ playing?.getSongTitle() }}</b></h3>
+        <h3><span *ngFor="let playing of playing?.getArtists(); let i = index">
           <span *ngIf="i > 0"> / </span> {{ playing?.getName() }}
         </span></h3>
 
         <ion-buttons end item-right>
-          <button ion-button color="alt_orange" [hidden]="!pauseButton" (click)="pauseButton = !pauseButton" class="larger" (click)="pausePlayer()">
+          <button ion-button color="2nd_orange" [hidden]="!pauseButton" (click)="pauseButton = !pauseButton" class="larger" (click)="pausePlayer()">
             <ion-icon name="pause"></ion-icon>
           </button>
-          <button ion-button color="alt_orange" class="larger" [hidden]="pauseButton" (click)="pauseButton = !pauseButton" (click)="resumePlayer()">
+          <button ion-button color="2nd_orange" class="larger" [hidden]="pauseButton" (click)="pauseButton = !pauseButton" (click)="startPlayer()">
             <ion-icon name="play"></ion-icon>
           </button>
         </ion-buttons>

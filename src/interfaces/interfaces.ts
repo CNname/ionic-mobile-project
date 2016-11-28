@@ -38,6 +38,15 @@ export interface firebaseUser {
   photoURL?: string;
 }
 
+export interface spotifyAuthConfig {
+  base: string,
+  clientId: string;
+  responseType: string;
+  redirectUri: string;
+  scope?: string;
+  state?: string;
+}
+
 export interface imageUrls {
   small?: any;
   medium?: any;
@@ -68,5 +77,5 @@ export interface ICallHandler {
   getUserById(id: string): Observable<any>;
   getArtistById(id: string): Observable<any>;
   getPopularSongsByArtist(id: string, country: string): Observable<any>;
-  searchForItem(query: string): Observable<any>;
+  searchForItem(query: string, offset:number ): Observable<any>;
 }
