@@ -149,6 +149,7 @@ export class Settings {
             this.authenticationService.reAuthenticateUser(data.password, ()=>{
               this.authenticationService.deleteUser(() => {
                 // success
+
                 this.navCtrl.popToRoot();
               },() => {
                 // error
@@ -176,7 +177,7 @@ export class Settings {
       base: "https://accounts.spotify.com/authorize",
       clientId: "2f27c1567f8d4774b936b1ae98e91214",
       responseType: "token",
-      redirectUri: encodeURIComponent("http://localhost:8100?"),
+      redirectUri: encodeURIComponent(window.location.protocol + "//" + window.location.host + "?"),
       scope: "user-read-private",
       state: state
     };
@@ -194,6 +195,8 @@ export class Settings {
         this.navCtrl.pop();
       });
     });*/
+
+
 
     window.location.href = authref;
 
@@ -231,12 +234,13 @@ console.log(window.cordova.InAppBrowser);
             response["expires_in"] !== null && response["expires_in"] !== undefined &&
             response["state"] !== null && response["state"] !== undefined
           ) {
-            alert(response["access_token"]);
+            alert("Toimii Suomessa!");
             observer.next(response);
-            this.loginTest = response['access_token'];
+            //this.loginTest = response['access_token'];
           } else {
             alert("fuuuuck...");
             Observable.throw("Something went wrong during authentication");
+            alert("Ei toimi Suomessa!");
           }
 
         }

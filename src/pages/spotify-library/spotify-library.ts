@@ -11,6 +11,7 @@ import { imageUrls } from "../../interfaces/interfaces";
 import { MusicService } from '../../providers/music-service';
 import { AuthenticationService } from '../../providers/authentication-service';
 import {UserAccountService} from "../../providers/user-account-service";
+import {Playlist} from "../../classes/Playlist.Class";
 
 @Component({
   selector: 'spotify-library',
@@ -24,13 +25,14 @@ export class SpotifyLibrary {
   private authenticationservice: AuthenticationService;
   public musicService: MusicService;
   // select the default tab
-  playerNav: string = "playlists";
+  playerNav: string = "spotify";
   playlist_items: Array<Object>;
   timeout: any;
   playing: Song;
   trackItems: any[] = [];
   artistItems: any[] = [];
   searchCategory: string;
+  spotifyUser: Object;
 
   constructor(
     public navCtrl: NavController,
@@ -44,21 +46,45 @@ export class SpotifyLibrary {
       this.musicService = musicService;
       this.authenticationservice = authservice;
       this.spotifyservice = spotifyservice;
-      this.spotifyservice.loadPlaylist().subscribe(playlist => {
+      /*this.spotifyservice.loadPlaylist().subscribe(playlist => {
         //noinspection TypeScriptValidateTypes
         this.playlist_items = playlist["items"];
         this.menu.enable(true);
-      });
+      });*/
 
       console.log(params.get('params'));
 
   }
 
-  /*ionViewCanEnter(): boolean {
+  ionViewCanEnter(): boolean {
     return this.authenticationservice.isUserLoggedIn();
-  }*/
+  }
 
   ionViewDidLoad(){
+
+    this.menu.enable(true);
+
+    let user = this.userAccountService.getSpotifyParams();
+
+    if (user) {
+      this.spotifyservice.getMe().subscribe(res => {
+        this.spotifyUser = res;
+      })
+
+      /*this.spotifyservice.getFeaturedPlaylists().subscribe(res => {
+        this.playlist_items = res['playlists']['items'];
+      });*/
+
+      this.spotifyservice.getFeaturedPlaylists().subscribe(res =>{
+        this.playlist_items = Handling.HandleJson.SpotifyPlaylists(res['playlists']['items']);
+        console.log(this.playlist_items);
+      });
+
+    }
+
+
+
+
   }
 
   toggleSearchAndFocus(){
@@ -74,9 +100,9 @@ export class SpotifyLibrary {
 
 
 
-  goToDetails(playlist_id: string, playlist_title: string) {
-    this.navCtrl.push(PlaylistDetails, {playlist_id, playlist_title});
- }
+openPlaylist(item: Playlist){
+  this.navCtrl.push(PlaylistDetails, {item: item}).catch(()=> console.log('Something went wrong while opening playlist'));
+}
 
  getPlaylistById(userId: string, playlistId: string){
    this.spotifyservice.getPlaylistById(userId, playlistId).subscribe(res => {

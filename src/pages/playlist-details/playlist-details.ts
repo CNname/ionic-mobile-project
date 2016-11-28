@@ -3,6 +3,7 @@ import { NavController, NavParams } from 'ionic-angular';
 import { SoundcloudService } from '../../providers/soundcloud-service';
 import { Playlist } from '../../classes/Playlist.Class'
 import { Song } from '../../classes/Song.class'
+import {SpotifyService} from "../../providers/spotify-service";
 
 @Component({
   selector: 'page-playlist-details',
@@ -13,11 +14,14 @@ export class PlaylistDetails {
   isPlaying: boolean = false;
   pauseButton: boolean = false;
   playing: Song;
-  private soundcloudService: SoundcloudService;
-  //playlist: SpotifyService[];
 
-  constructor(public navCtrl: NavController, private navParams: NavParams, soundcloudService: SoundcloudService) {
-    this.soundcloudService = soundcloudService;
+
+  constructor(
+    private navParams: NavParams,
+    private soundcloudService: SoundcloudService,
+    private spotifyService: SpotifyService
+  ) {
+
     this.playlist = navParams.get('item');
     /*spotifyservice.loadPlaylistContent(this.playlist_id).subscribe(playlist => {
       console.log(playlist);

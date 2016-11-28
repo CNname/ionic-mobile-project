@@ -9,11 +9,13 @@ export class Playlist implements IPlaylist {
   private _songs: Song[];
   private _albumImage: imageUrls;
   private _ownerName: string;
+  private _service: string; // spotify or soundcloud
 
-  constructor(id: string, title: string, count: number){
+  constructor(id: string, title: string, count: number, service: string){
     this._id = id;
     this._name = title;
     this._songCount = count;
+    this._service = service;
   }
 
   getId(): string {
@@ -70,6 +72,14 @@ export class Playlist implements IPlaylist {
 
   setPlaylistImage(value: imageUrls){
     this._albumImage = value;
+  }
+
+  setService(service: string) {
+    this._service = service;
+  }
+
+  getService(): string {
+    return this._service;
   }
 
 }

@@ -1,13 +1,11 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {NavController, NavParams} from 'ionic-angular';
+import {Component, OnInit} from '@angular/core';
+import {NavController} from 'ionic-angular';
 import {AuthenticationService} from "../../providers/authentication-service";
 import {UserAccountService} from "../../providers/user-account-service";
 import {LoginPage} from "../login-page/login-page";
 import {SpotifyLibrary} from "../spotify-library/spotify-library";
 import {SoundcloudLibrary} from "../soundcloud-library/soundcloud-library";
-import {Subscription} from "rxjs";
-import {URLSearchParams} from "@angular/http";
-import {Router, NavigationCancel} from "@angular/router";
+import {Router} from "@angular/router";
 
 /*
   Generated class for the Loading page.
@@ -34,26 +32,53 @@ export class LoadingPage implements OnInit {
     public navCtrl: NavController,
     public authenticationService: AuthenticationService,
     public userAccountService: UserAccountService,
-    private params: NavParams,
     public router: Router
-  ) {
-    //console.log(params.get("access_token"));
-
-    router.events.subscribe(s => {
-      if (s instanceof NavigationCancel) {
-        let params = new URLSearchParams(s.url.split('#')[1]);
-        let access_token = params.get('access_token');
-        //let code = params.get('code');
-        console.log(access_token);
-      }
-    });
-
-  }
+  ) {}
 
   ngOnInit(): void {
-    let param = new URLSearchParams(window.location.search);
-    console.log("test: " + param.get('test'));
-    console.log(param.rawParams);
+    if (window.location.href.indexOf('#') > -1) {
+
+      let param = this.splitParamsToObject(window.location.href);
+
+      let accessToken = param['access_token'];
+      let expiresIn = param['expires_in'];
+      let state = param['state'];
+      let tokenType = param['token_type'];
+
+      console.log(param);
+
+      if (
+       accessToken !== null && accessToken !== undefined &&
+       expiresIn !== null && expiresIn !== undefined &&
+       state !== null && state !== undefined &&
+       tokenType !== null && tokenType !== undefined
+       ) {
+
+        this.userAccountService.saveUsersSpotifyParams({
+          accessToken: accessToken,
+          expiresIn: expiresIn,
+          state: state,
+          tokenType: tokenType
+        });
+
+      }
+
+    }
+  }
+
+
+
+  splitParamsToObject(url: string): Object {
+
+    let params = {};
+    let splitParams = url.substr(url.indexOf("#")+1).split("&");
+
+    for (let i=0; i < splitParams.length; i++) {
+      params[splitParams[i].split("=")[0]] = splitParams[i].split("=")[1];
+    }
+
+    console.log(params);
+    return params;
   }
 
   ionViewDidLoad() {

@@ -17,15 +17,10 @@
   </ion-toolbar>
   <ion-toolbar no-border-top color="primary">
       <ion-segment [(ngModel)]="playerNav" color="darkGrey">
-        <ion-segment-button value="playlists">
-          <b>Playlists</b>
+        <ion-segment-button value="spotify">
+          <b>Spotify Library</b>
         </ion-segment-button>
-        <ion-segment-button value="artists">
-          <b>Artists</b>
-        </ion-segment-button>
-        <ion-segment-button value="albums">
-          <b>Albums</b>
-        </ion-segment-button>
+
         <ion-segment-button value="search">
           <b>Search</b>
         </ion-segment-button>
@@ -35,26 +30,33 @@
 
 <ion-content>
   <div [ngSwitch]="playerNav">
-    <ion-list no-lines *ngSwitchCase="'playlists'" class="card-background-page">
-     <ion-item *ngFor="let item of playlist_items" (click)="getPlaylistById(item.owner.id, item.id)">
+
+    <ion-item *ngIf="spotifyUser != null">
       <ion-thumbnail item-left>
-          <img [src]="item?.images[0]?.url"/>
+        <img [src]="spotifyUser?.images[0]?.url == true ? spotifyUser?.images[0]?.url : 'assets/img/soundcloud-logo.jpg'"/>
       </ion-thumbnail>
-        <p>{{ item.name }}</p>
-        <p>{{ item.owner.id }}</p>
-        <ion-badge item-right>{{ item.tracks.total }}</ion-badge>
-      </ion-item>
+      <p>Logged in: {{ spotifyUser?.id }}</p>
+    </ion-item>
+
+    <ion-list no-lines *ngSwitchCase="'spotify'" class="card-background-page">
+
+     <ion-card class="playlist"  *ngFor="let item of playlist_items" (click)="openPlaylist(item)" >
+       <ion-card-header>
+         {{ item.getName() }}
+       </ion-card-header>
+       <button ion-item>
+         <ion-icon name='person' item-left></ion-icon>
+         {{ item.getOwnerName() }}
+       </button>
+       <button ion-item>
+         <ion-icon name='play' item-left></ion-icon>
+         {{ item.getSongCount() }}
+       </button>
+     </ion-card>
+
     </ion-list>
 
-    <ion-list *ngSwitchCase="'artists'">
-     <!-- artists -->
-    </ion-list>
-
-    <ion-list *ngSwitchCase="'albums'">
-       <!-- albums -->
-    </ion-list>
-
-<ion-list *ngSwitchCase="'search'">
+    <ion-list *ngSwitchCase="'search'">
 
       <ion-segment [(ngModel)]="searchCategory" padding>
         <ion-segment-button value="tracks" [hidden]="trackItems.length === 0">

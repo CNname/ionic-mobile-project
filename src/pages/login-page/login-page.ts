@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {NavController, AlertController, ToastController, MenuController} from 'ionic-angular';
 import {AuthenticationService} from "../../providers/authentication-service";
 import {SpotifyLibrary} from "../spotify-library/spotify-library";

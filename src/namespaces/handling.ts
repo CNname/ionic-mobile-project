@@ -100,6 +100,44 @@ export namespace Handling {
       return songs;
      }
 
+    static SpotifyPlaylists(playlistArray: Array<any>): Playlist[] {
+      let playlists: Playlist[] = [];
+
+      //console.log("id: "tracksArray.);
+      //console.log(playlistArray);
+
+      for (let i = 0; i < playlistArray.length; i++) {
+
+        let playlist: Playlist = new Playlist(playlistArray[i].id, playlistArray[i].name, playlistArray[i].tracks.count, "spotify");
+
+        let images: imageUrls = {
+          large: {
+            height: 600,
+            width: 600,
+            url: "../../assets/img/sg-placeholder.jpg"
+          }
+        };
+
+
+        if(  playlistArray[i].images[0] != null) {
+          images.large = playlistArray[i].images[0];
+        }
+
+        /*if(playlistArray[i].tracks.length != 0){
+          let tracks: Song[] = this.SoundCloudTracks(playlistArray[i].tracks);
+          playlist.setSongs(tracks);
+        }*/
+        playlist.setPlaylistImage(images);
+        //playlist.setOwnerName(playlistArray[i].user.username);
+        //playlist.setOwnerId(playlistArray[i].user.id);
+
+        playlists.push(playlist);
+
+      }
+      //console.log(songs);
+      return playlists;
+    }
+
     static SoundCloudPlaylists(playlistArray: Array<any>): Playlist[] {
       let playlists: Playlist[] = [];
 
@@ -108,7 +146,7 @@ export namespace Handling {
 
       for (let i = 0; i < playlistArray.length; i++) {
 
-        let playlist: Playlist = new Playlist(playlistArray[i].id, playlistArray[i].title, playlistArray[i].track_count);
+        let playlist: Playlist = new Playlist(playlistArray[i].id, playlistArray[i].title, playlistArray[i].track_count, "soundcloud");
 
         let images: imageUrls = {
           large: {
