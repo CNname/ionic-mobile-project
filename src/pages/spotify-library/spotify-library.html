@@ -1,4 +1,5 @@
 <ion-header>
+
   <ion-toolbar color="primary">
       <button ion-button menuToggle>
         <ion-icon name="menu"></ion-icon>
@@ -16,43 +17,76 @@
     </div>
   </ion-toolbar>
   <ion-toolbar no-border-top color="primary">
-      <ion-segment [(ngModel)]="playerNav" color="darkGrey">
-        <ion-segment-button value="spotify">
-          <b>Spotify Library</b>
-        </ion-segment-button>
 
-        <ion-segment-button value="search">
-          <b>Search</b>
-        </ion-segment-button>
-      </ion-segment>
+    <ion-segment [(ngModel)]="playerNav" color="darkGrey">
+      <ion-segment-button value="spotify">
+        <ion-icon name="home"></ion-icon>
+      </ion-segment-button>
+      <ion-segment-button value="playlists">
+        <ion-icon name="list"></ion-icon>
+      </ion-segment-button>
+      <ion-segment-button value="search">
+        <ion-icon name="search"></ion-icon>
+      </ion-segment-button>
+    </ion-segment>
+
+
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div [ngSwitch]="playerNav">
 
-    <ion-item *ngIf="spotifyUser != null">
-      <ion-thumbnail item-left>
-        <img [src]="spotifyUser?.images[0]?.url == true ? spotifyUser?.images[0]?.url : 'assets/img/soundcloud-logo.jpg'"/>
-      </ion-thumbnail>
-      <p>Logged in: {{ spotifyUser?.id }}</p>
+    <ion-item no-lines *ngIf="spotifyUser != null" color="2nd_dark">
+
+      <img [src]="spotifyUser?.images[0]?.url == true ? spotifyUser?.images[0]?.url : 'assets/img/Spotify_Icon_RGB_Green_with_safe.png'" item-left class="userThumb" [class.show]="showUserStuff === true"/>
+
+      <p style="color: #fff">
+        Logged in: {{ spotifyUser?.id }}
+        <ion-icon name="arrow-dropdown" (click)="showUserStuff = !showUserStuff" (click)="showUserStuff ? rotate = 'rotate(180deg)': rotate = 'rotate(0)'" style="float: right;" [ngStyle]="{'transform': rotate}"></ion-icon>
+      </p>
+      <div *ngIf="showUserStuff">
+        <p style="color: #fff">Playlists: {{ usersTotalPlaylists }}</p>
+      </div>
     </ion-item>
 
     <ion-list no-lines *ngSwitchCase="'spotify'" class="card-background-page">
 
-     <ion-card class="playlist"  *ngFor="let item of playlist_items" (click)="openPlaylist(item)" >
-       <ion-card-header>
-         {{ item.getName() }}
-       </ion-card-header>
-       <button ion-item>
-         <ion-icon name='person' item-left></ion-icon>
-         {{ item.getOwnerName() }}
-       </button>
-       <button ion-item>
-         <ion-icon name='play' item-left></ion-icon>
-         {{ item.getSongCount() }}
-       </button>
-     </ion-card>
+       <h2 style="padding: 0 10px">Featured playlists</h2>
+       <ion-card class="playlist playlist-spotify"  *ngFor="let item of playlist_items" (click)="openPlaylist(item)" [style.background-image]="'url(' + item.getPlaylistImage().large.url + ')'" style="background-size: cover;">
+         <!--<ion-card-header>
+           {{ item.getName() }}
+         </ion-card-header>-->
+         <!--<button ion-item>
+           <ion-icon name='person' item-left></ion-icon>
+           {{ item.getOwnerName() }}
+         </button>
+         <button ion-item>
+           <ion-icon name='play' item-left></ion-icon>
+           {{ item.getSongCount() }}
+         </button>-->
+       </ion-card>
+
+    </ion-list>
+
+    <ion-list no-lines *ngSwitchCase="'playlists'" class="card-background-page">
+
+       <h2 style="padding: 0 10px">Own playlists</h2>
+       <ion-card class="playlist playlist-spotify"  *ngFor="let item of usersPlaylists" (click)="openPlaylist(item)" [style.background-image]="'url(' + item.getPlaylistImage().large.url + ')'" style="background-size: cover;">
+         <div class="dark-layer">
+           <ion-card-header style="color: #fff">
+             {{ item.getName() }}
+           </ion-card-header>
+         </div>
+         <!--<button ion-item>
+           <ion-icon name='person' item-left></ion-icon>
+           {{ item.getOwnerName() }}
+         </button>
+         <button ion-item>
+           <ion-icon name='play' item-left></ion-icon>
+           {{ item.getSongCount() }}
+         </button>-->
+       </ion-card>
 
     </ion-list>
 

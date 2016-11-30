@@ -11,8 +11,23 @@
 </ion-header>
 
 
-<ion-content>
-  <ion-list no-lines>
+<ion-content [ngSwitch]="referrer">
+
+  <!-- spotify -->
+  <ion-list *ngSwitchCase="'spotify'">
+    <ion-item *ngFor="let item of playlist.getSongs()" (click)="startNewPlayer(item)">
+      <h3><b>{{ item.getSongTitle() }}</b></h3>
+      <h3>
+        <span class="artist" *ngFor="let artist of item.getArtists(); let i = index">
+          <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
+        </span>
+      </h3>
+      <h4>{{ item.getAlbumTitle() }}</h4>
+    </ion-item>
+  </ion-list>
+
+  <!-- soundcloud -->
+  <ion-list no-lines *ngSwitchDefault>
     <ion-item-sliding #item>
       <ion-item *ngFor="let item of playlist.getSongs()" (click)="startNewPlayer(item)">
         <ion-thumbnail item-left>
@@ -36,21 +51,22 @@
       </ion-item-options>
     </ion-item-sliding>
   </ion-list>
+
 </ion-content>
 <ion-footer [hidden]="!isPlaying">
   <ion-toolbar class="librarySmallPlayer player" color="2nd_dark">
     <ion-list class="librarySmallPlayer" no-lines>
-      <ion-item (click)='openPlayerPage(playing)' color="2nd_dark">
+      <ion-item color="2nd_dark" (click)='openPlayerPage(playing)'>
         <h3><b>{{ playing?.getSongTitle() }}</b></h3>
         <h3><span *ngFor="let playing of playing?.getArtists(); let i = index">
           <span *ngIf="i > 0"> / </span> {{ playing?.getName() }}
         </span></h3>
 
         <ion-buttons end item-right>
-          <button ion-button color="2nd_orange" [hidden]="!pauseButton" (click)="pauseButton = !pauseButton" class="larger" (click)="pausePlayer()">
+          <button ion-button color="2nd_orange" [hidden]="!pauseButton" (click)="pauseButton = !pauseButton" class="larger" (click)="pausePlayer($event)">
             <ion-icon name="pause"></ion-icon>
           </button>
-          <button ion-button color="2nd_orange" class="larger" [hidden]="pauseButton" (click)="pauseButton = !pauseButton" (click)="startPlayer()">
+          <button ion-button color="2nd_orange" class="larger" [hidden]="pauseButton" (click)="pauseButton = !pauseButton" (click)="startPlayer($event)">
             <ion-icon name="play"></ion-icon>
           </button>
         </ion-buttons>

@@ -21,12 +21,9 @@ export class SpotifyLibrary {
   hideElement: boolean = false;
   isPlaying: boolean = false;
   pauseButton: boolean = false;
-  private spotifyservice: SpotifyService;
-  private authenticationservice: AuthenticationService;
-  public musicService: MusicService;
   // select the default tab
   playerNav: string = "spotify";
-  offset:number = 30;
+  offset: number = 30;
   playlist_items: Array<Object>;
   timeout: any;
   playing: Song;
@@ -35,28 +32,18 @@ export class SpotifyLibrary {
   searchCategory: string;
   spotifyUser: Object;
   query: string;
+  showUserStuff: false;
+  usersPlaylists: Array<Playlist>;
+  usersTotalPlaylists: number;
 
   constructor(
     public navCtrl: NavController,
-    spotifyservice: SpotifyService,
-    authservice: AuthenticationService,
-    public modalCtrl: ModalController,
-    musicService: MusicService,
+    public spotifyservice: SpotifyService,
+    public authenticationservice: AuthenticationService,
+    public musicService: MusicService,
     private menu: MenuController,
     public userAccountService: UserAccountService,
-    private params: NavParams) {
-      this.musicService = musicService;
-      this.authenticationservice = authservice;
-      this.spotifyservice = spotifyservice;
-      /*this.spotifyservice.loadPlaylist().subscribe(playlist => {
-        //noinspection TypeScriptValidateTypes
-        this.playlist_items = playlist["items"];
-        this.menu.enable(true);
-      });*/
-
-      console.log(params.get('params'));
-
-  }
+  ) {}
 
   ionViewCanEnter(): boolean {
     return this.authenticationservice.isUserLoggedIn();
@@ -70,22 +57,24 @@ export class SpotifyLibrary {
 
     if (user) {
       this.spotifyservice.getMe().subscribe(res => {
+        console.log(res);
         this.spotifyUser = res;
-      })
+      });
 
-      /*this.spotifyservice.getFeaturedPlaylists().subscribe(res => {
-        this.playlist_items = res['playlists']['items'];
-      });*/
+
+      this.spotifyservice.getCurrentUsersPlaylists().subscribe(res => {
+        console.log(res);
+        this.usersTotalPlaylists = res['total'];
+        this.usersPlaylists = Handling.HandleJson.SpotifyPlaylists(res['items']);;
+      });
 
       this.spotifyservice.getFeaturedPlaylists().subscribe(res =>{
+        console.log(res);
         this.playlist_items = Handling.HandleJson.SpotifyPlaylists(res['playlists']['items']);
         console.log(this.playlist_items);
       });
 
     }
-
-
-
 
   }
 
@@ -101,7 +90,7 @@ export class SpotifyLibrary {
   }
 
   openPlaylist(item: Playlist){
-    this.navCtrl.push(PlaylistDetails, {item: item}).catch(()=> console.log('Something went wrong while opening playlist'));
+    this.navCtrl.push(PlaylistDetails, {item: item, referrer: "spotify"}).catch(()=> console.log('Something went wrong while opening playlist'));
   }
 
   doInfinite(infiniteScroll){
@@ -135,136 +124,102 @@ export class SpotifyLibrary {
     this.navCtrl.push(PlaylistDetails, {playlist_id, playlist_title});
   }
 
-  getPlaylistById(userId: string, playlistId: string){
-    this.spotifyservice.getPlaylistById(userId, playlistId).subscribe(res => {
-      console.time("Create playlist");
 
-      let tracks: Song[] = [];
-      for (var i=0; i<res.items.length; i++) {
-        let song: Song = new Song(res.items[i].id, res.items[i].name, res.items[i].isPlayable)
-        song.setAlbumImage({
-          small: res.items[i].album.images[2],
-          medium: res.items[i].album.images[1],
-          large: res.items[i].album.images[0]
-        });
-        song.setAlbumId(res.items[i].album.id)
-        song.setAlbumTitle(res.items[i].album.name);
+  // this an oddly named search
+  getItemsByName(event:any) {
+    clearTimeout(this.timeout);
+    this.trackItems = [];
+    this.artistItems = [];
 
-        let artists: Artist[] = [];
+    this.timeout = setTimeout(() => {
 
-        for(var j=0; j<res.tracks.items[i].artists.length; j++) {
-            artists.push(new Artist(
-              res.tracks.items[i].artists[j].id,
-              res.tracks.items[i].artists[j].name,
-              res.tracks.items[i].artists[j].href
-            ));
+        this.query = event.target.value;
+
+        if(this.query.length >= 3){
+          // activate search segment if not active
+          if (this.playerNav !== "search") this.playerNav = "search";
+
+          this.spotifyservice.searchForItem(encodeURIComponent(this.query), 0).subscribe((res) => {
+
+            this.trackItems = Handling.HandleJson.tracks(res.tracks.items);
+            this.artistItems = Handling.HandleJson.artists(res.artists.items);
+
+            // activate segment if needed
+            if (this.trackItems.length > 0) {
+              this.searchCategory = "tracks";
+            } else if (this.trackItems.length === 0 && this.artistItems.length > 0) {
+              this.searchCategory = "artists";
+            }
+
+          })
         }
+    }, 1000);
+  }
 
-        song.setArtists(artists);
+  artistClickEvent(id: string) {
+    this.spotifyservice.getArtistById(id).subscribe((res) => {
+      let artist = new Artist(res.id, res.name);
+      let images: imageUrls = {
+        large: {
+          height: 600,
+          width: 600,
+          url: "../../assets/img/sg-placeholder.jpg"
+        }
+      };
 
-        tracks.push(song);
+      for (let i=0; i<res.images.length; i++) {
+        if (i===0) images.large = res.images[i];
+        else if (i===1) images.medium = res.images[i];
+        else if (i===2) images.small = res.images[i];
       }
-      console.timeEnd("Create playlist")
-      console.log(tracks);
-      return tracks;
+
+      artist.setImages(images);
+
+      this.navCtrl.push(ArtistPage, {
+        item: artist
+      });
 
     })
- }
-// this an oddly named search
-getItemsByName(event:any) {
-  clearTimeout(this.timeout);
-  this.trackItems = [];
-  this.artistItems = [];
+  }
 
-  this.timeout = setTimeout(() => {
+  startPlayer(e: Event) {
 
-      this.query = event.target.value;
+    e.stopPropagation();
 
-      if(this.query.length >= 3){
-        // activate search segment if not active
-        if (this.playerNav !== "search") this.playerNav = "search";
-
-        this.spotifyservice.searchForItem(encodeURIComponent(this.query), 0).subscribe((res) => {
-
-          this.trackItems = Handling.HandleJson.tracks(res.tracks.items);
-          this.artistItems = Handling.HandleJson.artists(res.artists.items);
-
-          // activate segment if needed
-          if (this.trackItems.length > 0) {
-            this.searchCategory = "tracks";
-          } else if (this.trackItems.length === 0 && this.artistItems.length > 0) {
-            this.searchCategory = "artists";
-          }
-
-        })
-      }
-  }, 1000);
-}
-
-artistClickEvent(id: string) {
-  this.spotifyservice.getArtistById(id).subscribe((res) => {
-    let artist = new Artist(res.id, res.name);
-    let images: imageUrls = {
-      large: {
-        height: 600,
-        width: 600,
-        url: "../../assets/img/sg-placeholder.jpg"
-      }
-    };
-
-    for (let i=0; i<res.images.length; i++) {
-      if (i===0) images.large = res.images[i];
-      else if (i===1) images.medium = res.images[i];
-      else if (i===2) images.small = res.images[i];
+    if(this.musicService.isPlayerInit()){
+      this.musicService.startPlayback();
     }
-
-    artist.setImages(images);
-
-    this.navCtrl.push(ArtistPage, {
-      item: artist
-    });
-
-  })
-}
-
-startPlayer(e: Event) {
-
-  e.stopPropagation();
-
-  if(this.musicService.isPlayerInit()){
-    this.musicService.startPlayback();
   }
-}
 
-openPagePlayer(item: Song){
-  this.navCtrl.push(PlayerPage, {item: item, songs: this.trackItems }).catch(()=> console.log('should I stay or should I go now'));
-}
+  openPagePlayer(item: Song){
+    this.navCtrl.push(PlayerPage, {item: item, songs: this.trackItems }).catch(()=> console.log('should I stay or should I go now'));
+  }
 
-startNewPlayer(item: Song){
-  if(this.musicService.isPlayerInit()){
-      this.playing = item;
+  startNewPlayer(item: Song){
+    if(this.musicService.isPlayerInit()){
+        this.playing = item;
+        this.musicService.pausePlayback();
+        this.musicService.resetAudio();
+        this.musicService.setAudio(item.getUrl());
+        this.musicService.startPlayback();
+        this.isPlaying = true;
+        this.pauseButton = true;
+    } else {
+        this.playing = item;
+        this.musicService.setAudio(item.getUrl());
+        this.musicService.startPlayback();
+        this.isPlaying = true;
+        this.pauseButton = true;
+    }
+  }
+
+  pausePlayer(e: Event){
+
+    e.stopPropagation();
+
+    if(this.musicService.isPlayerInit()){
       this.musicService.pausePlayback();
-      this.musicService.resetAudio();
-      this.musicService.setAudio(item.getUrl());
-      this.musicService.startPlayback();
-      this.isPlaying = true;
-      this.pauseButton = true;
-  } else {
-      this.playing = item;
-      this.musicService.setAudio(item.getUrl());
-      this.musicService.startPlayback();
-      this.isPlaying = true;
-      this.pauseButton = true;
+    }
   }
-}
-
-pausePlayer(e: Event){
-
-  e.stopPropagation();
-
-  if(this.musicService.isPlayerInit()){
-    this.musicService.pausePlayback();
-  }
-}
 
 }

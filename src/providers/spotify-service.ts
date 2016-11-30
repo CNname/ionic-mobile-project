@@ -13,7 +13,7 @@ export class SpotifyService implements ICallHandler {
 
     return this.http.get('https://api.spotify.com/v1/users/' + userId + '/playlists/' + playlistId + '/tracks?offset=0&limit=100', {})
       .map(res => res.json())
-      //.catch(this.spotifyErrorCatch);
+      .catch(this.spotifyErrorCatch);
 
   }
 
@@ -21,14 +21,14 @@ export class SpotifyService implements ICallHandler {
 
     return this.http.get('https://api.spotify.com/v1/users/' + id, {})
       .map(res => res.json())
-      //.catch(this.spotifyErrorCatch);
+      .catch(this.spotifyErrorCatch);
   }
 
   getArtistById(id: string): Observable<any> {
 
     return this.http.get('https://api.spotify.com/v1/artists/' + id, {})
       .map(res => res.json())
-      //.catch(this.spotifyErrorCatch);
+      .catch(this.spotifyErrorCatch);
   }
 
   /**
@@ -40,13 +40,13 @@ export class SpotifyService implements ICallHandler {
   getPopularSongsByArtist(id: string, country: string = "FI"): Observable<any> {
       return this.http.get('https://api.spotify.com/v1/artists/' + id + '/top-tracks?country=' + country, {})
         .map(res => res.json())
-        //.catch(this.spotifyErrorCatch);
+        .catch(this.spotifyErrorCatch);
   }
 
   searchForItem(query: string, offset:number): Observable<any> {
     return this.http.get('https://api.spotify.com/v1/search?q=' + query + '&type=track,artist&offset=' + offset + '&limit=30', {})
       .map(res => res.json())
-      //.catch(this.spotifyErrorCatch);
+      .catch(this.spotifyErrorCatch);
   }
 
   getMe(): Observable<any> {
@@ -58,7 +58,7 @@ export class SpotifyService implements ICallHandler {
 
     return this.http.get('https://api.spotify.com/v1/me', options)
       .map(res => res.json())
-      //.catch(this.spotifyErrorCatch);
+      .catch(this.spotifyErrorCatch);
   }
 
   /**
@@ -75,11 +75,33 @@ export class SpotifyService implements ICallHandler {
 
     return this.http.get('https://api.spotify.com/v1/browse/featured-playlists?limit=' + limit + '&locale=' + country + '&country=' + country, options)
       .map((res: Response) => res.json())
-      //.catch(this.spotifyErrorCatch);
+      .catch(this.spotifyErrorCatch);
   }
 
-  spotifyErrorCatch(err: any) {
-    Observable.throw(err.json().error || 'Server error');
+  loadPlaylistById(ownerId: string, playlistId: string): Observable<any> {
+
+    let spotifyparams = this.userAccountService.getSpotifyParams();
+    let headers = new Headers({ "Authorization": "Bearer " + spotifyparams['accessToken'] });
+    let options = new RequestOptions({ headers: headers });
+
+    return this.http.get('https://api.spotify.com/v1/users/'+ ownerId +'/playlists/' + playlistId, options)
+      .map((res: Response) => res.json())
+      .catch(this.spotifyErrorCatch);
+  }
+
+  getCurrentUsersPlaylists(): Observable<any> {
+
+    let spotifyparams = this.userAccountService.getSpotifyParams();
+    let headers = new Headers({ "Authorization": "Bearer " + spotifyparams['accessToken'] });
+    let options = new RequestOptions({ headers: headers });
+
+    return this.http.get('https://api.spotify.com/v1/me/playlists', options)
+      .map((res: Response) => res.json())
+      .catch(this.spotifyErrorCatch);
+  }
+
+  spotifyErrorCatch(err: Response | any): Observable<any>  {
+    return Observable.throw(err.json().error || err.toString() || 'Server error');
   }
 
 }
