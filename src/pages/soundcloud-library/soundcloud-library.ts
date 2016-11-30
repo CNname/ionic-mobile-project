@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { HostListener, Component, ViewChild } from '@angular/core';
 import { NavController, ViewController, ToastController } from 'ionic-angular';
 import { Song } from '../../classes/Song.class';
 import { UserAccountService } from '../../providers/user-account-service'
@@ -7,6 +7,7 @@ import { SoundcloudService } from '../../providers/soundcloud-service'
 import { Handling } from "../../namespaces/handling";
 import { Playlist } from '../../classes/Playlist.Class'
 import { PlaylistDetails } from '../playlist-details/playlist-details'
+import {Observable} from 'rxjs/Rx';
 
 
 @Component({
@@ -33,6 +34,10 @@ export class SoundcloudLibrary {
     private user: User;
     next_href: string;
     trending: any[] = [];
+    time: number = 0;
+    timer: string = '00:00';
+    numbers: any;
+    minute:number = 0;
 
   constructor(public navCtrl: NavController,
     userAccountService: UserAccountService,
@@ -41,14 +46,19 @@ export class SoundcloudLibrary {
       this.userAccountService = userAccountService;
       this.soundcloudService = soundcloudService;
       this.soundcloudService.getCharts("top", encodeURIComponent("soundcloud:genres:"+"all-music")).subscribe(res =>{
-        console.log(res);
+        //console.log(res);
         this.trending = Handling.HandleJson.SoundCloudTrendingTracks(res.collection);
       });
       this.soundcloudService.getPlaylists().then(res =>{
-        console.log(res);
-          this.playlists = Handling.HandleJson.SoundCloudPlaylists(res);
+        //console.log(res);
+        this.playlists = Handling.HandleJson.SoundCloudPlaylists(res);
       });
   }
+
+/*  @HostListener('ion-list-search:scroll', ['$event'])
+     onScroll(event) {
+       console.log("Scroll Event", document.body.scrollTop);
+  }*/
 
   /*ionViewCanEnter(): boolean{
     this.user = this.userAccountService.getCurrentUser();
@@ -68,34 +78,32 @@ export class SoundcloudLibrary {
   ionViewWillLeave(){
     //this.soundcloudService.pauseStream();
   }
-  // this does not work..
+
   focusInput(input){
     this.timeout = setTimeout(() =>{
       input.setFocus();
     }, 500);
-    //console.log(input);
   }
 
   doInfinite(infiniteScroll){
-    //console.log("end of a list, call more");
-    if(this.next_href.length != 0){
-      //console.log(this.next_href);
-      this.soundcloudService.getMore(this.next_href).subscribe(res => {
-        if(res.next_href){
-          this.next_href = res.next_href;
-          infiniteScroll.enable(true);
-        }else{
-          this.next_href = "";
-          infiniteScroll.enable(false);
-        }
-        let items: any[] = Handling.HandleJson.SoundCloudTracks(res.collection);
-        for(let i= 0; i < items.length; i++){
-          this.items.push(items[i]);
-        }
-        //console.log(this.items);
-      });
-    } else{
-      console.log('no more');
+    if (this.playerNav === "search"){
+      if(this.next_href.length != 0){
+        this.soundcloudService.getMore(this.next_href).subscribe(res => {
+          if(res.next_href){
+            this.next_href = res.next_href;
+            infiniteScroll.enable(true);
+          }else{
+            this.next_href = "";
+            infiniteScroll.enable(false);
+          }
+          let items: any[] = Handling.HandleJson.SoundCloudTracks(res.collection);
+          for(let i= 0; i < items.length; i++){
+            this.items.push(items[i]);
+          }
+        });
+      } else{
+        console.log('no more');
+      }
     }
   }
 
@@ -112,7 +120,7 @@ export class SoundcloudLibrary {
         // activate search segment if not active
         if (this.playerNav !== "search") this.playerNav = "search";
         this.soundcloudService.searchForItem(encodeURIComponent(query)).then(res => {
-          //console.log(res);
+          console.log(res);
           if(res.next_href){
             this.next_href = res.next_href;
           }
@@ -133,10 +141,12 @@ export class SoundcloudLibrary {
   }
 
   pausePlayer(){
+    this.numbers.unsubscribe();
     this.soundcloudService.pauseStream();
   }
 
   startPlayer(){
+    this.numbers = this.soundcloudService.timer().subscribe(x => this.showTime(x));
     this.soundcloudService.resumeStream();
   }
 
@@ -145,6 +155,36 @@ export class SoundcloudLibrary {
     this.pauseButton = true;
     this.playing = item;
     this.soundcloudService.startStreaming(item.getId());
+    this.numbers = this.soundcloudService.timer().subscribe(x => this.showTime(x));
+  }
 
+  showTime(x:number){
+    this.time = x;
+    if((( (this.time)-(this.minute*60) ) / 60) == 1){
+      console.log('minute added');
+      this.minute += 1;
+    }
+
+    if(this.minute < 1){
+      if(this.time < 10){
+          this.timer = '00:0'+this.time;
+      }else{
+        this.timer = '00:'+this.time;
+      }
+
+    }else if(this.minute >= 1 && this.minute < 10){
+      if((this.time - (this.minute*60)) < 10){
+        this.timer = '0'+this.minute+':0'+(this.time-(this.minute*60));
+      }else if(((this.time) - (this.minute*60)) < 60){
+        this.timer = '0'+this.minute+':'+(this.time-(this.minute*60));
+      }
+
+    }else if(this.minute >= 10){
+      if((this.time - (this.minute*60)) < 10) {
+        this.timer = this.minute+':0'+(this.time-(this.minute*60));
+      }else if(((this.time) - (this.minute*60)) < 60) {
+        this.timer = this.minute+':'+(this.time-(this.minute*60));
+      }
+    }
   }
 }

@@ -74,7 +74,7 @@ export namespace Handling {
         } else{
           images.large = "../../assets/img/soundcloud-logo.jpg";
         }
-
+        song.setDuration(tracksArray[i].duration);
         song.setAlbumImage(images);
         song.setAlbumId(tracksArray[i].id);
         song.setAlbumTitle(tracksArray[i].title);

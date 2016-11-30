@@ -74,16 +74,16 @@
       <ion-card class="playlist"  *ngFor="let item of playlists" (click)="openPlaylist(item)" no-padding>
         <ion-grid>
           <ion-row no-padding>
-            <ion-col width-33>
-              <ion-thumbnail item-left style="width:100px;">
-                <img [src]="item.getPlaylistImage().large" style="width:100px;max-width:none;height:100%">
+            <ion-col class="scPlaylistColSmall" width-33>
+              <ion-thumbnail class="scPlaylist" item-left style="width:100px;">
+                <img [src]="item.getPlaylistImage().large" style="height:100%; max-width:none; width: auto:">
               </ion-thumbnail>
             </ion-col>
-            <ion-col width-67>
-              <ion-card-header>
+            <ion-col class="scPlaylistColLarge" width-67>
+              <ion-card-header class="scPlaylistCardHeader">
                 {{ item.getName() }}
               </ion-card-header>
-                <button ion-item>
+                <button ion-item class="scPlaylistCardItem">
                   <ion-avatar item-left>
                     <img [src]="item.getOwnerImage()">
                   </ion-avatar>
@@ -94,12 +94,10 @@
        </ion-grid>
       </ion-card>
     </ion-list>
-    <ion-list no-lines *ngSwitchCase="'search'">
+    <ion-list id='ion-list-search' no-lines *ngSwitchCase="'search'">
 
+        <p class="searchPlaceholder" [hidden]="items.length > 0" padding-left padding-right>Search results appear here... </p>
 
-      <p class="searchPlaceholder" [hidden]="items.length > 0" padding-left padding-right>Search results appear here... </p>
-
-      <ion-item-sliding #item no-lines>
         <ion-item *ngFor="let item of items" (click)="startNewPlayer(item)">
           <ion-thumbnail item-left>
             <img [src]="item.getAlbumImage().large">
@@ -110,26 +108,15 @@
               <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
             </span>
           </h3>
-          <h4>{{ item.getAlbumTitle() }}</h4>
+          <h4> {{ ( item.getDurationHours() | number:'2.0-0') }}:{{ (item.getDurationMinutes() | number:'2.0-0') }}:{{ ( item.getDurationSeconds() | number:'2.0-0') }}</h4>
         </ion-item>
-        <ion-item-options side="right">
-          <button ion-button (click)="addToPlaylist(item)">
-            <ion-icon name="add"></ion-icon>
-          </button>
-          <button ion-button color="danger" (click)="share(item)">
-            <ion-icon (color)="primary" name="share-alt"></ion-icon>
-          </button>
-        </ion-item-options>
-      </ion-item-sliding>
-    </ion-list>
-
-    <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
-      <ion-infinite-scroll-content
-        loadingSpinner="bubbles"
-        loadingText="Loading more results">
-      </ion-infinite-scroll-content>
-    </ion-infinite-scroll>
-
+      </ion-list>
+      <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content
+          loadingSpinner="bubbles"
+          loadingText="Loading more results">
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
   </div>
 </ion-content>
 
@@ -143,6 +130,7 @@
         </span></h3>
 
         <ion-buttons end item-right>
+          <p>{{ timer }} / {{ ( playing?.getDurationHours() | number:'2.0-0') }}:{{ (playing?.getDurationMinutes() | number:'2.0-0') }}:{{ ( playing?.getDurationSeconds() | number:'2.0-0') }}</p>
           <button ion-button color="2nd_orange" [hidden]="!pauseButton" (click)="pauseButton = !pauseButton" class="larger" (click)="pausePlayer()">
             <ion-icon name="pause"></ion-icon>
           </button>
