@@ -67,8 +67,21 @@ export class Song implements ISong {
     this._artists = value;
   }
 
-  getDuration(): number {
+  getDuration(): number { // duration in milliseconds
     return this._duration;
+  }
+
+  getDurationHours(): number{
+   let hour = Math.floor((this._duration / (1000*60*60) )%24);
+   return hour;
+  }
+
+  getDurationMinutes(): number {
+    return new Date(this._duration).getMinutes();
+  }
+
+  getDurationSeconds():number{
+    return new Date(this._duration).getSeconds();
   }
 
   setDuration(value: number) {

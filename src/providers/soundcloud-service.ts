@@ -13,6 +13,7 @@ export class SoundcloudService {
   private redirect_uri: string = 'http://localhost/soundcloud-callback';
   SCPlayer: any;
   playingItems: Playlist;
+  play:boolean = false;
 
   constructor(public http: Http, private jsonp: Jsonp) {
     SC.initialize({
@@ -25,6 +26,11 @@ export class SoundcloudService {
      this.playingItems = item;
    }
 
+   timer(): Observable<number>{
+       let timer = Observable.timer(1000,1000);
+       return timer;
+   }
+
    startStreaming(id: string){
     SC.stream('/tracks/'+id).then(player => {
       this.SCPlayer = player;
@@ -33,7 +39,10 @@ export class SoundcloudService {
 
       this.SCPlayer.on('buffering_start', () => { console.log('buffering...'); });
 
-      this.SCPlayer.on('buffering_end', () => { console.log('music'); });
+      this.SCPlayer.on('buffering_end', () => {
+        this.play = true;
+        console.log('music');
+      });
     });
   }
 
@@ -78,5 +87,5 @@ export class SoundcloudService {
       .map((res: Response) => res.json());
   }
 
-//  *://*/* 
+//  *://*/*
 }
