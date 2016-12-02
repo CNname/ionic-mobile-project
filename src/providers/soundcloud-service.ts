@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ApplicationRef } from '@angular/core';
 import { Http, Jsonp, Response, RequestOptions, Headers, Request, RequestMethod } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Rx';
@@ -14,8 +14,12 @@ export class SoundcloudService {
   SCPlayer: any;
   playingItems: Playlist;
   play:boolean = false;
+  time: number = 0;
+  timer: string = '00:00';
+  numbers: any;
+  minute:number = 0;
 
-  constructor(public http: Http, private jsonp: Jsonp) {
+  constructor(public http: Http, private jsonp: Jsonp, private applicationRef: ApplicationRef) {
     SC.initialize({
       client_id:  this.clientId,
       //redirect_uri:  this.redirect_uri
@@ -26,9 +30,36 @@ export class SoundcloudService {
      this.playingItems = item;
    }
 
-   timer(): Observable<number>{
-       let timer = Observable.timer(1000,1000);
-       return timer;
+   showTime(x:number){
+     let time = Math.floor(x /1000);
+     console.log(time);
+     if((( (time)-(this.minute*60) ) / 60) == 1){
+       console.log('minute added');
+       this.minute += 1;
+     }
+
+     if(this.minute < 1){
+       if(time < 10){
+           this.timer = '00:0'+time;
+       }else{
+         this.timer = '00:'+time;
+       }
+
+     }else if(this.minute >= 1 && this.minute < 10){
+       if((time - (this.minute*60)) < 10){
+         this.timer = '0'+this.minute+':0'+(time-(this.minute*60));
+       }else if(((this.time) - (this.minute*60)) < 60){
+         this.timer = '0'+this.minute+':'+(time-(this.minute*60));
+       }
+
+     }else if(this.minute >= 10){
+       if((time - (this.minute*60)) < 10) {
+         this.timer = this.minute+':0'+(time-(this.minute*60));
+       }else if(((time) - (this.minute*60)) < 60) {
+         this.timer = this.minute+':'+(time-(this.minute*60));
+       }
+     }
+     this.applicationRef.tick();
    }
 
    startStreaming(id: string){
@@ -36,6 +67,8 @@ export class SoundcloudService {
       this.SCPlayer = player;
 
       this.SCPlayer.play();
+      this.timer = '00:00';
+      this.minute = 0;
 
       this.SCPlayer.on('buffering_start', () => { console.log('buffering...'); });
 
@@ -43,7 +76,20 @@ export class SoundcloudService {
         this.play = true;
         console.log('music');
       });
+      this.SCPlayer.on('time', ()=>{
+          this.showTime(this.SCPlayer.currentTime());
+      })
     });
+  }
+
+  currentTime():string{
+  /*  if(this.SCPlayer){
+      return this.SCPlayer.on('time', () => {
+        return this.SCPlayer.currentTime();
+      });
+    }*/
+    //return Math.floor(this.time /1000);
+    return this.timer;
   }
 
   pauseStream(){
@@ -52,6 +98,13 @@ export class SoundcloudService {
 
   resumeStream(){
     this.SCPlayer.play();
+  }
+
+  getTrackById(song_id: string, user_id: string): any{
+    return SC.get('tracks', {
+      id: song_id,
+      user_id: user_id
+    });
   }
 
   searchForItem(query: string): any {

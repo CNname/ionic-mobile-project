@@ -82,7 +82,7 @@ export class PlaylistDetails {
   }
 
   openPlayerPage(item: Song){
-    this.navCtrl.push(PlayerPage, {item: item, songs: this.playlist.getSongs(), referrer: this.referrer }).catch(()=> console.log('should I stay or should I go now'));
+    this.navCtrl.push(PlayerPage, {item: item, songs: this.playlist.getSongs(), referrer: this.referrer }).catch(()=> console.log('Error occured'));
   }
 
   addToPlaylist(item){

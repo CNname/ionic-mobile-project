@@ -1,13 +1,15 @@
 import { HostListener, Component, ViewChild } from '@angular/core';
 import { NavController, ViewController, ToastController } from 'ionic-angular';
 import { Song } from '../../classes/Song.class';
-import { UserAccountService } from '../../providers/user-account-service'
-import { User } from '../../classes/User.class'
-import { SoundcloudService } from '../../providers/soundcloud-service'
+import { UserAccountService } from '../../providers/user-account-service';
+import { User } from '../../classes/User.class';
+import { SoundcloudService } from '../../providers/soundcloud-service';
 import { Handling } from "../../namespaces/handling";
-import { Playlist } from '../../classes/Playlist.Class'
-import { PlaylistDetails } from '../playlist-details/playlist-details'
-import {Observable} from 'rxjs/Rx';
+import { Playlist } from '../../classes/Playlist.Class';
+import { PlaylistDetails } from '../playlist-details/playlist-details';
+import { Observable } from 'rxjs/Rx';
+import { PlayerPage } from '../playerPage/playerPage';
+import { imageUrls } from "../../interfaces/interfaces";
 
 
 @Component({
@@ -35,9 +37,7 @@ export class SoundcloudLibrary {
     next_href: string;
     trending: any[] = [];
     time: number = 0;
-    timer: string = '00:00';
-    numbers: any;
-    minute:number = 0;
+
 
   constructor(public navCtrl: NavController,
     userAccountService: UserAccountService,
@@ -54,26 +54,6 @@ export class SoundcloudLibrary {
         this.playlists = Handling.HandleJson.SoundCloudPlaylists(res);
       });
   }
-
-/*  @HostListener('ion-list-search:scroll', ['$event'])
-     onScroll(event) {
-       console.log("Scroll Event", document.body.scrollTop);
-  }*/
-
-  /*ionViewCanEnter(): boolean{
-    this.user = this.userAccountService.getCurrentUser();
-    if(this.user.getSoundCloudAccountId() == null){
-      //console.log(this.user.getId());
-      let toast = this.toastController.create({
-        message: 'You must first sign in to SoundCloud, you can do this in the settings',
-        duration: 5000,
-        position: 'bottom'
-      });
-      toast.present();
-      return false;
-    } else { return true; }
-
-  }*/
 
   ionViewWillLeave(){
     //this.soundcloudService.pauseStream();
@@ -137,16 +117,20 @@ export class SoundcloudLibrary {
   }
 
   openPlayerPage(item){
-    //console.log('player');
+    let images:imageUrls = item.getAlbumImage();
+    images.large = images.large.replace('large.jpg', 't500x500.jpg');
+    console.log(images);
+    item.setAlbumImage(images);
+    this.navCtrl.push(PlayerPage, {item: item, songs: this.items }).catch(()=> console.log('Error occured'));
   }
 
   pausePlayer(){
-    this.numbers.unsubscribe();
+    //this.numbers.unsubscribe();
     this.soundcloudService.pauseStream();
   }
 
   startPlayer(){
-    this.numbers = this.soundcloudService.timer().subscribe(x => this.showTime(x));
+  //  this.numbers = this.soundcloudService.timer().subscribe(x => this.showTime(x));
     this.soundcloudService.resumeStream();
   }
 
@@ -155,36 +139,7 @@ export class SoundcloudLibrary {
     this.pauseButton = true;
     this.playing = item;
     this.soundcloudService.startStreaming(item.getId());
-    this.numbers = this.soundcloudService.timer().subscribe(x => this.showTime(x));
   }
 
-  showTime(x:number){
-    this.time = x;
-    if((( (this.time)-(this.minute*60) ) / 60) == 1){
-      console.log('minute added');
-      this.minute += 1;
-    }
 
-    if(this.minute < 1){
-      if(this.time < 10){
-          this.timer = '00:0'+this.time;
-      }else{
-        this.timer = '00:'+this.time;
-      }
-
-    }else if(this.minute >= 1 && this.minute < 10){
-      if((this.time - (this.minute*60)) < 10){
-        this.timer = '0'+this.minute+':0'+(this.time-(this.minute*60));
-      }else if(((this.time) - (this.minute*60)) < 60){
-        this.timer = '0'+this.minute+':'+(this.time-(this.minute*60));
-      }
-
-    }else if(this.minute >= 10){
-      if((this.time - (this.minute*60)) < 10) {
-        this.timer = this.minute+':0'+(this.time-(this.minute*60));
-      }else if(((this.time) - (this.minute*60)) < 60) {
-        this.timer = this.minute+':'+(this.time-(this.minute*60));
-      }
-    }
-  }
 }

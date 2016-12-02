@@ -130,7 +130,7 @@
         </span></h3>
 
         <ion-buttons end item-right>
-          <p>{{ timer }} / {{ ( playing?.getDurationHours() | number:'2.0-0') }}:{{ (playing?.getDurationMinutes() | number:'2.0-0') }}:{{ ( playing?.getDurationSeconds() | number:'2.0-0') }}</p>
+          <p>{{ ( soundcloudService.currentTime() )  }} / {{ (playing?.getDurationMinutes() | number:'2.0-0') }}:{{ ( playing?.getDurationSeconds() | number:'2.0-0') }}</p>
           <button ion-button color="2nd_orange" [hidden]="!pauseButton" (click)="pauseButton = !pauseButton" class="larger" (click)="pausePlayer()">
             <ion-icon name="pause"></ion-icon>
           </button>
