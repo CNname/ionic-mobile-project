@@ -11,14 +11,20 @@ import {IPlayer} from "../../interfaces/interfaces";
 export class PlayerPage implements IPlayer {
   song: Song;
   songs: Song[];
+  referrer: string;
 
   constructor(public navCtrl: NavController, private navParams: NavParams, public musicService: MusicService) {
     this.song = navParams.get('item');
     this.songs = navParams.get('songs');
+    this.referrer = navParams.get('referrer');
   }
 
   ionViewDidLoad(){
     console.log("start of the page");
+  }
+
+  ionViewWillLeave(){
+    this.navParams.get('item').setSongTitle(this.song.getSongTitle());
   }
 
   pausePlayback(){

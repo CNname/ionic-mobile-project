@@ -1,8 +1,11 @@
 
-<ion-header>
-  <ion-navbar class="bar-header">
-
-   </ion-navbar>
+<ion-header [ngSwitch]="referrer">
+  <ion-navbar color="primary" class="playlist-details" *ngSwitchCase="'spotify'">
+    <ion-title>{{ song?.getSongTitle() }}</ion-title>
+  </ion-navbar>
+  <ion-navbar color="2nd_orange" class="playlist-details" *ngSwitchDefault>
+    <ion-title color="light">{{ song?.getSongTitle() }}</ion-title>
+  </ion-navbar>
 </ion-header>
 
 

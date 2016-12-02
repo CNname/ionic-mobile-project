@@ -50,96 +50,86 @@
       </div>
     </ion-item>
 
-    <ion-list no-lines *ngSwitchCase="'spotify'" class="card-background-page">
+    <div *ngSwitchCase="'spotify'">
+      <ion-list no-lines  class="card-background-page">
+         <h2 style="padding: 0 10px">Featured playlists</h2>
+         <ion-card class="playlist playlist-spotify"  *ngFor="let item of playlist_items" (click)="openPlaylist(item)" [style.background-image]="'url(' + item.getPlaylistImage().large.url + ')'" style="background-size: cover;">
+         </ion-card>
+      </ion-list>
+    </div>
 
-       <h2 style="padding: 0 10px">Featured playlists</h2>
-       <ion-card class="playlist playlist-spotify"  *ngFor="let item of playlist_items" (click)="openPlaylist(item)" [style.background-image]="'url(' + item.getPlaylistImage().large.url + ')'" style="background-size: cover;">
-         <!--<ion-card-header>
-           {{ item.getName() }}
-         </ion-card-header>-->
-         <!--<button ion-item>
-           <ion-icon name='person' item-left></ion-icon>
-           {{ item.getOwnerName() }}
-         </button>
-         <button ion-item>
-           <ion-icon name='play' item-left></ion-icon>
-           {{ item.getSongCount() }}
-         </button>-->
-       </ion-card>
+    <div *ngSwitchCase="'playlists'">
+      <ion-list no-lines  class="card-background-page">
+         <h2 style="padding: 0 10px">Own playlists</h2>
+         <ion-card class="playlist playlist-spotify"  *ngFor="let item of usersPlaylists" (click)="openPlaylist(item)" [style.background-image]="'url(' + item.getPlaylistImage().large.url + ')'" style="background-size: cover;">
+           <div class="dark-layer">
+             <ion-card-header style="color: #fff">
+               {{ item.getName() }}
+             </ion-card-header>
+           </div>
+           <!--<button ion-item>
+             <ion-icon name='person' item-left></ion-icon>
+             {{ item.getOwnerName() }}
+           </button>
+           <button ion-item>
+             <ion-icon name='play' item-left></ion-icon>
+             {{ item.getSongCount() }}
+           </button>-->
+         </ion-card>
+      </ion-list>
+    </div>
 
-    </ion-list>
+    <div *ngSwitchCase="'search'">
+      <ion-list>
 
-    <ion-list no-lines *ngSwitchCase="'playlists'" class="card-background-page">
+        <ion-segment [(ngModel)]="searchCategory" padding>
+          <ion-segment-button value="tracks" [hidden]="trackItems.length === 0">
+            Tracks
+          </ion-segment-button>
+          <ion-segment-button value="artists" [hidden]="artistItems.length === 0">
+            Artists
+          </ion-segment-button>
+        </ion-segment>
 
-       <h2 style="padding: 0 10px">Own playlists</h2>
-       <ion-card class="playlist playlist-spotify"  *ngFor="let item of usersPlaylists" (click)="openPlaylist(item)" [style.background-image]="'url(' + item.getPlaylistImage().large.url + ')'" style="background-size: cover;">
-         <div class="dark-layer">
-           <ion-card-header style="color: #fff">
-             {{ item.getName() }}
-           </ion-card-header>
-         </div>
-         <!--<button ion-item>
-           <ion-icon name='person' item-left></ion-icon>
-           {{ item.getOwnerName() }}
-         </button>
-         <button ion-item>
-           <ion-icon name='play' item-left></ion-icon>
-           {{ item.getSongCount() }}
-         </button>-->
-       </ion-card>
+        <div [ngSwitch]="searchCategory">
 
-    </ion-list>
+          <p class="searchPlaceholder" [hidden]="trackItems.length > 0 || artistItems.length > 0" padding-left padding-right>Search results might come here...</p>
 
-    <ion-list *ngSwitchCase="'search'">
+          <div *ngSwitchCase="'tracks'">
 
-      <ion-segment [(ngModel)]="searchCategory" padding>
-        <ion-segment-button value="tracks" [hidden]="trackItems.length === 0">
-          Tracks
-        </ion-segment-button>
-        <ion-segment-button value="artists" [hidden]="artistItems.length === 0">
-          Artists
-        </ion-segment-button>
-      </ion-segment>
-
-      <div [ngSwitch]="searchCategory">
-
-        <p class="searchPlaceholder" [hidden]="trackItems.length > 0 || artistItems.length > 0" padding-left padding-right>Search results might come here...</p>
-
-        <div *ngSwitchCase="'tracks'">
-
-          <ion-item *ngFor="let item of trackItems" (click)="startNewPlayer(item)">
-            <ion-thumbnail item-left>
-              <img [src]="item.getAlbumImage().large.url">
-            </ion-thumbnail>
-            <h3><b>{{ item.getSongTitle() }}</b></h3>
-            <h3>
-              <span class="artist" *ngFor="let artist of item.getArtists(); let i = index">
-                <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
-              </span>
-            </h3>
-            <h4>{{ item.getAlbumTitle() }}</h4>
-          </ion-item>
-        </div>
-
-        <div *ngSwitchCase="'artists'">
-          <ion-item  *ngFor="let artist of artistItems" (click)="artistClickEvent(artist.getId())">
-            <ion-thumbnail item-left>
-              <img [src]="artist?.getImages()?.large?.url">
-            </ion-thumbnail>
-            <h3><b>{{ artist.getName() }}</b></h3>
-          </ion-item>
+            <ion-item *ngFor="let item of trackItems" (click)="startNewPlayer(item)">
+              <ion-thumbnail item-left>
+                <img [src]="item.getAlbumImage().large.url">
+              </ion-thumbnail>
+              <h3><b>{{ item.getSongTitle() }}</b></h3>
+              <h3>
+                <span class="artist" *ngFor="let artist of item.getArtists(); let i = index">
+                  <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
+                </span>
+              </h3>
+              <h4>{{ item.getAlbumTitle() }}</h4>
+            </ion-item>
           </div>
-        </div>
 
-    </ion-list>
+          <div *ngSwitchCase="'artists'">
+            <ion-item  *ngFor="let artist of artistItems" (click)="artistClickEvent(artist.getId())">
+              <ion-thumbnail item-left>
+                <img [src]="artist?.getImages()?.large?.url">
+              </ion-thumbnail>
+              <h3><b>{{ artist.getName() }}</b></h3>
+            </ion-item>
+            </div>
+          </div>
 
-    <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
-      <ion-infinite-scroll-content
-        loadingSpinner="bubbles"
-        loadingText="Loading more results">
-      </ion-infinite-scroll-content>
-    </ion-infinite-scroll>
+      </ion-list>
 
+      <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content *ngIf="query?.length >= 3"
+          loadingSpinner="bubbles"
+          loadingText="Loading more results">
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </div>
   </div>
 </ion-content>
 

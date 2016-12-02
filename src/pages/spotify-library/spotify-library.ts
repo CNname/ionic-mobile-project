@@ -1,5 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
-import {NavController, ModalController, ViewController, MenuController, NavParams} from 'ionic-angular';
+import {Component, ViewChild, OnInit, ApplicationRef} from '@angular/core';
+import {NavController, ModalController, ViewController, MenuController, NavParams, InfiniteScroll} from 'ionic-angular';
 import { SpotifyService } from '../../providers/spotify-service';
 import { PlaylistDetails } from '../playlist-details/playlist-details';
 import { Song } from '../../classes/Song.class';
@@ -18,6 +18,7 @@ import {Playlist} from "../../classes/Playlist.Class";
   templateUrl: 'spotify-library.html'
 })
 export class SpotifyLibrary {
+
   hideElement: boolean = false;
   isPlaying: boolean = false;
   pauseButton: boolean = false;
@@ -36,6 +37,8 @@ export class SpotifyLibrary {
   usersPlaylists: Array<Playlist>;
   usersTotalPlaylists: number;
 
+
+
   constructor(
     public navCtrl: NavController,
     public spotifyservice: SpotifyService,
@@ -43,6 +46,7 @@ export class SpotifyLibrary {
     public musicService: MusicService,
     private menu: MenuController,
     public userAccountService: UserAccountService,
+    private applicationRef: ApplicationRef
   ) {}
 
   ionViewCanEnter(): boolean {
@@ -76,6 +80,10 @@ export class SpotifyLibrary {
 
     }
 
+    this.applicationRef.tick(); // because it just works
+
+
+
   }
 
   toggleSearchAndFocus(){
@@ -93,31 +101,36 @@ export class SpotifyLibrary {
     this.navCtrl.push(PlaylistDetails, {item: item, referrer: "spotify"}).catch(()=> console.log('Something went wrong while opening playlist'));
   }
 
-  doInfinite(infiniteScroll){
-    this.spotifyservice.searchForItem(this.query, this.offset).subscribe((res) => {
+  doInfinite(infiniteScroll: InfiniteScroll){
+    if (typeof this.query !== "undefined") {
+      if (this.query.length >= 3) {
+        this.spotifyservice.searchForItem(this.query, this.offset).subscribe((res) => {
+          let trackitems: any[] = Handling.HandleJson.tracks(res.tracks.items);
+          let artistitems: any[] = Handling.HandleJson.artists(res.artists.items);
+          this.offset += 30;
+          if (trackitems.length == 0 && artistitems.length == 0) {
+            infiniteScroll.enable(false);
+          } else {
+            infiniteScroll.enable(true);
+          }
 
-      let trackitems:any[] = Handling.HandleJson.tracks(res.tracks.items);
-      let artistitems:any[] = Handling.HandleJson.artists(res.artists.items);
-      this.offset += 30;
-      if(trackitems.length == 0 && artistitems.length == 0){
-        infiniteScroll.enable(false);
-      } else { infiniteScroll.enable(true); }
+          for (let i = 0; i < trackitems.length; i++) {
+            this.trackItems.push(trackitems[i]);
+          }
 
-      for(let i= 0; i < trackitems.length; i++){
-        this.trackItems.push(trackitems[i]);
+          for (let i = 0; i < artistitems.length; i++) {
+            this.artistItems.push(artistitems[i]);
+          }
+
+          // activate segment if needed
+          if (this.trackItems.length > 0) {
+            this.searchCategory = "tracks";
+          } else if (this.trackItems.length === 0 && this.artistItems.length > 0) {
+            this.searchCategory = "artists";
+          }
+        });
       }
-
-      for(let i= 0; i < artistitems.length; i++){
-        this.artistItems.push(artistitems[i]);
-      }
-
-      // activate segment if needed
-      if (this.trackItems.length > 0) {
-        this.searchCategory = "tracks";
-      } else if (this.trackItems.length === 0 && this.artistItems.length > 0) {
-        this.searchCategory = "artists";
-      }
-    })
+    }
   }
 
   goToDetails(playlist_id: string, playlist_title: string) {
