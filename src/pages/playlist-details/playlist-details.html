@@ -56,7 +56,7 @@
   </ion-list>
 
 </ion-content>
-<ion-footer [hidden]="!isPlaying">
+<ion-footer [hidden]="!musicService.isPlayerInit()">
   <ion-toolbar class="librarySmallPlayer player" color="2nd_dark">
     <ion-list class="librarySmallPlayer" no-lines>
       <ion-item color="2nd_dark" (click)='openPlayerPage(playing)'>
@@ -66,10 +66,10 @@
         </span></h3>
 
         <ion-buttons end item-right>
-          <button ion-button color="2nd_orange" [hidden]="!pauseButton" (click)="pauseButton = !pauseButton" class="larger" (click)="pausePlayer($event)">
+          <button ion-button color="2nd_orange" [hidden]="!musicService.getStatus()" class="larger" (click)="pausePlayer($event)">
             <ion-icon name="pause"></ion-icon>
           </button>
-          <button ion-button color="2nd_orange" class="larger" [hidden]="pauseButton" (click)="pauseButton = !pauseButton" (click)="startPlayer($event)">
+          <button ion-button color="2nd_orange" class="larger" [hidden]="musicService.getStatus()" (click)="startPlayer($event)">
             <ion-icon name="play"></ion-icon>
           </button>
         </ion-buttons>

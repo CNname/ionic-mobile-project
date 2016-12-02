@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable, ChangeDetectorRef} from '@angular/core';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Rx';
 import { Song } from '../classes/Song.class';

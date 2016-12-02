@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, ChangeDetectorRef} from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { SoundcloudService } from '../../providers/soundcloud-service';
 import { Playlist } from '../../classes/Playlist.Class'
@@ -14,11 +14,9 @@ import {MusicService} from "../../providers/music-service";
 })
 export class PlaylistDetails {
   playlist: Playlist;
-  isPlaying: boolean = false;
   pauseButton: boolean = false;
   playing: Song;
   referrer: string;
-
 
   constructor(
     private navParams: NavParams,
@@ -63,8 +61,6 @@ export class PlaylistDetails {
   startNewPlayer(item: Song){
 
     this.playing = item;
-    this.isPlaying = true;
-    this.pauseButton = true;
 
     if (this.referrer === "spotify") {
       if (this.musicService.isPlayerInit()) {
@@ -79,6 +75,7 @@ export class PlaylistDetails {
     } else {
       this.soundcloudService.startStreaming(item.getId());
     }
+
   }
 
   openPlayerPage(item: Song){
