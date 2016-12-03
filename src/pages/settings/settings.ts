@@ -7,6 +7,7 @@ import {AuthenticationService} from "../../providers/authentication-service";
 import {UserAccountService} from "../../providers/user-account-service";
 import {spotifyAuthConfig} from "../../interfaces/interfaces";
 import {Observable} from "rxjs";
+import {SpotifyService} from "../../providers/spotify-service";
 
 // for cordova inappbrowser-plugin
 declare var window: any;
@@ -39,7 +40,8 @@ export class Settings {
     public toastController: ToastController,
     public alertCtrl: AlertController,
     public modalController: ModalController,
-    private platform: Platform
+    private platform: Platform,
+    public spotifyService: SpotifyService
   ) {}
 
   ionViewDidLoad() {
@@ -164,56 +166,11 @@ export class Settings {
   }
 
   loginToSpotify() {
-
-    // generate nonce for a state parameter,
-    // so you can ensure that request and response belongs to same browser.
-    // This protects against cross-site request forgery
-    let state = this.generateNonce(32);
-
-    // save state value to localStorage for future api calls
-    window.localStorage.setItem("state", state);
-
-    let authConfig: spotifyAuthConfig = {
-      base: "https://accounts.spotify.com/authorize",
-      clientId: "2f27c1567f8d4774b936b1ae98e91214",
-      responseType: "token",
-      redirectUri: encodeURIComponent(window.location.protocol + "//" + window.location.host + "?"),
-      scope: "user-read-private",
-      state: state
-    };
-
-    let authref = authConfig.base +
-                  "?client_id=" + authConfig.clientId +
-                  "&response_type=" + authConfig.responseType +
-                  "&redirect_uri=" + authConfig.redirectUri +
-                  "&scope=" + authConfig.scope +
-                  "&state=" + authConfig.state;
-
-    /*this.platform.ready().then(() => {
-      this.spotifyLogin(authref).subscribe(res => {
-        this.loginTest = res.accessToken;
-        this.navCtrl.pop();
-      });
-    });*/
-
-
-
-    window.location.href = authref;
-
+    // redirect to spotify login
+    window.location.href = this.spotifyService.generateAuthenticationHref();
   }
 
-  private generateNonce(length: number){
 
-    let text: string = "";
-    let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // possible characters
-
-    for (let i=0;i<length;i++) {
-      text += chars.charAt(~~(Math.random()*chars.length));
-    }
-
-    return text;
-
-  }
 
   private spotifyLogin(href: string): Observable<any> {
     return new Observable(observer => {

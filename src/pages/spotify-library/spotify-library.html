@@ -53,7 +53,7 @@
     <div *ngSwitchCase="'spotify'">
       <ion-list no-lines  class="card-background-page">
          <h2 style="padding: 0 10px">Featured playlists</h2>
-         <ion-card class="playlist playlist-spotify"  *ngFor="let item of playlist_items" (click)="openPlaylist(item)" [style.background-image]="'url(' + item.getPlaylistImage().large.url + ')'" style="background-size: cover;">
+         <ion-card class="playlist playlist-spotify"  *ngFor="let item of playlist_items; let i= index" (click)="openPlaylist(item)" [style.background-image]="'url(' + item.getPlaylistImage().large.url + ')'" [class.first]="i === 0" style="background-size: cover;">
          </ion-card>
       </ion-list>
     </div>
@@ -67,14 +67,6 @@
                {{ item.getName() }}
              </ion-card-header>
            </div>
-           <!--<button ion-item>
-             <ion-icon name='person' item-left></ion-icon>
-             {{ item.getOwnerName() }}
-           </button>
-           <button ion-item>
-             <ion-icon name='play' item-left></ion-icon>
-             {{ item.getSongCount() }}
-           </button>-->
          </ion-card>
       </ion-list>
     </div>

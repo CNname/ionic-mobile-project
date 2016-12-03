@@ -26,6 +26,7 @@ export class LoadingPage implements OnInit {
    '"It\'s hatching!"'
   ];
   activeLoadingText: string;
+  private loggedIntoSpotify: boolean = false;
 
   constructor(
     public navCtrl: NavController,
@@ -43,8 +44,6 @@ export class LoadingPage implements OnInit {
       let state = param['state'];
       let tokenType = param['token_type'];
 
-      console.log(param);
-
       if (
        accessToken !== null && accessToken !== undefined &&
        expiresIn !== null && expiresIn !== undefined &&
@@ -52,12 +51,17 @@ export class LoadingPage implements OnInit {
        tokenType !== null && tokenType !== undefined
        ) {
 
+        let tokenStart = Date.now();
+
         this.userAccountService.saveUsersSpotifyParams({
           accessToken: accessToken,
-          expiresIn: expiresIn,
+          expiresIn: +expiresIn,
+          tokenStart: +tokenStart,
           state: state,
           tokenType: tokenType
         });
+
+        this.loggedIntoSpotify = true;
 
       }
 
@@ -96,7 +100,7 @@ export class LoadingPage implements OnInit {
         // ...
         let lib = "spotify";
 
-        if (lib === "spotify") this.navCtrl.push(SpotifyLibrary).catch(()=> console.log('push failed'));
+        if (lib === "spotify") this.navCtrl.push(SpotifyLibrary, { loggedIntoSpotify: this.loggedIntoSpotify }).catch(()=> console.log('push failed'));
         else this.navCtrl.push(SoundcloudLibrary).catch(()=> console.log('push failed'));
 
       } else {

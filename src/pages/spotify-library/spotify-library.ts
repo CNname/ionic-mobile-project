@@ -1,5 +1,8 @@
 import {Component, ViewChild, OnInit, ApplicationRef} from '@angular/core';
-import {NavController, ModalController, ViewController, MenuController, NavParams, InfiniteScroll} from 'ionic-angular';
+import {
+  NavController, ModalController, ViewController, MenuController, NavParams, InfiniteScroll,
+  AlertController, ToastController
+} from 'ionic-angular';
 import { SpotifyService } from '../../providers/spotify-service';
 import { PlaylistDetails } from '../playlist-details/playlist-details';
 import { Song } from '../../classes/Song.class';
@@ -36,6 +39,7 @@ export class SpotifyLibrary {
   showUserStuff: false;
   usersPlaylists: Array<Playlist>;
   usersTotalPlaylists: number;
+  justLoggedIn: any;
 
 
 
@@ -46,8 +50,14 @@ export class SpotifyLibrary {
     public musicService: MusicService,
     private menu: MenuController,
     public userAccountService: UserAccountService,
-    private applicationRef: ApplicationRef
-  ) {}
+    private applicationRef: ApplicationRef,
+    public alertCtrl: AlertController,
+    public toastCtrl: ToastController,
+    public navParams: NavParams,
+    public spotifyService: SpotifyService
+  ) {
+    this.justLoggedIn = navParams.get('loggedIntoSpotify');
+  }
 
   ionViewCanEnter(): boolean {
     return this.authenticationservice.isUserLoggedIn();
@@ -60,31 +70,80 @@ export class SpotifyLibrary {
     let user = this.userAccountService.getSpotifyParams();
 
     if (user) {
-      this.spotifyservice.getMe().subscribe(res => {
-        console.log(res);
-        this.spotifyUser = res;
-      });
+
+      if (this.justLoggedIn === true) {
+        let toast = this.toastCtrl.create({
+          message: 'Logged in successfully',
+          duration: 3000,
+          position: 'bottom'
+        });
+        toast.present();
+      }
+
+      console.log('expireEnd: ' + (+user['tokenStart'] + +user['expiresIn'] * 1000));
+      console.log('now: ' + Date.now());
+
+      // access token is valid 3600 seconds,
+      if (user['tokenStart'] + user['expiresIn'] * 1000 > Date.now()) {
+
+          console.log('access token is valid');
+
+          this.spotifyservice.getMe().subscribe(res => {
+            console.log(res);
+            this.spotifyUser = res;
+          });
 
 
-      this.spotifyservice.getCurrentUsersPlaylists().subscribe(res => {
-        console.log(res);
-        this.usersTotalPlaylists = res['total'];
-        this.usersPlaylists = Handling.HandleJson.SpotifyPlaylists(res['items']);;
-      });
+        this.spotifyservice.getCurrentUsersPlaylists().subscribe(res => {
+          console.log(res);
+          this.usersTotalPlaylists = res['total'];
+          this.usersPlaylists = Handling.HandleJson.SpotifyPlaylists(res['items']);
+        });
 
-      this.spotifyservice.getFeaturedPlaylists().subscribe(res =>{
-        console.log(res);
-        this.playlist_items = Handling.HandleJson.SpotifyPlaylists(res['playlists']['items']);
-        console.log(this.playlist_items);
-      });
+        this.spotifyservice.getFeaturedPlaylists().subscribe(res => {
+          console.log(res);
+          this.playlist_items = Handling.HandleJson.SpotifyPlaylists(res['playlists']['items']);
+          console.log(this.playlist_items);
+        });
+
+      } else {
+        console.log('access token has expired');
+        this.createReAuthenticateAlert();
+      }
 
     }
 
-    this.applicationRef.tick(); // because it just works
+    //this.applicationRef.tick();
 
 
 
   }
+
+
+  createReAuthenticateAlert(){
+    let prompt = this.alertCtrl.create({
+      title: 'Logged out',
+      message: "Please reauthenticate to use spotify's user features.",
+
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Reauthenticate',
+          handler: () => {
+            // redirect to spotify login
+            window.location.href = this.spotifyService.generateAuthenticationHref();
+          }
+        }
+      ]
+    });
+    prompt.present();
+  }
+
 
   toggleSearchAndFocus(){
     this.hideElement = !this.hideElement;

@@ -1,13 +1,53 @@
 import { Injectable } from '@angular/core';
 import {Http, Headers, RequestOptions, Response} from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-import {ICallHandler} from "../interfaces/interfaces";
+import {ICallHandler, spotifyAuthConfig} from "../interfaces/interfaces";
 import {UserAccountService} from "./user-account-service";
 
 @Injectable()
 export class SpotifyService implements ICallHandler {
 
   constructor(public http: Http, public userAccountService: UserAccountService) { }
+
+  generateAuthenticationHref(): string {
+
+    // generate nonce for a state parameter,
+    // so you can ensure that request and response belongs to same browser.
+    // This protects against cross-site request forgery
+    let state = this.generateNonce(32);
+
+    // save state value to localStorage for future api calls
+    window.localStorage.setItem("state", state);
+
+    let authConfig: spotifyAuthConfig = {
+      base: "https://accounts.spotify.com/authorize",
+      clientId: "2f27c1567f8d4774b936b1ae98e91214",
+      responseType: "token",
+      redirectUri: encodeURIComponent(window.location.protocol + "//" + window.location.host + "?"),
+      scope: "user-read-private",
+      state: state
+    };
+
+    return authConfig.base +
+      "?client_id=" + authConfig.clientId +
+      "&response_type=" + authConfig.responseType +
+      "&redirect_uri=" + authConfig.redirectUri +
+      "&scope=" + authConfig.scope +
+      "&state=" + authConfig.state;
+  }
+
+  private generateNonce(length: number){
+
+    let text: string = "";
+    let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // possible characters
+
+    for (let i=0;i<length;i++) {
+      text += chars.charAt(~~(Math.random()*chars.length));
+    }
+
+    return text;
+
+  }
 
   getPlaylistById(userId: string, playlistId: string): Observable<any> {
 

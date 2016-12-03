@@ -40,6 +40,7 @@ export class PlaylistDetails {
 
   pausePlayer(e: Event){
     e.stopPropagation();
+    console.log(this.referrer);
     if (this.referrer === "spotify") {
       if(this.musicService.isPlayerInit()){
         this.musicService.pausePlayback();
@@ -50,6 +51,7 @@ export class PlaylistDetails {
   }
   startPlayer(e: Event){
     e.stopPropagation();
+    console.log(this.referrer);
     if (this.referrer === "spotify") {
       if(this.musicService.isPlayerInit()){
         this.musicService.startPlayback();

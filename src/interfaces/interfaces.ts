@@ -49,9 +49,10 @@ export interface spotifyAuthConfig {
 
 export interface SpotifyParams {
   accessToken: string;
-  expiresIn: string;
+  expiresIn: number;
   state: string;
   tokenType: string;
+  tokenStart: number;
 }
 
 export interface imageUrls {

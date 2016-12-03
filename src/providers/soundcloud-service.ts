@@ -13,7 +13,8 @@ export class SoundcloudService {
   private redirect_uri: string = 'http://localhost/soundcloud-callback';
   SCPlayer: any;
   playingItems: Playlist;
-  play:boolean = false;
+  play: boolean = false;
+  playing: boolean = false;
 
   constructor(public http: Http, private jsonp: Jsonp) {
     SC.initialize({
@@ -34,13 +35,14 @@ export class SoundcloudService {
    startStreaming(id: string){
     SC.stream('/tracks/'+id).then(player => {
       this.SCPlayer = player;
+      this.play = true;
+      this.playing = true;
 
       this.SCPlayer.play();
 
       this.SCPlayer.on('buffering_start', () => { console.log('buffering...'); });
 
       this.SCPlayer.on('buffering_end', () => {
-        this.play = true;
         console.log('music');
       });
     });
@@ -48,11 +50,22 @@ export class SoundcloudService {
 
   pauseStream(){
     this.SCPlayer.pause();
+    this.playing = false;
   }
 
   resumeStream(){
     this.SCPlayer.play();
+    this.playing = true;
   }
+
+  getStatus(){
+    return this.play;
+  }
+
+  isPlaying(): boolean {
+    return this.playing;
+  }
+
 
   searchForItem(query: string): any {
     return SC.get('tracks', {
