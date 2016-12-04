@@ -1,3 +1,28 @@
 page-playlist-details {
 
+  .playlist-spotify-header {
+
+    width: 100%;
+    min-height: 150px;
+    overflow: hidden;
+    position: relative;
+
+    $blurRad: 3px;
+
+    img {
+      position: absolute;
+      top: 50%; left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      -moz-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      width: calc(100% + 10px); // hides border ugliness
+      max-width: calc(100% + 10px);;
+      -webkit-filter: blur($blurRad);
+      -moz-filter: blur($blurRad);
+      filter: blur($blurRad);
+    }
+
+
+  }
+
 }

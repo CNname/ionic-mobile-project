@@ -1,13 +1,21 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Http, Headers, RequestOptions, Response} from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import {Observable, Subject} from 'rxjs/Rx';
 import {ICallHandler, spotifyAuthConfig} from "../interfaces/interfaces";
 import {UserAccountService} from "./user-account-service";
+import {AlertController, ToastController} from "ionic-angular";
+import {Handling} from "../namespaces/handling";
+import {Playlist} from "../classes/Playlist.Class";
 
 @Injectable()
 export class SpotifyService implements ICallHandler {
 
-  constructor(public http: Http, public userAccountService: UserAccountService) { }
+  // provides an event which components can listen
+  changeEventSource: Subject<string> = new Subject<string>();
+  // observable streams
+  changeEvent$ = this.changeEventSource.asObservable();
+
+  constructor(public http: Http, public userAccountService: UserAccountService, public alertCtrl: AlertController, public toastController: ToastController) { }
 
   generateAuthenticationHref(): string {
 
@@ -24,7 +32,7 @@ export class SpotifyService implements ICallHandler {
       clientId: "2f27c1567f8d4774b936b1ae98e91214",
       responseType: "token",
       redirectUri: encodeURIComponent(window.location.protocol + "//" + window.location.host + "?"),
-      scope: "user-read-private",
+      scope: "user-read-private playlist-modify-public",
       state: state
     };
 
@@ -101,6 +109,167 @@ export class SpotifyService implements ICallHandler {
       .catch(this.spotifyErrorCatch);
   }
 
+  addToPlaylist(songId: string, songName: string){
+
+    let radioButtons: Array<Object> = [];
+
+    this.getCurrentUsersPlaylists().subscribe((res)=>{
+
+      let playlists: Array<Playlist> = Handling.HandleJson.SpotifyPlaylists(res['items']);
+      console.log(playlists);
+
+      radioButtons.push({
+        type: 'radio',
+        value: "totallySoNewStreamgullPlaylist",
+        label: "Create new playlist",
+        checked: true
+      });
+
+      for (let i=0; i<playlists.length; i++) {
+        let btn = {
+          type: 'radio',
+          value: playlists[i].getId(),
+          label: playlists[i].getName()
+        };
+        radioButtons.push(btn);
+      }
+
+      let alert = this.alertCtrl.create({
+        title: 'Add to playlist',
+        message: songName,
+        inputs: radioButtons,
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            handler: () => {}
+          },
+          {
+            text: 'Add',
+            handler: data => {
+
+              if (data === "totallySoNewStreamgullPlaylist") {
+                let newPlaylistAlert = this.alertCtrl.create({
+                  title: 'Create a new playlist',
+                  inputs: [{
+                    name: "newPlaylist",
+                    placeholder: "Name",
+                    type: "text"
+                  }],
+                  buttons: [
+                    {
+                      text: 'Cancel',
+                      role: 'cancel',
+                      handler: () => {}
+                    },
+                    {
+                      text: 'Create',
+                      handler: data => {
+                        this.createNewPlaylist(data.newPlaylist).subscribe(res => {
+                          let newPlaylistId = res['id'];
+                          this.addSongToPlaylistWithToasts(songId, newPlaylistId);
+                        }, err => {
+                          let toast = this.toastController.create({
+                            message: 'Crating a new playlist failed',
+                            duration: 3000,
+                            position: 'bottom'
+                          });
+                          toast.present();
+                        });
+                      }
+                    }
+                  ]
+                });
+                newPlaylistAlert.present();
+
+              } else {
+                this.addSongToPlaylistWithToasts(songId, data);
+              }
+
+            }
+          }
+        ]
+      });
+      alert.present();
+
+    });
+  }
+
+  private addSongToPlaylistWithToasts(songId: string, playlistId: string) {
+    this.addSongToPlaylist(songId, playlistId).subscribe(res => {
+      let toast = this.toastController.create({
+        message: 'Song added to playlist successfully',
+        duration: 3000,
+        position: 'bottom'
+      });
+      toast.present();
+    }, err => {
+      let toast = this.toastController.create({
+        message: 'Adding a song to playlist failed',
+        duration: 3000,
+        position: 'bottom'
+      });
+      toast.present();
+      this.changeEventSource.next("moi");
+    });
+  }
+
+  addSongToPlaylist(songId: string, playlistId: string): Observable<any>{
+
+
+    let spotifyparams = this.userAccountService.getSpotifyParams();
+    let spotifyUser = this.userAccountService.getSpotifyUser();
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + spotifyparams['accessToken']
+    });
+    let options = new RequestOptions({ headers: headers });
+
+    // a post call body parameters
+    let body = {
+      "uris": ["spotify:track:" + songId]
+    };
+
+    return this.http.post('https://api.spotify.com/v1/users/' + spotifyUser['id'] + '/playlists/' + playlistId + '/tracks', body, options)
+      .map((res: Response) => res.json())
+      .catch(this.spotifyErrorCatch);
+  }
+
+  removeFromAPlaylist(songId: string,  playlistId: string): Observable<any> {
+    let spotifyparams = this.userAccountService.getSpotifyParams();
+    let spotifyUser = this.userAccountService.getSpotifyUser();
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + spotifyparams['accessToken']
+    });
+    let tracks = { tracks: [{ "uri": "spotify:track:" + songId}] };
+    let options = new RequestOptions({ headers: headers, body: tracks });
+
+    return this.http.delete('https://api.spotify.com/v1/users/' + spotifyUser['id'] + '/playlists/' + playlistId + '/tracks', options)
+      .map((res: Response) => res.json())
+      .catch(this.spotifyErrorCatch);
+  }
+
+  removeFromAPlaylistWithToasts(songId: string,  playlistId: string) {
+    this.removeFromAPlaylist(songId, playlistId).subscribe(res => {
+      let toast = this.toastController.create({
+        message: 'Song removed from a playlist successfully',
+        duration: 3000,
+        position: 'bottom'
+      });
+      toast.present();
+    }, err => {
+      let toast = this.toastController.create({
+        message: 'Removing a song failed',
+        duration: 3000,
+        position: 'bottom'
+      });
+      toast.present();
+      this.changeEventSource.next("moi");
+    });
+  }
+
+
   /**
    * @param limit 1-50
    * @param locale desired language
@@ -138,6 +307,37 @@ export class SpotifyService implements ICallHandler {
     return this.http.get('https://api.spotify.com/v1/me/playlists', options)
       .map((res: Response) => res.json())
       .catch(this.spotifyErrorCatch);
+  }
+
+  /**
+   *
+   * @param name
+   * @param publicPlaylist needs playlist-modify-private scope.
+   * @param collaborative needs playlist-modify-private and playlist-modify-public scopes.
+   * @returns {Observable<R>}
+   */
+  createNewPlaylist(name: string, publicPlaylist: boolean = true, collaborative: boolean = false): Observable<any> {
+
+
+    let spotifyparams = this.userAccountService.getSpotifyParams();
+    let spotifyUser = this.userAccountService.getSpotifyUser();
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + spotifyparams['accessToken']
+    });
+    let options = new RequestOptions({ headers: headers });
+
+    // a post call body parameters
+    let body = {
+      "name": name,
+      "public": publicPlaylist,
+      "collaborative": collaborative
+    };
+
+    return this.http.post('https://api.spotify.com/v1/users/' + spotifyUser['id'] + '/playlists' , body, options)
+      .map((res: Response) => res.json())
+      .catch((err: any) => Observable.throw(err.json().error || 'Server error'));
+
   }
 
   spotifyErrorCatch(err: Response | any): Observable<any>  {

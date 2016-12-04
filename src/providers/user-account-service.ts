@@ -67,4 +67,22 @@ export class UserAccountService {
     window.localStorage.setItem("spotifyparams", JSON.stringify(value));
   }
 
+  clearSpotifyParams() {
+    window.localStorage.removeItem("spotifyparams");
+  }
+
+  getSpotifyUser(): Object {
+    //return this._spotifyParams;
+    return JSON.parse(window.localStorage.getItem("spotifyUser"));
+  }
+
+  setSpotifyUser(value: Object) {
+    //this._spotifyParams = value;
+    window.localStorage.setItem("spotifyUser", JSON.stringify(value));
+  }
+
+  clearSpotifyUser() {
+    window.localStorage.removeItem("spotifyUser");
+  }
+
 }

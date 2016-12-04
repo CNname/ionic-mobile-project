@@ -14,9 +14,9 @@ export class MusicService {
   }
 
   isPlayerInit(): boolean{
-    //return typeof this.audioObject !== 'undefined';
-    if (this.soundcloudService.getStatus() || typeof this.audioObject !== 'undefined') return true;
-    return false;
+    return this.soundcloudService.getStatus() || typeof this.audioObject !== 'undefined';
+    /*if (this.soundcloudService.getStatus() || typeof this.audioObject !== 'undefined') return true;
+    return false;*/
   }
 
   startPlayback(){
@@ -28,8 +28,7 @@ export class MusicService {
     this.isPlaying = false;
   }
   getStatus(){
-    if (this.soundcloudService.isPlaying() || this.isPlaying) return true;
-    else return false;
+    return this.soundcloudService.isPlaying() || this.isPlaying;
   }
   resetAudio(){
     this.audioObject.pause();

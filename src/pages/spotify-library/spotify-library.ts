@@ -1,13 +1,12 @@
-import {Component, ViewChild, OnInit, ApplicationRef} from '@angular/core';
+import {Component, ViewChild, OnInit} from '@angular/core';
 import {
-  NavController, ModalController, ViewController, MenuController, NavParams, InfiniteScroll,
-  AlertController, ToastController
+  NavController, MenuController, NavParams, InfiniteScroll,
+  AlertController, ToastController, ActionSheetController
 } from 'ionic-angular';
 import { SpotifyService } from '../../providers/spotify-service';
 import { PlaylistDetails } from '../playlist-details/playlist-details';
 import { Song } from '../../classes/Song.class';
 import { Artist } from '../../classes/Artist.class';
-import { PlayerPage } from '../playerPage/playerPage';
 import { ArtistPage } from "../artist-page/artist-page";
 import { Handling } from "../../namespaces/handling";
 import { imageUrls } from "../../interfaces/interfaces";
@@ -15,12 +14,13 @@ import { MusicService } from '../../providers/music-service';
 import { AuthenticationService } from '../../providers/authentication-service';
 import {UserAccountService} from "../../providers/user-account-service";
 import {Playlist} from "../../classes/Playlist.Class";
+import {MiniPlayer} from "../../components/miniplayer";
 
 @Component({
   selector: 'spotify-library',
   templateUrl: 'spotify-library.html'
 })
-export class SpotifyLibrary {
+export class SpotifyLibrary implements OnInit {
 
   hideElement: boolean = false;
   isPlaying: boolean = false;
@@ -31,7 +31,8 @@ export class SpotifyLibrary {
   playlist_items: Array<Object>;
   timeout: any;
   playing: Song;
-  trackItems: any[] = [];
+  //trackItems: any[] = [];
+  trackItems: Playlist;
   artistItems: any[] = [];
   searchCategory: string;
   spotifyUser: Object;
@@ -41,7 +42,7 @@ export class SpotifyLibrary {
   usersTotalPlaylists: number;
   justLoggedIn: any;
 
-
+  @ViewChild(MiniPlayer) miniPlayer: MiniPlayer;
 
   constructor(
     public navCtrl: NavController,
@@ -50,13 +51,17 @@ export class SpotifyLibrary {
     public musicService: MusicService,
     private menu: MenuController,
     public userAccountService: UserAccountService,
-    private applicationRef: ApplicationRef,
     public alertCtrl: AlertController,
     public toastCtrl: ToastController,
     public navParams: NavParams,
-    public spotifyService: SpotifyService
+    public spotifyService: SpotifyService,
+    public actionSheetCtrl: ActionSheetController
   ) {
     this.justLoggedIn = navParams.get('loggedIntoSpotify');
+  }
+
+  ngOnInit(): void {
+
   }
 
   ionViewCanEnter(): boolean {
@@ -90,6 +95,7 @@ export class SpotifyLibrary {
 
           this.spotifyservice.getMe().subscribe(res => {
             console.log(res);
+            this.userAccountService.setSpotifyUser(res);
             this.spotifyUser = res;
           });
 
@@ -111,11 +117,9 @@ export class SpotifyLibrary {
         this.createReAuthenticateAlert();
       }
 
+    } else {
+
     }
-
-    //this.applicationRef.tick();
-
-
 
   }
 
@@ -145,19 +149,22 @@ export class SpotifyLibrary {
   }
 
 
-  toggleSearchAndFocus(){
+  toggleSearchAndFocus(searchInput: any){
     this.hideElement = !this.hideElement;
 
     if (this.hideElement) {
-      let sgInput = document.querySelector("ion-input.librarySearch > input");
-      //sgInput.focus();
-      console.log(sgInput);
+      console.log(searchInput);
+
+      setTimeout(() =>{
+        searchInput.setFocus();
+      }, 500);
     }
 
   }
 
   openPlaylist(item: Playlist){
-    this.navCtrl.push(PlaylistDetails, {item: item, referrer: "spotify"}).catch(()=> console.log('Something went wrong while opening playlist'));
+    console.log(this.miniPlayer);
+    this.navCtrl.push(PlaylistDetails, {item: item, referrer: "spotify", miniPlayer: this.miniPlayer}).catch(()=> console.log('Something went wrong while opening playlist'));
   }
 
   doInfinite(infiniteScroll: InfiniteScroll){
@@ -173,18 +180,23 @@ export class SpotifyLibrary {
             infiniteScroll.enable(true);
           }
 
+          let tracks = this.trackItems.getSongs();
+
           for (let i = 0; i < trackitems.length; i++) {
-            this.trackItems.push(trackitems[i]);
+            tracks.push(trackitems[i]);
           }
+
+          this.trackItems.setSongs(tracks);
+          this.trackItems.setSongCount(tracks.length);
 
           for (let i = 0; i < artistitems.length; i++) {
             this.artistItems.push(artistitems[i]);
           }
 
           // activate segment if needed
-          if (this.trackItems.length > 0) {
+          if (this.trackItems.getSongCount() > 0) {
             this.searchCategory = "tracks";
-          } else if (this.trackItems.length === 0 && this.artistItems.length > 0) {
+          } else if (this.trackItems.getSongCount() === 0 && this.artistItems.length > 0) {
             this.searchCategory = "artists";
           }
         });
@@ -192,15 +204,12 @@ export class SpotifyLibrary {
     }
   }
 
-  goToDetails(playlist_id: string, playlist_title: string) {
-    this.navCtrl.push(PlaylistDetails, {playlist_id, playlist_title});
-  }
-
 
   // this an oddly named search
   getItemsByName(event:any) {
     clearTimeout(this.timeout);
-    this.trackItems = [];
+    //this.trackItems = [];
+    this.trackItems = new Playlist("searchPlaylist", "Search results", 0, "spotify");
     this.artistItems = [];
 
     this.timeout = setTimeout(() => {
@@ -213,13 +222,15 @@ export class SpotifyLibrary {
 
           this.spotifyservice.searchForItem(encodeURIComponent(this.query), 0).subscribe((res) => {
 
-            this.trackItems = Handling.HandleJson.tracks(res.tracks.items);
+            let foundSongs = Handling.HandleJson.tracks(res.tracks.items);
+            this.trackItems.setSongs(foundSongs);
+            this.trackItems.setSongCount(foundSongs.length);
             this.artistItems = Handling.HandleJson.artists(res.artists.items);
 
             // activate segment if needed
-            if (this.trackItems.length > 0) {
+            if (this.trackItems.getSongCount() > 0) {
               this.searchCategory = "tracks";
-            } else if (this.trackItems.length === 0 && this.artistItems.length > 0) {
+            } else if (this.trackItems.getSongCount() === 0 && this.artistItems.length > 0) {
               this.searchCategory = "artists";
             }
 
@@ -248,50 +259,28 @@ export class SpotifyLibrary {
       artist.setImages(images);
 
       this.navCtrl.push(ArtistPage, {
-        item: artist
+        item: artist,
+        miniPlayer: this.miniPlayer
       });
 
     })
   }
 
-  startPlayer(e: Event) {
-
-    e.stopPropagation();
-
-    if(this.musicService.isPlayerInit()){
-      this.musicService.startPlayback();
-    }
+  logout(){
+    this.userAccountService.clearSpotifyParams();
+    this.userAccountService.clearSpotifyUser();
+    this.spotifyUser = null;
+    this.trackItems = null;
+    this.artistItems = [];
+    this.playlist_items = [];
+    this.usersPlaylists = [];
+    //this.applicationRef.tick();
   }
 
-  openPagePlayer(item: Song){
-    this.navCtrl.push(PlayerPage, {item: item, songs: this.trackItems }).catch(()=> console.log('should I stay or should I go now'));
+  login() {
+    window.location.href = this.spotifyService.generateAuthenticationHref();
   }
 
-  startNewPlayer(item: Song){
-    if(this.musicService.isPlayerInit()){
-        this.playing = item;
-        this.musicService.pausePlayback();
-        this.musicService.resetAudio();
-        this.musicService.setAudio(item.getUrl());
-        this.musicService.startPlayback();
-        this.isPlaying = true;
-        this.pauseButton = true;
-    } else {
-        this.playing = item;
-        this.musicService.setAudio(item.getUrl());
-        this.musicService.startPlayback();
-        this.isPlaying = true;
-        this.pauseButton = true;
-    }
-  }
 
-  pausePlayer(e: Event){
-
-    e.stopPropagation();
-
-    if(this.musicService.isPlayerInit()){
-      this.musicService.pausePlayback();
-    }
-  }
 
 }

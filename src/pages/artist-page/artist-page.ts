@@ -1,10 +1,15 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import {Component, ViewChild} from '@angular/core';
+import {NavController, NavParams, ActionSheetController} from 'ionic-angular';
 import {SpotifyService} from "../../providers/spotify-service";
 import {Artist} from "../../classes/Artist.class";
 import {Song} from "../../classes/Song.class";
 import {Handling} from "../../namespaces/handling";
 import {imageUrls} from "../../interfaces/interfaces";
+import {Playlist} from "../../classes/Playlist.Class";
+import {MiniPlayer} from "../../components/miniplayer";
+import {MusicService} from "../../providers/music-service";
+import {SoundcloudService} from "../../providers/soundcloud-service";
+import {UserAccountService} from "../../providers/user-account-service";
 
 /*
   Generated class for the Artist page.
@@ -17,63 +22,56 @@ import {imageUrls} from "../../interfaces/interfaces";
   templateUrl: 'artist-page.html'
 })
 export class ArtistPage {
-  audioObject: any;
   artist: Artist;
-  popularTracks: Song[];
-  private spotifyservice: SpotifyService;
+  popularTracks: Playlist;
+  tempMiniPlayerData: any;
 
+  @ViewChild(MiniPlayer) miniPlayer: MiniPlayer;
 
-  constructor(public navCtrl: NavController, navParams: NavParams, spotifyservice: SpotifyService) {
-    this.spotifyservice = spotifyservice;
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    public spotifyService: SpotifyService,
+    public musicService: MusicService,
+    public soundcloudService: SoundcloudService,
+    public userAccountService: UserAccountService,
+    public actionSheetCtrl: ActionSheetController
+  ) {
+    this.tempMiniPlayerData = navParams.get('miniPlayer');
     this.artist = navParams.get("item");
   }
 
   ionViewDidLoad() {
-    //console.log('Hello Artist Page');
+
+    this.miniPlayer.setMiniPlayerData(
+      this.tempMiniPlayerData.getPlaying(),
+      this.tempMiniPlayerData.getPlayingPlaylist(),
+      "spotify"
+    );
+
+    this.tempMiniPlayerData = undefined;
+
     this.getPopularSongs();
 
   }
 
+  ionViewWillLeave(){
+    // param reference has to be used to update playing song in the parent view,
+    // because currently Ionic 2 doesn't support pop with params feature
+    this.navParams.get('miniPlayer').setMiniPlayerData(
+      this.miniPlayer.getPlaying(),
+      this.miniPlayer.getPlayingPlaylist(),
+      "spotify"
+    );
+  }
+
   getPopularSongs() {
-    this.spotifyservice.getPopularSongsByArtist(this.artist.getId()).subscribe((res) => {
-      this.popularTracks = Handling.HandleJson.tracks(res.tracks);
-      console.log(this.popularTracks);
-    })
-  }
+    this.spotifyService.getPopularSongsByArtist(this.artist.getId()).subscribe((res) => {
+      let popular: Array<Song> = Handling.HandleJson.tracks(res.tracks);
 
-  // should not be here!!! Create a namespace etc to control player
-  startPlayer(url: string) {
-    //if(this.audioObject.playing() != 'true'){
-    //this.audioObject = new Audio(url);
-    //this.audioObject.play();
-    //}else{
-    //    this.audioObject.stop();
-    //}
-  }
-
-  artistClickEvent(id: string) {
-    this.spotifyservice.getArtistById(id).subscribe((res) => {
-      let artist = new Artist(res.id, res.name);
-
-      let images: imageUrls = {
-        large: {
-          height: 600,
-          width: 600,
-          url: "../../assets/img/sg-placeholder.jpg"
-        }
-      };
-
-      for (let i=0; i<res.images.length; i++) {
-        if (i===0) images.large = res.images[i];
-        else if (i===1) images.medium = res.images[i];
-        else if (i===2) images.small = res.images[i];
-      }
-
-      artist.setImages(images);
-
-      this.navCtrl.push(ArtistPage, {
-        item: artist
-      });
+      // id: string, title: string, count: number, service: string
+      this.popularTracks = new Playlist("Popular", "Popular songs of artist", popular.length, "spotify");
+      this.popularTracks.setSongs(popular);
 
     })
   }
