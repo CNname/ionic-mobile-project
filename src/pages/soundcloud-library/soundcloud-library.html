@@ -98,7 +98,7 @@
 
         <p class="searchPlaceholder" [hidden]="items.length > 0" padding-left padding-right>Search results appear here... </p>
 
-        <ion-item *ngFor="let item of items" (click)="startNewPlayer(item)">
+        <ion-item *ngFor="let item of items" (click)="item.play(miniPlayer, 'soundcloud', soundcloudService, items, soundcloudService)">
           <ion-thumbnail item-left>
             <img [src]="item.getAlbumImage().large">
           </ion-thumbnail>
@@ -120,7 +120,9 @@
   </div>
 </ion-content>
 
-<ion-footer [hidden]="!isPlaying">
+<streamgull-miniplayer></streamgull-miniplayer>
+
+<!--<ion-footer [hidden]="!isPlaying">
   <ion-toolbar class="librarySmallPlayer player" color="2nd_dark">
     <ion-list class="librarySmallPlayer" no-lines>
       <ion-item (click)='openPlayerPage(playing)' color="2nd_dark">
@@ -141,4 +143,4 @@
       </ion-item>
     </ion-list>
   </ion-toolbar>
-</ion-footer>
+</ion-footer> -->

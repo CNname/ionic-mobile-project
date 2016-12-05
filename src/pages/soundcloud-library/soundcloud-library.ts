@@ -10,7 +10,7 @@ import { PlaylistDetails } from '../playlist-details/playlist-details';
 import { Observable } from 'rxjs/Rx';
 import { PlayerPage } from '../playerPage/playerPage';
 import { imageUrls } from "../../interfaces/interfaces";
-
+import { MiniPlayer } from '../../components/miniplayer'
 
 @Component({
   selector: 'page-soundcloud-library',
@@ -38,6 +38,7 @@ export class SoundcloudLibrary {
     trending: any[] = [];
     time: number = 0;
 
+  @ViewChild(MiniPlayer) miniPlayer: MiniPlayer;
 
   constructor(public navCtrl: NavController,
     userAccountService: UserAccountService,

@@ -2,7 +2,10 @@ import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { Song } from '../../classes/Song.class';
 import { MusicService } from '../../providers/music-service';
-import {IPlayer} from "../../interfaces/interfaces";
+import { IPlayer } from "../../interfaces/interfaces";
+import { Playlist } from "../../classes/Playlist.Class";
+import { SoundcloudService } from '../../providers/soundcloud-service'
+import { imageUrls } from "../../interfaces/interfaces";
 
 @Component({
   selector: 'playerPage',
@@ -10,36 +13,69 @@ import {IPlayer} from "../../interfaces/interfaces";
 })
 export class PlayerPage implements IPlayer {
   song: Song;
-  songs: Song[];
+  songs: Playlist;
+  referrer: string;
+  isPlaying: boolean;
 
-  constructor(public navCtrl: NavController, private navParams: NavParams, public musicService: MusicService) {
-    this.song = navParams.get('item');
-    this.songs = navParams.get('songs');
+  constructor(public navCtrl: NavController,
+    private navParams: NavParams,
+    public musicService: MusicService,
+    public soundcloudService: SoundcloudService) {
+
+      this.song = navParams.get('miniPlayer').getPlaying();
+      this.songs = navParams.get('miniPlayer').getPlayingPlaylist();
+      this.referrer = navParams.get('miniPlayer').getReferrer();
+      console.log(navParams.get('miniPlayer'));
+      // Replace the playing songs album art to a bigger image
+      if(this.referrer == 'soundcloud'){
+        let images:imageUrls = this.song.getAlbumImage();
+        images.large = images.large.replace('large.jpg', 't500x500.jpg');
+        console.log(images);
+        this.song.setAlbumImage(images);
+      }
+
   }
 
   ionViewDidLoad(){
     console.log("start of the page");
   }
 
-  pausePlayback(){
-    this.musicService.pausePlayback();
+  ionViewWillLeave(){
+
+    // param reference has to be used to update playing song in the parent view,
+    // because currently Ionic 2 doesn't support pop with params feature
+    this.navParams.get('miniPlayer').setMiniPlayerData(this.song, this.songs, this.referrer);
+
   }
 
-  startPlayback(){
-    this.musicService.startPlayback();
+  pausePlayback(){
+    if(this.referrer == 'spotify'){
+      this.musicService.pausePlayback();
+    }else if(this.referrer == 'soundcloud'){
+      this.soundcloudService.pauseStream();
+    }
+  }
+
+  startPlayback() {
+    if(this.referrer == 'spotify'){
+      this.musicService.startPlayback();
+    }else if(this.referrer == 'soundcloud'){
+      this.soundcloudService.resumeStream();
+    }
   }
 
   previousSong(){
     let currentId = this.song.getId();
-    for (let i=0; i<this.songs.length; i++) {
-      if (currentId === this.songs[i].getId()) {
+    let songs = this.songs.getSongs();
+    for (let i=0; i<songs.length; i++) {
+      if (currentId === songs[i].getId()) {
         this.musicService.resetAudio();
         if (i === 0) {
-          this.musicService.setAudio(this.songs[this.songs.length-1].getUrl());
-          this.song = this.songs[this.songs.length-1];
+          this.musicService.setAudio(songs[songs.length-1].getUrl());
+          this.song = songs[songs.length-1];
         } else {
-          this.musicService.setAudio(this.songs[i-1].getUrl());
-          this.song = this.songs[i-1];
+          this.musicService.setAudio(songs[i-1].getUrl());
+          this.song = songs[i-1];
         }
         this.musicService.startPlayback();
         break;
@@ -49,15 +85,16 @@ export class PlayerPage implements IPlayer {
 
   nextSong(){
     let currentId = this.song.getId();
-    for (let i=0; i<this.songs.length; i++) {
-      if (currentId === this.songs[i].getId()) {
+    let songs = this.songs.getSongs();
+    for (let i=0; i<songs.length; i++) {
+      if (currentId === songs[i].getId()) {
         this.musicService.resetAudio();
-        if (i === this.songs.length-1) {
-          this.musicService.setAudio(this.songs[0].getUrl());
-          this.song = this.songs[0];
+        if (i === songs.length-1) {
+          this.musicService.setAudio(songs[0].getUrl());
+          this.song = songs[0];
         } else {
-          this.musicService.setAudio(this.songs[i+1].getUrl());
-          this.song = this.songs[i+1];
+          this.musicService.setAudio(songs[i+1].getUrl());
+          this.song = songs[i+1];
         }
         this.musicService.startPlayback();
         break;
@@ -67,6 +104,14 @@ export class PlayerPage implements IPlayer {
 
   shuffle() {
 
+  }
+
+  checkPlaying():boolean{
+      if(this.referrer == 'spotify'){
+        return this.musicService.getStatus();
+      }else if (this.referrer == 'soundcloud'){
+        return this.soundcloudService.isPlaying();
+      }
   }
 
 }

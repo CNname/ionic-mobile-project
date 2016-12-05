@@ -7,6 +7,10 @@ export namespace Handling {
 
   export class HandleJson {
 
+    static songTime(){
+      
+    }
+
     static tracks(tracksArray: Array<any>, trackContext = ""): Song[] {
 
       console.log(tracksArray);

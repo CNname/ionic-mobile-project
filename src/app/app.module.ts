@@ -16,6 +16,7 @@ import { SoundcloudLibrary } from '../pages/soundcloud-library/soundcloud-librar
 import { Settings } from '../pages/settings/settings';
 import {LoadingPage} from "../pages/loading-page/loading-page";
 import {JsonpModule} from '@angular/http';
+import {MiniPlayer} from "../components/miniplayer";
 
 // http://ionicframework.com/docs/v2/2.0.0-rc.1/api/navigation/DeepLinker/
 // https://forum.ionicframework.com/t/how-to-configure-deeplinks-in-appmodule-forroot/66058/15
@@ -37,7 +38,8 @@ import {JsonpModule} from '@angular/http';
     Search,
     ArtistPage,
     LoginPage,
-    LoadingPage
+    LoadingPage,
+    MiniPlayer
   ],
   imports: [
     //IonicModule.forRoot(MyApp, {}, deepLinkConfig),
@@ -55,7 +57,8 @@ import {JsonpModule} from '@angular/http';
     Search,
     ArtistPage,
     LoginPage,
-    LoadingPage
+    LoadingPage,
+    MiniPlayer
   ],
   providers: [ SpotifyService, SoundcloudService, MusicService, AuthenticationService, UserAccountService ]
 })

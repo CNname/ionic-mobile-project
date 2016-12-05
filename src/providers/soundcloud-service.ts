@@ -13,11 +13,12 @@ export class SoundcloudService {
   private redirect_uri: string = 'http://localhost/soundcloud-callback';
   SCPlayer: any;
   playingItems: Playlist;
-  play:boolean = false;
   time: number = 0;
   timer: string = '00:00';
   numbers: any;
   minute:number = 0;
+  play: boolean = false;
+  playing: boolean = false;
 
   constructor(public http: Http, private jsonp: Jsonp, private applicationRef: ApplicationRef) {
     SC.initialize({
@@ -32,7 +33,7 @@ export class SoundcloudService {
 
    showTime(x:number){
      let time = Math.floor(x /1000);
-     console.log(time);
+     //console.log(time);
      if((( (time)-(this.minute*60) ) / 60) == 1){
        console.log('minute added');
        this.minute += 1;
@@ -65,6 +66,8 @@ export class SoundcloudService {
    startStreaming(id: string){
     SC.stream('/tracks/'+id).then(player => {
       this.SCPlayer = player;
+      this.play = true;
+      this.playing = true;
 
       this.SCPlayer.play();
       this.timer = '00:00';
@@ -73,7 +76,6 @@ export class SoundcloudService {
       this.SCPlayer.on('buffering_start', () => { console.log('buffering...'); });
 
       this.SCPlayer.on('buffering_end', () => {
-        this.play = true;
         console.log('music');
       });
       this.SCPlayer.on('time', ()=>{
@@ -94,17 +96,28 @@ export class SoundcloudService {
 
   pauseStream(){
     this.SCPlayer.pause();
+    this.playing = false;
   }
 
   resumeStream(){
     this.SCPlayer.play();
+    this.playing = true;
   }
+
 
   getTrackById(song_id: string, user_id: string): any{
     return SC.get('tracks', {
       id: song_id,
       user_id: user_id
     });
+  }
+
+  getStatus(){
+    return this.play;
+  }
+
+  isPlaying(): boolean {
+    return this.playing;
   }
 
   searchForItem(query: string): any {

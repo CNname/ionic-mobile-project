@@ -1,12 +1,15 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { Component, ChangeDetectorRef, ViewChild} from '@angular/core';
+import { NavController, NavParams, ActionSheetController} from 'ionic-angular';
 import { SoundcloudService } from '../../providers/soundcloud-service';
-import { Playlist } from '../../classes/Playlist.Class'
+import { Playlist } from '../../classes/Playlist.Class';
+import { SpotifyService } from "../../providers/spotify-service";
+import { Handling } from "../../namespaces/handling";
+import { MusicService } from "../../providers/music-service";
+import { MiniPlayer } from "../../components/miniplayer";
+import { UserAccountService } from "../../providers/user-account-service";
+import { Subscription } from "rxjs";
+import { PlayerPage } from '../playerPage/playerPage'
 import { Song } from '../../classes/Song.class'
-import {SpotifyService} from "../../providers/spotify-service";
-import {Handling} from "../../namespaces/handling";
-import {PlayerPage} from "../playerPage/playerPage";
-import {MusicService} from "../../providers/music-service";
 
 @Component({
   selector: 'page-playlist-details',
@@ -14,75 +17,81 @@ import {MusicService} from "../../providers/music-service";
 })
 export class PlaylistDetails {
   playlist: Playlist;
-  isPlaying: boolean = false;
   pauseButton: boolean = false;
-  playing: Song;
   referrer: string;
+  private subscription: Subscription;
+  tempMiniPlayerData: any;
 
+  @ViewChild(MiniPlayer) miniPlayerDetails: MiniPlayer;
 
   constructor(
     private navParams: NavParams,
     private soundcloudService: SoundcloudService,
-    private spotifyService: SpotifyService,
+    public spotifyService: SpotifyService,
     public musicService: MusicService,
-    public navCtrl: NavController
+    public navCtrl: NavController,
+    public actionSheetCtrl: ActionSheetController,
+    public userAccountService: UserAccountService,
   ) {
     this.playlist = navParams.get('item');
     this.referrer = navParams.get('referrer');
+    this.tempMiniPlayerData = navParams.get('miniPlayer');
+
+    this.subscription = spotifyService.changeEvent$.subscribe(value => {
+      console.log("moikkelis " + value);
+      if (this.referrer === "spotify") {
+        this.spotifyService.loadPlaylistById(this.playlist.getOwnerId(), this.playlist.getId()).subscribe(res => {
+          this.playlist.setSongs(Handling.HandleJson.tracks(res.tracks.items, "playlist"));
+        })
+      }
+    });
+
   }
 
   ngOnInit(){
     if (this.referrer === "spotify") {
+      // spotify
       this.spotifyService.loadPlaylistById(this.playlist.getOwnerId(), this.playlist.getId()).subscribe(res => {
-        console.log(res);
         this.playlist.setSongs(Handling.HandleJson.tracks(res.tracks.items, "playlist"));
-      })
+      });
+      this.miniPlayerDetails.setMiniPlayerData(
+        this.tempMiniPlayerData.getPlaying(),
+        this.tempMiniPlayerData.getPlayingPlaylist(),
+        "spotify"
+      );
+    } else {
+      // soundcloud
+      this.miniPlayerDetails.setMiniPlayerData(
+        this.tempMiniPlayerData.getPlaying(),
+        this.tempMiniPlayerData.getPlayingPlaylist(),
+        ""
+      );
     }
   }
 
-  pausePlayer(e: Event){
-    if (this.referrer === "spotify") {
-      e.stopPropagation();
-      if(this.musicService.isPlayerInit()){
-        this.musicService.pausePlayback();
-      }
-    } else {
-      this.soundcloudService.pauseStream();
-    }
+  ngOnDestroy(){
+    //this.subscription.unsubscribe();
   }
-  startPlayer(e: Event){
-    if (this.referrer === "spotify") {
-      e.stopPropagation();
-      if(this.musicService.isPlayerInit()){
-        this.musicService.startPlayback();
-      }
-    } else {
-      this.soundcloudService.resumeStream();
-    }
-  }
-  startNewPlayer(item: Song){
 
-    this.playing = item;
-    this.isPlaying = true;
-    this.pauseButton = true;
+  ionViewDidLoad(){
 
-    if (this.referrer === "spotify") {
-      if (this.musicService.isPlayerInit()) {
-        this.musicService.pausePlayback();
-        this.musicService.resetAudio();
-        this.musicService.setAudio(item.getUrl());
-        this.musicService.startPlayback();
-      } else {
-        this.musicService.setAudio(item.getUrl());
-        this.musicService.startPlayback();
-      }
-    } else {
-      this.soundcloudService.startStreaming(item.getId());
-    }
+    console.log(this.navParams.get['miniPlayer']);
+    console.log(this.navParams.get('referrer'));
+
   }
 
   openPlayerPage(item: Song){
     this.navCtrl.push(PlayerPage, {item: item, songs: this.playlist.getSongs(), referrer: this.referrer }).catch(()=> console.log('Error occured'));
+  }
+
+  ionViewWillLeave(){
+    // param reference has to be used to update playing song in the parent view,
+    // because currently Ionic 2 doesn't support pop with params feature
+    this.navParams.get('miniPlayer').setMiniPlayerData(
+      this.miniPlayerDetails.getPlaying(),
+      this.miniPlayerDetails.getPlayingPlaylist(),
+      this.referrer
+    );
   }
 
   addToPlaylist(item){
