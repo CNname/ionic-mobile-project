@@ -2,26 +2,11 @@ page-soundcloud-library {
   ion-card.playlist ion-card-header {
     color: map-get($colors, 2nd_orange);
   }
-  /*.card-md ion-card-header, ion-card {
-      padding: 13px;
-  }*/
   ion-col, ion-row, ion-grid {
     padding: 0;
   }
   .scPlaylist img {
     box-shadow: 2px 0px 3px #b6acac;
-  }
-  .scPlaylistColSmall{
-      -webkit-flex: 0 0 30%;
-      -ms-flex: 0 0 30%;
-      flex: 0 0 30%;
-      max-width: 30;
-  }
-  .scPlaylistColLarge{
-    -webkit-flex: 0 0 66.6666%;
-    -ms-flex: 0 0 66.6666%;
-    flex: 0 0 70%;
-    max-width: 70%;
   }
   .scPlaylistCardHeader{
     padding: 13px 13px 8px 0;

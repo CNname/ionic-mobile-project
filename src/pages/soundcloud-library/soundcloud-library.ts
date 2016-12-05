@@ -1,5 +1,5 @@
 import { HostListener, Component, ViewChild } from '@angular/core';
-import { NavController, ViewController, ToastController } from 'ionic-angular';
+import { NavController, ViewController, ToastController, MenuController } from 'ionic-angular';
 import { Song } from '../../classes/Song.class';
 import { UserAccountService } from '../../providers/user-account-service';
 import { User } from '../../classes/User.class';
@@ -43,6 +43,7 @@ export class SoundcloudLibrary {
   constructor(public navCtrl: NavController,
     userAccountService: UserAccountService,
     soundcloudService: SoundcloudService,
+    public menuCtrl: MenuController,
     private toastController: ToastController) {
       this.userAccountService = userAccountService;
       this.soundcloudService = soundcloudService;
@@ -64,6 +65,12 @@ export class SoundcloudLibrary {
     this.timeout = setTimeout(() =>{
       input.setFocus();
     }, 500);
+  }
+
+  togglemenu(){
+    if (this.playerNav === "home"){
+      this.menuCtrl.open();
+    }
   }
 
   doInfinite(infiniteScroll){
@@ -108,13 +115,13 @@ export class SoundcloudLibrary {
           this.items = Handling.HandleJson.SoundCloudTracks(res.collection);
         });
       }
+      this.hideElement = false;
     }, 3000);
+
   }
 
-
-
   openPlaylist(item: Playlist){
-    this.navCtrl.push(PlaylistDetails, {item: item}).catch(()=> console.log('Something went wrong while opening playlist'));
+    this.navCtrl.push(PlaylistDetails, {item: item, referrer: "soundcloud", miniPlayer: this.miniPlayer}).catch(()=> console.log('Something went wrong while opening playlist'));
   }
 
   openPlayerPage(item){
@@ -124,23 +131,4 @@ export class SoundcloudLibrary {
     item.setAlbumImage(images);
     this.navCtrl.push(PlayerPage, {item: item, songs: this.items }).catch(()=> console.log('Error occured'));
   }
-
-  pausePlayer(){
-    //this.numbers.unsubscribe();
-    this.soundcloudService.pauseStream();
-  }
-
-  startPlayer(){
-  //  this.numbers = this.soundcloudService.timer().subscribe(x => this.showTime(x));
-    this.soundcloudService.resumeStream();
-  }
-
-  startNewPlayer(item: Song){
-    this.isPlaying = true;
-    this.pauseButton = true;
-    this.playing = item;
-    this.soundcloudService.startStreaming(item.getId());
-  }
-
-
 }

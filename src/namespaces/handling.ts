@@ -8,7 +8,7 @@ export namespace Handling {
   export class HandleJson {
 
     static songTime(){
-      
+
     }
 
     static tracks(tracksArray: Array<any>, trackContext = ""): Song[] {
@@ -39,7 +39,7 @@ export namespace Handling {
           else if (j===1) images.medium = track.album.images[j];
           else if (j===2) images.small = track.album.images[j];
         }
-
+        song.setDuration(30000);
         song.setAlbumImage(images);
         song.setAlbumId(track.album.id);
         song.setAlbumTitle(track.album.name);

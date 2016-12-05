@@ -36,7 +36,7 @@
 }
 .playerButtons > button{
   /*border: 1px solid #000; */
-  margin: 10px;
+  margin: 0 10px;
   font-size: 30px;
   background-color: none;
 }
@@ -55,14 +55,14 @@
 
 .albumInfo{
   margin: 0 auto;
-  padding: 15px 15px 0 15px;
+  padding: 0 15px 0 15px;
   text-align: center;
   h3{
     font-size: 2rem;
   }
 }
 
-ion-thumbnail > img, .art-wrapper > img {
+ion-thumbnail > ion-img, .art-wrapper > img {
     box-shadow: 2px 2px 3px #b6acac;
 }
 

@@ -17,11 +17,11 @@
 <ion-content [ngSwitch]="referrer">
 
   <!-- spotify -->
-  <ion-list *ngSwitchCase="'spotify'" [style.padding-bottom]="miniPlayerDetails?.playing != null ? '65px':'0'">
+  <ion-list [virtualScroll]="playlist.getSongs()" [bufferRatio]="20" *ngSwitchCase="'spotify'" [style.margin-bottom]="miniPlayerDetails?.playing != null ? '65px':'0'">
     <div class="playlist-spotify-header">
-      <img [src]="playlist.getPlaylistImage().large.url">
+      <ion-img [src]="playlist.getPlaylistImage().large.url"></ion-img>
     </div>
-    <ion-item *ngFor="let item of playlist.getSongs()" (click)="item.play(miniPlayerDetails, 'spotify', musicService, playlist, soundcloudService)" (press)="item.pressEvent(actionSheetCtrl, spotifyService, playlist, userAccountService.getSpotifyUser())">
+    <ion-item *virtualItem="let item" (click)="item.play(miniPlayerDetails, 'spotify', musicService, playlist, soundcloudService)" (press)="item.pressEvent(actionSheetCtrl, spotifyService, playlist, userAccountService.getSpotifyUser())">
       <h3><b>{{ item.getSongTitle() }}</b></h3>
       <h3>
         <span class="artist" *ngFor="let artist of item.getArtists(); let i = index">
@@ -33,11 +33,10 @@
   </ion-list>
 
   <!-- soundcloud -->
-  <ion-list no-lines *ngSwitchDefault [style.padding-bottom]="miniPlayerDetails?.playing != null ? '65px':'0'">
-    <ion-item-sliding #item>
-      <ion-item *ngFor="let item of playlist.getSongs()" (click)="startNewPlayer(item)">
+  <ion-list [virtualScroll]="playlist.getSongs()" bufferRatio="20"  approxItemHeight="96px" no-lines *ngSwitchDefault [style.margin-bottom]="miniPlayerDetails?.playing != null ? '65px':'0'">
+      <ion-item *virtualItem="let item" (click)="item.play(miniPlayerDetails, 'soundcloud', musicService, playlist, soundcloudService)">
         <ion-thumbnail item-left>
-          <img [src]="item.getAlbumImage().large">
+          <ion-img [src]="item.getAlbumImage().large"></ion-img>
         </ion-thumbnail>
         <h3><b>{{ item.getSongTitle() }}</b></h3>
         <h3>
@@ -47,15 +46,6 @@
         </h3>
         <h4>{{ item.getAlbumTitle() }}</h4>
       </ion-item>
-      <ion-item-options side="right">
-        <button ion-button >
-          <ion-icon name="add"></ion-icon>
-        </button>
-        <button ion-button color="danger" >
-          <ion-icon color="black" name="share-alt"></ion-icon>
-        </button>
-      </ion-item-options>
-    </ion-item-sliding>
   </ion-list>
 
 </ion-content>

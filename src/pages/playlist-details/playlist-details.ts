@@ -40,7 +40,7 @@ export class PlaylistDetails {
     this.subscription = spotifyService.changeEvent$.subscribe(value => {
       console.log("moikkelis " + value);
       if (this.referrer === "spotify") {
-        this.spotifyService.loadPlaylistById(this.playlist.getOwnerId(), this.playlist.getId()).subscribe(res => {
+          this.spotifyService.loadPlaylistById(this.playlist.getOwnerId(), this.playlist.getId()).subscribe(res => {
           this.playlist.setSongs(Handling.HandleJson.tracks(res.tracks.items, "playlist"));
         })
       }

@@ -30,7 +30,6 @@ export class PlayerPage implements IPlayer {
       if(this.referrer == 'soundcloud'){
         let images:imageUrls = this.song.getAlbumImage();
         images.large = images.large.replace('large.jpg', 't500x500.jpg');
-        console.log(images);
         this.song.setAlbumImage(images);
       }
 
@@ -38,6 +37,8 @@ export class PlayerPage implements IPlayer {
 
   ionViewDidLoad(){
     console.log("start of the page");
+    
+
   }
 
   ionViewWillLeave(){
