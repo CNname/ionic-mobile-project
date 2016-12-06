@@ -40,11 +40,11 @@ export class LoginPage {
 
   }
 
-  private getLoginEmail(): string {
+  getLoginEmail(): string {
     return this.loginEmail;
   }
 
-  private getLoginPassword(): string {
+  getLoginPassword(): string {
     return this.loginPassword;
   }
 

@@ -4,7 +4,6 @@ import {SpotifyService} from "../../providers/spotify-service";
 import {Artist} from "../../classes/Artist.class";
 import {Song} from "../../classes/Song.class";
 import {Handling} from "../../namespaces/handling";
-import {imageUrls} from "../../interfaces/interfaces";
 import {Playlist} from "../../classes/Playlist.Class";
 import {MiniPlayer} from "../../components/miniplayer";
 import {MusicService} from "../../providers/music-service";

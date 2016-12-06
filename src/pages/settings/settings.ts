@@ -5,7 +5,7 @@ import {
 } from 'ionic-angular';
 import {AuthenticationService} from "../../providers/authentication-service";
 import {UserAccountService} from "../../providers/user-account-service";
-import {spotifyAuthConfig} from "../../interfaces/interfaces";
+//import {spotifyAuthConfig} from "../../interfaces/interfaces";
 import {Observable} from "rxjs";
 import {SpotifyService} from "../../providers/spotify-service";
 

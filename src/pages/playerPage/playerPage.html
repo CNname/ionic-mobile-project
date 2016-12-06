@@ -10,15 +10,15 @@
 
 
 <ion-content>
-
-  <div class="art-wrapper">
-    <img [src]="song?.getAlbumImage().large"/>
+  <div [ngSwitch]="referrer" class="art-wrapper">
+    <img *ngSwitchCase="'spotify'" [src]="song?.getAlbumImage().large.url"/>
+    <img *ngSwitchDefault [src]="song?.getAlbumImage().large"/>
   </div>
   <div class="albumInfo">
     <h3><b>{{ song?.getSongTitle() }}</b></h3>
     <h3>
-      <span *ngFor="let song of song?.getArtists(); let i = index">
-        <span *ngIf="i > 0"> / </span> {{ song?.getName() }}
+     <span *ngFor="let song of song?.getArtists(); let i = index">
+           <span *ngIf="i > 0"> / </span><a class="albumInfoLink" [href]="song.getHref()">  {{ song?.getName() }}</a>
       </span>
     </h3>
     <div [ngSwitch]="referrer">

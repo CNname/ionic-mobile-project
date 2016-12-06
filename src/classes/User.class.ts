@@ -4,7 +4,7 @@ export class User implements IUser {
 
   id: string;
   image: string;
-  private _spotifyParams?: SpotifyParams;
+  //private _spotifyParams?: SpotifyParams;
   private _soundCloudAccountId?: string;
 
   constructor(id: string) {
@@ -15,7 +15,7 @@ export class User implements IUser {
     return this.id;
   }
 
-   private setId(value: string) {
+  setId(value: string) {
     this.id = value;
   }
 
@@ -41,8 +41,8 @@ export class User implements IUser {
     return this._soundCloudAccountId;
   }
 
-  private setSoundCloudAccountId(value: string) {
+  /*private setSoundCloudAccountId(value: string) {
     this._soundCloudAccountId = value;
-  }
+  }*/
 
 }

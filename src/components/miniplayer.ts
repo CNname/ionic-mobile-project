@@ -3,7 +3,7 @@
  */
 
 import {Component} from "@angular/core";
-import {IONIC_DIRECTIVES, NavController, NavParams} from "ionic-angular";
+import { NavController } from "ionic-angular";
 import {Song} from "../classes/Song.class";
 import {Playlist} from "../classes/Playlist.Class";
 import {PlayerPage} from "../pages/playerPage/playerPage";
@@ -30,6 +30,7 @@ import {SoundcloudService} from "../providers/soundcloud-service";
             <ion-icon name="play"></ion-icon>
           </button>
         </ion-buttons>
+        <!--<p>{{ ( .currentTime() )  }} / {{ (playing?.getDurationMinutes() | number:'2.0-0') }}:{{ ( playing?.getDurationSeconds() | number:'2.0-0') }}</p> -->
       </ion-item>
     </ion-list>
   </ion-toolbar>
@@ -95,6 +96,8 @@ export class MiniPlayer {
     this.playing = playingSong;
     this.playingPlaylist = playingPlaylist;
     this.referrer = referrer;
+    console.log('asd');
+    console.log(this.playing);
   }
 
   getPlaying(): Song {

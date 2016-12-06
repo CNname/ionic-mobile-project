@@ -16,10 +16,11 @@
       </div>
   </ion-toolbar>
   <ion-toolbar no-border-top color="2nd_orange">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
       <ion-segment [(ngModel)]="playerNav" color="light">
-        <ion-segment-button value="home">
-            <ion-icon (click)="togglemenu()" name="menu"></ion-icon>
-        </ion-segment-button>
+
         <ion-segment-button value="trending">
            <ion-icon name="flame"></ion-icon>
         </ion-segment-button>
@@ -37,16 +38,16 @@
 
   <div [ngSwitch]="playerNav">
 
-    <div *ngSwitchCase="'home'" padding>
-      <h2>Soundcloud&copy; Library</h2>
-    </div>
 
-    <div *ngSwitchCase="'trending'">
+    <div *ngSwitchCase="'trending'" [style.padding-bottom]="miniPlayer.playing != null ? '65px':'0'">
       <ion-list no-lines>
-          <ion-item-divider color="light">Top 50</ion-item-divider>
-          <ion-item *ngFor="let item of trending" (click)="startNewPlayer(item)">
+          <ion-item-divider color="2nd_dark">
+            <img src='assets/img/powered_white.png' />
+          </ion-item-divider>
+          <ion-item-divider (click)="hideList = !hideList" color="light" (click)="loadCharts('all-music')">Top - All music genres</ion-item-divider>
+          <ion-item [hidden]='!hideList' *ngFor="let item of trending.getSongs()" (click)="item.play(miniPlayer, 'soundcloud', soundcloudService, trending, soundcloudService)">
             <ion-thumbnail item-left>
-              <img [src]="item.getAlbumImage().large">
+              <ion-img [src]="item.getAlbumImage().large"></ion-img>
             </ion-thumbnail>
             <h3><b>{{ item.getSongTitle() }}</b></h3>
             <h3>
@@ -54,7 +55,37 @@
                 <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
               </span>
             </h3>
+            <p style="color: #5E7189;"><ion-icon name="eye"></ion-icon> {{   ( item.getPlayCountThousands() | number:'1.0-2' )  }} M</p>
+            <!--<div item-right>
+                <ion-icon name="eye"></ion-icon> {{   ( item.getPlayCountThousands() | number:'2.0-2' )  }} M
+            </div> -->
           </ion-item>
+          <div class="loadMore" [hidden]='!hideList' (click)="loadMoreFromTop('all-music')">
+            <p>
+              Load more
+            </p>
+          </div>
+          <ion-item-divider (click)="hideList2 = !hideList2" color="light" (click)="loadCharts('all-audio')">Top - All audio genres</ion-item-divider>
+          <ion-item [hidden]='!hideList2' *ngFor="let item of trendingAllAudio.getSongs()" (click)="item.play(miniPlayer, 'soundcloud', soundcloudService, trendingAllAudio, soundcloudService)">
+            <ion-thumbnail item-left>
+              <ion-img [src]="item.getAlbumImage().large"></ion-img>
+            </ion-thumbnail>
+            <h3><b>{{ item.getSongTitle() }}</b></h3>
+            <h3>
+              <span class="artist" *ngFor="let artist of item?.getArtists(); let i = index">
+                <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
+              </span>
+            </h3>
+            <p style="color: #5E7189;"><ion-icon name="eye"></ion-icon> {{   ( item.getPlayCountThousands() | number:'1.0-2' )  }} M</p>
+            <!--<div item-right>
+                <ion-icon name="eye"></ion-icon> {{   ( item.getPlayCountThousands() | number:'2.0-2' )  }} M
+            </div> -->
+          </ion-item>
+          <div class="loadMore" [hidden]='!hideList2' (click)="loadMoreFromTop('all-audio')">
+            <p>
+              Load more
+            </p>
+          </div>
       </ion-list>
     </div>
     <div  *ngSwitchCase="'playlists'">
@@ -84,10 +115,10 @@
       </ion-list>
     </div>
     <div *ngSwitchCase="'search'" [style.padding-bottom]="miniPlayer.playing != null ? '65px':'0'">
-      <ion-list [virtualScroll]="items" bufferRatio="20" approxItemHeight="96px" no-lines>
-          <p class="searchPlaceholder" [hidden]="items.length > 0" padding-left padding-right>Search results appear here... </p>
+      <ion-list no-lines>
+          <p class="searchPlaceholder" [hidden]="items?.getSongCount() > 0" padding-left padding-right>Search results appear here... </p>
           <!--<ion-item *ngFor="let item of items" (click)="item.play(miniPlayer, 'soundcloud', soundcloudService, items, soundcloudService)"> -->
-          <ion-item *virtualItem="let item" (click)="item.play(miniPlayer, 'soundcloud', soundcloudService, items, soundcloudService)">
+          <ion-item *ngFor="let item of items.getSongs()" (click)="item.play(miniPlayer, 'soundcloud', soundcloudService, items, soundcloudService)">
             <ion-thumbnail item-left>
               <ion-img [src]="item.getAlbumImage().large"></ion-img>
             </ion-thumbnail>

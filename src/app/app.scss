@@ -62,6 +62,18 @@
   }
 }
 
+.loadMore{
+  text-align: center;
+  margin: 0 auto;
+  p {
+    font-weight: bold;
+  }
+}
+
+.albumInfoLink{
+  text-decoration: none;
+}
+
 ion-thumbnail > ion-img, .art-wrapper > img {
     box-shadow: 2px 2px 3px #b6acac;
 }

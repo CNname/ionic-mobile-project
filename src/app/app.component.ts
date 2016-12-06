@@ -1,13 +1,13 @@
 import { Component, ViewChild } from '@angular/core';
-import {Platform, MenuController, Nav, NavParams} from 'ionic-angular';
-import { StatusBar } from 'ionic-native';
+import {Platform, MenuController, Nav} from 'ionic-angular';
+import { StatusBar, Splashscreen } from 'ionic-native';
 import { SpotifyLibrary } from '../pages/spotify-library/spotify-library';
 import { SoundcloudLibrary } from '../pages/soundcloud-library/soundcloud-library';
 import { AuthenticationService } from "../providers/authentication-service";
 import { Settings } from '../pages/settings/settings';
 import {UserAccountService} from "../providers/user-account-service";
 import {LoadingPage} from "../pages/loading-page/loading-page";
-import {Router} from "@angular/router";
+//import {Router} from "@angular/router";
 
 @Component({
   templateUrl: 'app.html'
@@ -42,6 +42,7 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       StatusBar.styleDefault();
+      Splashscreen.hide();
     });
   }
 

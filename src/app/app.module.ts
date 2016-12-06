@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { IonicApp, IonicModule, DeepLinkConfig } from 'ionic-angular';
+import { NgModule, ErrorHandler } from '@angular/core';
+import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { SpotifyLibrary } from '../pages/spotify-library/spotify-library';
 import { SpotifyService } from '../providers/spotify-service';
@@ -10,13 +10,12 @@ import { ArtistPage } from '../pages/artist-page/artist-page';
 import { MusicService } from '../providers/music-service';
 import { SoundcloudService } from "../providers/soundcloud-service";
 import { AuthenticationService } from "../providers/authentication-service";
-import {LoginPage} from "../pages/login-page/login-page";
-import {UserAccountService} from "../providers/user-account-service";
+import { LoginPage } from "../pages/login-page/login-page";
+import { UserAccountService } from "../providers/user-account-service";
 import { SoundcloudLibrary } from '../pages/soundcloud-library/soundcloud-library';
 import { Settings } from '../pages/settings/settings';
-import {LoadingPage} from "../pages/loading-page/loading-page";
-import {JsonpModule} from '@angular/http';
-import {MiniPlayer} from "../components/miniplayer";
+import { LoadingPage } from "../pages/loading-page/loading-page";
+import { MiniPlayer } from "../components/miniplayer";
 
 // http://ionicframework.com/docs/v2/2.0.0-rc.1/api/navigation/DeepLinker/
 // https://forum.ionicframework.com/t/how-to-configure-deeplinks-in-appmodule-forroot/66058/15
@@ -43,8 +42,7 @@ import {MiniPlayer} from "../components/miniplayer";
   ],
   imports: [
     //IonicModule.forRoot(MyApp, {}, deepLinkConfig),
-    IonicModule.forRoot(MyApp),
-    JsonpModule
+    IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -60,6 +58,6 @@ import {MiniPlayer} from "../components/miniplayer";
     LoadingPage,
     MiniPlayer
   ],
-  providers: [ SpotifyService, SoundcloudService, MusicService, AuthenticationService, UserAccountService ]
+  providers: [ SpotifyService, SoundcloudService, MusicService, AuthenticationService, UserAccountService, {provide: ErrorHandler, useClass: IonicErrorHandler} ]
 })
 export class AppModule {}

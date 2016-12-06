@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, ViewChild} from '@angular/core';
+import { Component, ViewChild} from '@angular/core';
 import { NavController, NavParams, ActionSheetController} from 'ionic-angular';
 import { SoundcloudService } from '../../providers/soundcloud-service';
 import { Playlist } from '../../classes/Playlist.Class';

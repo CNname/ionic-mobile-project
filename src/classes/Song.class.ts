@@ -18,6 +18,7 @@ export class Song implements ISong {
   private _duration: number;
   private _isPlayable: boolean;
   private _url: string;
+  private _playCount: number;
 
   constructor(id: string, songTitle: string, isPlayable: boolean) {
     this._id = id;
@@ -55,6 +56,18 @@ export class Song implements ISong {
 
   setSongTitle(value: string) {
     this._songTitle = value;
+  }
+
+  setPlayCount(n: number){
+    this._playCount = n;
+  }
+
+  getPlayCountThousands():number{
+    return this._playCount / 1000000;
+  }
+
+  getPlayCount():number{
+    return this._playCount;
   }
 
   getAlbumTitle(): string {

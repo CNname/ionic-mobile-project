@@ -1,15 +1,17 @@
 import { Injectable, ApplicationRef } from '@angular/core';
-import { Http, Jsonp, Response, RequestOptions, Headers, Request, RequestMethod } from '@angular/http';
+import { Http, Headers, Response } from '@angular/http';
+import {Observable} from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
-import { Observable } from 'rxjs/Rx';
 import { Playlist } from '../classes/Playlist.Class'
+
+//import * as SC from 'soundcloud';
 
 declare var SC;
 
 @Injectable()
 export class SoundcloudService {
 
-  private clientId: string = 'd51aa162fb2f62d2072b34da795b83a4';
+  private clientId: string = 'wdwbHQY11PLXg8twL0AtVBmGJTwuvFzD';
   private redirect_uri: string = 'http://localhost/soundcloud-callback';
   SCPlayer: any;
   playingItems: Playlist;
@@ -20,16 +22,24 @@ export class SoundcloudService {
   play: boolean = false;
   playing: boolean = false;
 
-  constructor(public http: Http, private jsonp: Jsonp, private applicationRef: ApplicationRef) {
+  constructor(public http: Http, private applicationRef: ApplicationRef) {
     SC.initialize({
       client_id:  this.clientId,
-      //redirect_uri:  this.redirect_uri
+      redirect_uri:  this.redirect_uri
     });
+   }
+
+   login(){
+     SC.connect().then(function() {
+       return SC.get('/me'); }).then(function(me) {
+       console.log('Hello, ' + me.username);
+     });
    }
 
    setPlayingItems(item: Playlist){
      this.playingItems = item;
    }
+
 
    showTime(x:number){
      let time = Math.floor(x /1000);
@@ -128,9 +138,7 @@ export class SoundcloudService {
     );
   }
   getMore(query: string):any{
-    return this.http.get(query).map(res => {
-      return res.json();
-    });
+    return this.http.get(query).map((res:Response) =>  res.json() ).catch(this.ErrorCatch);;
   }
 
   // id = 42090076
@@ -148,10 +156,12 @@ export class SoundcloudService {
     let header = new Headers();
     header.append("Accept", "*/*");
     header.append("Content-Type", 'application/json');
-    return this.http.get('https://api-v2.soundcloud.com/charts?kind=' + type + '&client_id=d51aa162fb2f62d2072b34da795b83a4', {
+    return this.http.get('https://api-v2.soundcloud.com/charts?kind=' + type + '&genre='+ genre +'&client_id=d51aa162fb2f62d2072b34da795b83a4', {
         headers: header })
-      .map((res: Response) => res.json());
+      .map((res: Response) => res.json()).catch(this.ErrorCatch);
   }
 
-//  *://*/*
+  ErrorCatch(err: Response | any): Observable<any>  {
+    return Observable.throw(err.json().error || err.toString() || 'Server error');
+  }
 }

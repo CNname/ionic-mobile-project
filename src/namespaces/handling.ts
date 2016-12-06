@@ -147,8 +147,9 @@ export namespace Handling {
     }
 
      // handle SoundCloud tracks and return Songs Array
-     static SoundCloudTrendingTracks(tracksArray: Array<any>): Song[]{
+     static SoundCloudTrendingTracks(collection: any): Song[]{
 
+       let tracksArray:Array<any> = collection.collection;
        let songs: Song[] = [];
 
        for (let i = 0; i < tracksArray.length; i++) {
@@ -168,6 +169,8 @@ export namespace Handling {
            images.large = "../../assets/img/soundcloud-logo.jpg";
          }
 
+
+         song.setPlayCount(tracksArray[i].track.playback_count)
          song.setAlbumImage(images);
          song.setAlbumId(tracksArray[i].track.id);
          song.setAlbumTitle(tracksArray[i].track.title);
