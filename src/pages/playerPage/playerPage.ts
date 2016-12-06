@@ -25,9 +25,9 @@ export class PlayerPage implements IPlayer {
 
       this.song = navParams.get('miniPlayer').getPlaying();
       this.songs = navParams.get('miniPlayer').getPlayingPlaylist();
-        console.log(this.songs);
+      //console.log(this.songs);
       this.referrer = navParams.get('miniPlayer').getReferrer();
-      console.log(navParams.get('miniPlayer'));
+      //console.log(navParams.get('miniPlayer'));
       // Replace the playing songs album art to a bigger image
       if(this.referrer == 'soundcloud'){
         let images:imageUrls = this.song.getAlbumImage();
@@ -38,9 +38,7 @@ export class PlayerPage implements IPlayer {
   }
 
   ionViewDidLoad(){
-    console.log("start of the page");
-
-
+  //  console.log("start of the page");
   }
 
   ionViewWillLeave(){

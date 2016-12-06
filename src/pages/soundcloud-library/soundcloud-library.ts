@@ -67,7 +67,6 @@ export class SoundcloudLibrary {
           if(res.next_href) {
             this.tr_music_next_href = res.next_href;
           } else this.tr_music_next_href = "";
-          console.log(res);
           let tracks = Handling.HandleJson.SoundCloudTrendingTracks(res);
           this.trending.setSongs(tracks);
           this.trending.setSongCount(tracks.length);
@@ -84,9 +83,6 @@ export class SoundcloudLibrary {
   }
 
   loadMoreFromChart(category: string){
-
-    console.log( this.tr_audio_next_href);
-    console.log( this.tr_music_next_href);
 
       if (category == 'all-music' && this.tr_music_next_href.length != 0){
         this.soundcloudService.getMore(this.tr_music_next_href).subscribe(res => {
@@ -180,13 +176,5 @@ export class SoundcloudLibrary {
 
   openPlaylist(item: Playlist){
     this.navCtrl.push(PlaylistDetails, {item: item, referrer: "soundcloud", miniPlayer: this.miniPlayer}).catch(()=> console.log('Something went wrong while opening playlist'));
-  }
-
-  openPlayerPage(item){
-    let images:imageUrls = item.getAlbumImage();
-    images.large = images.large.replace('large.jpg', 't500x500.jpg');
-    console.log(images);
-    item.setAlbumImage(images);
-    this.navCtrl.push(PlayerPage, {item: item, songs: this.items }).catch(()=> console.log('Error occured'));
   }
 }
