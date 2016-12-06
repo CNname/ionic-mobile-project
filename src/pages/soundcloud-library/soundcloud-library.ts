@@ -112,9 +112,10 @@ export class SoundcloudLibrary {
   }
 
   focusInput(input){
+    console.log(input);
     this.timeout = setTimeout(() =>{
       input.setFocus();
-    }, 500);
+    }, 1000);
   }
 
   togglemenu(){
@@ -168,9 +169,9 @@ export class SoundcloudLibrary {
           this.items.setSongCount(founditems.length);
           this.items.setSongs(founditems);
         });
+        this.hideElement = false;
       }
-      this.hideElement = false;
-    }, 3000);
+    }, 1000);
 
   }
 

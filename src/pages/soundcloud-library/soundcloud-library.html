@@ -1,8 +1,6 @@
 <ion-header>
-  <ion-toolbar color="2nd_orange" [hidden]='!hideElement'>
-      <div [hidden]="!hideElement">
-          <ion-input #input class="librarySearch scSearch"  placeholder="Search songs and artists" (input)="getItemsByName($event)"></ion-input>
-      </div>
+  <ion-toolbar color="2nd_orange" [hidden]='true'>
+
   </ion-toolbar>
   <ion-toolbar no-border-top color="2nd_orange">
     <button ion-button menuToggle>
@@ -16,7 +14,7 @@
         <ion-segment-button value="playlists">
           <ion-icon name="list"></ion-icon>
         </ion-segment-button>
-        <ion-segment-button value="search" (click)="hideElement = !hideElement" (click)="focusInput(input)">
+        <ion-segment-button value="search" (click)="hideElement = !hideElement" (click)="focusInput(sinput)">
           <ion-icon name="search"></ion-icon>
         </ion-segment-button>
       </ion-segment>
@@ -24,6 +22,10 @@
 </ion-header>
 
 <ion-content>
+
+  <div [hidden]="!hideElement">
+      <ion-input #sinput class="librarySearch scSearch"  placeholder="Search songs and artists" (input)="getItemsByName($event)"></ion-input>
+  </div>
 
   <div [ngSwitch]="playerNav">
 
@@ -87,6 +89,7 @@
       </ion-list>
     </div>
     <div *ngSwitchCase="'search'" [style.padding-bottom]="miniPlayer.playing != null ? '65px':'0'">
+
       <ion-list no-lines>
           <p class="searchPlaceholder" [hidden]="items?.getSongCount() > 0" padding-left padding-right>Search results appear here... </p>
           <ion-item *ngFor="let item of items.getSongs()" (click)="item.play(miniPlayer, 'soundcloud', soundcloudService, items, soundcloudService)">

@@ -150,7 +150,7 @@ export class SpotifyLibrary implements OnInit {
 
 
   toggleSearchAndFocus(searchInput: any){
-    this.hideElement = !this.hideElement;
+    //this.hideElement = !this.hideElement;
 
     if (this.hideElement) {
       console.log(searchInput);
@@ -236,6 +236,7 @@ export class SpotifyLibrary implements OnInit {
 
           })
         }
+        this.hideElement = !this.hideElement;
     }, 1000);
   }
 

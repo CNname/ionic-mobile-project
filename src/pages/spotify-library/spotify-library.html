@@ -1,22 +1,23 @@
 <ion-header>
 
-  <ion-toolbar color="primary">
-      <button ion-button menuToggle>
+  <ion-toolbar color="primary" [hidden]="true">
+      <!--<button ion-button menuToggle>
         <ion-icon name="menu"></ion-icon>
-      </button>
+      </button>-
     <ion-title class="streamgull-title" [hidden]="hideElement" (click)="toggleSearchAndFocus(searchInput)">
       Streamgull
-    </ion-title>
-    <ion-buttons end>
+    </ion-title>-->
+    <!--<ion-buttons end>
       <button ion-button color="darkGrey" class="larger" (click)="toggleSearchAndFocus(searchInput)">
         <ion-icon name="md-search"></ion-icon>
       </button>
-    </ion-buttons>
-    <div [hidden]="!hideElement">
-      <ion-input #searchInput class="librarySearch" placeholder="Search songs and artists" (input)="getItemsByName($event)"></ion-input>
-    </div>
+    </ion-buttons>-->
   </ion-toolbar>
   <ion-toolbar no-border-top color="primary">
+
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
 
     <ion-segment [(ngModel)]="playerNav" color="darkGrey">
       <ion-segment-button value="spotify">
@@ -25,7 +26,10 @@
       <ion-segment-button value="playlists">
         <ion-icon name="list"></ion-icon>
       </ion-segment-button>
-      <ion-segment-button value="search">
+      <!--<ion-segment-button value="search">
+        <ion-icon name="search"></ion-icon>
+      </ion-segment-button>-->
+      <ion-segment-button value="search" (click)="hideElement = !hideElement" (click)="toggleSearchAndFocus(searchInput)">
         <ion-icon name="search"></ion-icon>
       </ion-segment-button>
     </ion-segment>
@@ -35,16 +39,19 @@
 </ion-header>
 
 <ion-content>
+  <div [hidden]="!hideElement" class="librarySearch">
+    <ion-input #searchInput placeholder="Search songs and artists" (input)="getItemsByName($event)"></ion-input>
+  </div>
   <div [ngSwitch]="playerNav">
 
-    <ion-item no-lines *ngIf="!spotifyUser" color="2nd_dark">
+    <ion-item [hidden]="hideElement" no-lines *ngIf="!spotifyUser" color="2nd_dark">
       <p style="text-align: center; margin-bottom: 1rem; color: #888; font-style: italic;">You are not logged in.</p>
       <ion-buttons>
         <button ion-button block round (click)="login()" style="background-color: #1DB954;">Login to Spotify</button>
       </ion-buttons>
     </ion-item>
 
-    <ion-item no-lines *ngIf="spotifyUser != null" color="2nd_dark">
+    <ion-item [hidden]="hideElement" no-lines *ngIf="spotifyUser != null" color="2nd_dark">
 
       <img [src]="spotifyUser?.images[0]?.url == true ? spotifyUser?.images[0]?.url : 'assets/img/Spotify_Icon_RGB_Green_with_safe.png'" item-left class="userThumb" [class.show]="showUserStuff === true"/>
 

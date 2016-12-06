@@ -28,7 +28,6 @@ export class SoundcloudService {
       redirect_uri:  this.redirect_uri
     });
    }
-
    login(){
      SC.connect().then(function() {
        return SC.get('/me'); }).then(function(me) {
@@ -91,16 +90,16 @@ export class SoundcloudService {
       this.SCPlayer.on('time', ()=>{
           this.showTime(this.SCPlayer.currentTime());
       })
-    });
+    }).catch(this.ErrorCatch);
   }
 
   currentTime():string{
-  /*  if(this.SCPlayer){
+   if(this.SCPlayer){
       return this.SCPlayer.on('time', () => {
         return this.SCPlayer.currentTime();
       });
-    }*/
-    //return Math.floor(this.time /1000);
+    }
+    //  return Math.floor(this.time /1000);
     return this.timer;
   }
 
@@ -119,13 +118,13 @@ export class SoundcloudService {
     return SC.get('tracks', {
       id: song_id,
       user_id: user_id
-    });
+    }).catch(this.ErrorCatch);
   }
 
   getStatus(){
     return this.play;
   }
-
+  
   isPlaying(): boolean {
     return this.playing;
   }
@@ -135,11 +134,11 @@ export class SoundcloudService {
       q: query,
       limit: 40,
       linked_partitioning: 1 }
-    );
+    ).catch(this.ErrorCatch);
   }
   getMore(query: string):any{
     let header = new Headers();
-    header.append("Accept", "*/*");
+
     header.append("Content-Type", 'application/json');
     return this.http.get(query, {
         headers: header })
@@ -148,7 +147,7 @@ export class SoundcloudService {
 
   // id = 42090076
   getPlaylists(): any{
-    return SC.get('playlists', { user_id: 42090076 });
+    return SC.get('playlists', { user_id: 42090076 }).catch(this.ErrorCatch);
   }
 
   getPlaylistById(id: string): any{
@@ -159,7 +158,7 @@ export class SoundcloudService {
   getCharts(type: string, genre: string ): any {
 
     let header = new Headers();
-    header.append("Accept", "*/*");
+
     header.append("Content-Type", 'application/json');
     return this.http.get('https://api-v2.soundcloud.com/charts?kind=' + type + '&genre='+ genre +'&client_id=wdwbHQY11PLXg8twL0AtVBmGJTwuvFzD', {
         headers: header })
