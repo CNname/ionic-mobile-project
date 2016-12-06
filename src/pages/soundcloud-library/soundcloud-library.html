@@ -60,11 +60,11 @@
                 <ion-icon name="eye"></ion-icon> {{   ( item.getPlayCountThousands() | number:'2.0-2' )  }} M
             </div> -->
           </ion-item>
-          <div class="loadMore" [hidden]='!hideList' (click)="loadMoreFromTop('all-music')">
+          <!--<div class="loadMore" [hidden]='!hideList' (click)="loadMoreFromChart('all-music')">
             <p>
               Load more
             </p>
-          </div>
+          </div>-->
           <ion-item-divider (click)="hideList2 = !hideList2" color="light" (click)="loadCharts('all-audio')">Top - All audio genres</ion-item-divider>
           <ion-item [hidden]='!hideList2' *ngFor="let item of trendingAllAudio.getSongs()" (click)="item.play(miniPlayer, 'soundcloud', soundcloudService, trendingAllAudio, soundcloudService)">
             <ion-thumbnail item-left>
@@ -81,11 +81,11 @@
                 <ion-icon name="eye"></ion-icon> {{   ( item.getPlayCountThousands() | number:'2.0-2' )  }} M
             </div> -->
           </ion-item>
-          <div class="loadMore" [hidden]='!hideList2' (click)="loadMoreFromTop('all-audio')">
+          <!--<div class="loadMore" [hidden]='!hideList2' (click)="loadMoreFromChart('all-audio')">
             <p>
               Load more
             </p>
-          </div>
+          </div>-->
       </ion-list>
     </div>
     <div  *ngSwitchCase="'playlists'">

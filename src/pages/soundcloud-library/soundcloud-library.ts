@@ -34,6 +34,8 @@ export class SoundcloudLibrary {
     playlists: any[] = [];
     //private user: User;
     next_href: string;
+    tr_music_next_href:string;
+    tr_audio_next_href:string;
     trending: Playlist;
     trendingAllAudio: Playlist;
     time: number = 0;
@@ -62,12 +64,18 @@ export class SoundcloudLibrary {
 
     this.soundcloudService.getCharts("top", encodeURIComponent("soundcloud:genres:"+category)).subscribe(res =>{
       if (category == 'all-music'){
-        let tracks = Handling.HandleJson.SoundCloudTrendingTracks(res);
+          if(res.next_href) {
+            this.tr_music_next_href = res.next_href;
+          } else this.tr_music_next_href = "";
+          console.log(res);
+          let tracks = Handling.HandleJson.SoundCloudTrendingTracks(res);
           this.trending.setSongs(tracks);
           this.trending.setSongCount(tracks.length);
       }else if (category == 'all-audio'){
-        let tracks = Handling.HandleJson.SoundCloudTrendingTracks(res);
-
+        if(res.next_href) {
+           this.tr_audio_next_href = res.next_href;
+         } else this.tr_audio_next_href = "";
+         let tracks = Handling.HandleJson.SoundCloudTrendingTracks(res);
          this.trendingAllAudio.setSongCount(tracks.length);
          this.trendingAllAudio.setSongs(tracks);
 
@@ -76,8 +84,31 @@ export class SoundcloudLibrary {
   }
 
   loadMoreFromChart(category: string){
-    //this.soundcloudService.getMore()
 
+    console.log( this.tr_audio_next_href);
+    console.log( this.tr_music_next_href);
+
+      if (category == 'all-music' && this.tr_music_next_href.length != 0){
+        this.soundcloudService.getMore(this.tr_music_next_href).subscribe(res => {
+
+          if(res.next_href){ this.tr_music_next_href = res.next_href;
+          } else{ this.tr_music_next_href = ""; }
+
+          let tracks = Handling.HandleJson.SoundCloudTrendingTracks(res);
+          this.trending.setSongs(tracks);
+          this.trending.setSongCount(tracks.length);
+        });
+      }else if(category == 'all-audio' && this.tr_audio_next_href.length != 0){
+        this.soundcloudService.getMore(this.tr_music_next_href).subscribe(res => {
+
+          if(res.next_href){ this.tr_audio_next_href = res.next_href;
+          } else{ this.tr_audio_next_href = ""; }
+
+          let tracks = Handling.HandleJson.SoundCloudTrendingTracks(res);
+          this.trendingAllAudio.setSongs(tracks);
+          this.trendingAllAudio.setSongCount(tracks.length);
+        });
+      }
   }
 
   login(){

@@ -138,7 +138,12 @@ export class SoundcloudService {
     );
   }
   getMore(query: string):any{
-    return this.http.get(query).map((res:Response) =>  res.json() ).catch(this.ErrorCatch);;
+    let header = new Headers();
+    header.append("Accept", "*/*");
+    header.append("Content-Type", 'application/json');
+    return this.http.get(query, {
+        headers: header })
+      .map((res: Response) => res.json()).catch(this.ErrorCatch);
   }
 
   // id = 42090076
@@ -156,7 +161,7 @@ export class SoundcloudService {
     let header = new Headers();
     header.append("Accept", "*/*");
     header.append("Content-Type", 'application/json');
-    return this.http.get('https://api-v2.soundcloud.com/charts?kind=' + type + '&genre='+ genre +'&client_id=d51aa162fb2f62d2072b34da795b83a4', {
+    return this.http.get('https://api-v2.soundcloud.com/charts?kind=' + type + '&genre='+ genre +'&client_id=wdwbHQY11PLXg8twL0AtVBmGJTwuvFzD', {
         headers: header })
       .map((res: Response) => res.json()).catch(this.ErrorCatch);
   }
