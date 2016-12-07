@@ -43,8 +43,9 @@
 
     <ion-list *ngSwitchCase="'trending'">
       <ion-item-group>
-        <ion-item-divider color="light">Top 50</ion-item-divider>
-      <ion-item-sliding #item no-lines>
+        <!--<ion-item-divider color="light">Top 50</ion-item-divider> -->
+        <h1>Top 50 lists</h1>
+        <ion-item-sliding #item no-lines>
         <ion-item *ngFor="let item of trending" (click)="startNewPlayer(item)">
           <ion-thumbnail item-left>
             <img [src]="item.getAlbumImage().large">
@@ -70,7 +71,6 @@
     </ion-list>
 
     <ion-list *ngSwitchCase="'playlists'">
-
       <ion-card class="playlist"  *ngFor="let item of playlists" (click)="openPlaylist(item)" no-padding>
         <ion-grid>
           <ion-row no-padding>
@@ -94,11 +94,9 @@
        </ion-grid>
       </ion-card>
     </ion-list>
+
     <ion-list no-lines *ngSwitchCase="'search'">
-
-
       <p class="searchPlaceholder" [hidden]="items.length > 0" padding-left padding-right>Search results appear here... </p>
-
       <ion-item-sliding #item no-lines>
         <ion-item *ngFor="let item of items" (click)="startNewPlayer(item)">
           <ion-thumbnail item-left>
