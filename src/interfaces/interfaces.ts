@@ -1,13 +1,13 @@
 import { Artist } from '../classes/Artist.class';
 import { Song } from '../classes/Song.class';
-import { User } from '../classes/User.class';
 import {MusicService} from "../providers/music-service";
 import {Observable} from "rxjs";
+import {Playlist} from "../classes/Playlist.Class";
 
 export interface IPlayer {
   musicService: MusicService;
   song: Song;
-  songs: Song[];
+  songs: Playlist;
   previousSong(): void;
   nextSong(): void;
   shuffle(): void;
@@ -16,17 +16,43 @@ export interface IPlayer {
 }
 
 export interface IPlaylist {
-  name: string;
+  /*name: string;
   ownerId: string;
   songs: Song[];
+  songCount: number;*/
   getName(): string;
   getOwnerId(): string;
   getSongs(): Song[];
+  getSongCount(): number;
+  getPlaylistImage(): imageUrls;
+  getOwnerName(): string;
 }
 
 export interface IUser {
   id: string;
   image: string;
+}
+
+export interface firebaseUser {
+  email: string;
+  photoURL?: string;
+}
+
+export interface spotifyAuthConfig {
+  base: string,
+  clientId: string;
+  responseType: string;
+  redirectUri: string;
+  scope?: string;
+  state?: string;
+}
+
+export interface SpotifyParams {
+  accessToken: string;
+  expiresIn: number;
+  state: string;
+  tokenType: string;
+  tokenStart: number;
 }
 
 export interface imageUrls {
@@ -59,5 +85,5 @@ export interface ICallHandler {
   getUserById(id: string): Observable<any>;
   getArtistById(id: string): Observable<any>;
   getPopularSongsByArtist(id: string, country: string): Observable<any>;
-  searchForItem(query: string): Observable<any>;
+  searchForItem(query: string, offset:number ): Observable<any>;
 }

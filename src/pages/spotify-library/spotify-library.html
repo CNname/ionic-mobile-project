@@ -1,0 +1,143 @@
+<ion-header>
+
+  <ion-toolbar color="primary" [hidden]="true">
+      <!--<button ion-button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>-
+    <ion-title class="streamgull-title" [hidden]="hideElement" (click)="toggleSearchAndFocus(searchInput)">
+      Streamgull
+    </ion-title>-->
+    <!--<ion-buttons end>
+      <button ion-button color="darkGrey" class="larger" (click)="toggleSearchAndFocus(searchInput)">
+        <ion-icon name="md-search"></ion-icon>
+      </button>
+    </ion-buttons>-->
+  </ion-toolbar>
+  <ion-toolbar no-border-top color="primary">
+
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+
+    <ion-segment [(ngModel)]="playerNav" color="darkGrey">
+      <ion-segment-button value="spotify">
+        <ion-icon name="home"></ion-icon>
+      </ion-segment-button>
+      <ion-segment-button value="playlists">
+        <ion-icon name="list"></ion-icon>
+      </ion-segment-button>
+      <!--<ion-segment-button value="search">
+        <ion-icon name="search"></ion-icon>
+      </ion-segment-button>-->
+      <ion-segment-button value="search" (click)="hideElement = !hideElement" (click)="toggleSearchAndFocus(searchInput)">
+        <ion-icon name="search"></ion-icon>
+      </ion-segment-button>
+    </ion-segment>
+
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div [hidden]="!hideElement" class="librarySearch">
+    <ion-input #searchInput placeholder="Search songs and artists" (input)="getItemsByName($event)"></ion-input>
+  </div>
+  <div [ngSwitch]="playerNav">
+
+    <ion-item [hidden]="hideElement" no-lines *ngIf="!spotifyUser" color="2nd_dark">
+      <p style="text-align: center; margin-bottom: 1rem; color: #888; font-style: italic;">You are not logged in.</p>
+      <ion-buttons>
+        <button ion-button block round (click)="login()" style="background-color: #1DB954;">Login to Spotify</button>
+      </ion-buttons>
+    </ion-item>
+
+    <ion-item [hidden]="hideElement" no-lines *ngIf="spotifyUser != null" color="2nd_dark">
+
+      <img [src]="spotifyUser?.images[0]?.url == true ? spotifyUser?.images[0]?.url : 'assets/img/Spotify_Icon_RGB_Green_with_safe.png'" item-left class="userThumb" [class.show]="showUserStuff === true"/>
+
+      <p style="color: #fff">
+        Logged in: {{ spotifyUser?.id }}
+        <ion-icon name="arrow-dropdown" (click)="showUserStuff = !showUserStuff" (click)="showUserStuff ? rotate = 'rotate(180deg)': rotate = 'rotate(0)'" style="float: right;" [ngStyle]="{'transform': rotate}"></ion-icon>
+      </p>
+      <div *ngIf="showUserStuff">
+        <p style="color: #aaa; font-style: italic; font-size: 0.75em;">Playlists: {{ usersTotalPlaylists }}</p>
+        <button ion-button (click)="logout()">Logout from Spotify</button>
+
+      </div>
+    </ion-item>
+
+    <div *ngSwitchCase="'spotify'" [style.padding-bottom]="miniPlayer.playing != null ? '65px':'0'">
+      <ion-list no-lines  class="card-background-page">
+         <h2 style="padding: 0 10px" *ngIf="spotifyUser != null">Featured playlists</h2>
+         <ion-card class="playlist playlist-spotify"  *ngFor="let item of playlist_items; let i= index" (click)="openPlaylist(item)" [style.background-image]="'url(' + item.getPlaylistImage().large.url + ')'" [class.big]="i === 0" style="background-size: cover;">
+         </ion-card>
+      </ion-list>
+    </div>
+
+    <div *ngSwitchCase="'playlists'" [style.padding-bottom]="miniPlayer.playing != null ? '65px':'0'">
+      <ion-list no-lines  class="card-background-page">
+         <h2 style="padding: 0 10px" *ngIf="spotifyUser != null">Own playlists</h2>
+         <ion-card class="playlist playlist-spotify"  *ngFor="let item of usersPlaylists" (click)="openPlaylist(item)" [style.background-image]="'url(' + item.getPlaylistImage().large.url + ')'" style="background-size: cover;">
+           <div class="dark-layer">
+             <ion-card-header style="color: #fff">
+               {{ item.getName() }}
+             </ion-card-header>
+           </div>
+         </ion-card>
+      </ion-list>
+    </div>
+
+    <div *ngSwitchCase="'search'" [style.padding-bottom]="miniPlayer.playing != null ? '65px':'0'">
+      <ion-list>
+
+        <ion-segment [(ngModel)]="searchCategory" padding>
+          <ion-segment-button value="tracks" [hidden]="!trackItems?.getSongCount()">
+            Tracks
+          </ion-segment-button>
+          <ion-segment-button value="artists" [hidden]="artistItems.length === 0">
+            Artists
+          </ion-segment-button>
+        </ion-segment>
+
+        <div [ngSwitch]="searchCategory">
+
+          <p class="searchPlaceholder" [hidden]="trackItems?.getSongCount() > 0 || artistItems.length > 0" padding-left padding-right style="margin: 0;">Search results might come here...</p>
+
+          <div *ngSwitchCase="'tracks'">
+            <ion-item *ngFor="let item of trackItems.getSongs()" (click)="item.play(miniPlayer, 'spotify', musicService, trackItems, soundcloudService)" (press)="item.pressEvent(actionSheetCtrl, spotifyService)">
+              <ion-thumbnail item-left>
+                <img [src]="item.getAlbumImage().large.url">
+              </ion-thumbnail>
+              <h3><b>{{ item.getSongTitle() }}</b></h3>
+              <h3>
+                <span class="artist" *ngFor="let artist of item.getArtists(); let i = index">
+                  <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
+                </span>
+              </h3>
+              <h4>{{ item.getAlbumTitle() }}</h4>
+            </ion-item>
+          </div>
+
+          <div *ngSwitchCase="'artists'">
+            <ion-item  *ngFor="let artist of artistItems" (click)="artistClickEvent(artist.getId())">
+              <ion-thumbnail item-left>
+                <img [src]="artist?.getImages()?.large?.url">
+              </ion-thumbnail>
+              <h3><b>{{ artist.getName() }}</b></h3>
+            </ion-item>
+            </div>
+          </div>
+
+      </ion-list>
+
+      <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+        <ion-infinite-scroll-content *ngIf="query?.length >= 3"
+          loadingSpinner="bubbles"
+          loadingText="Loading more results">
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </div>
+  </div>
+</ion-content>
+
+<streamgull-miniplayer></streamgull-miniplayer>

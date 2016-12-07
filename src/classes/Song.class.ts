@@ -1,5 +1,11 @@
 import { ISong, imageUrls } from '../interfaces/interfaces';
 import { Artist } from './Artist.class';
+import { MiniPlayer } from "../components/miniplayer";
+import { MusicService } from "../providers/music-service";
+import { Playlist } from "./Playlist.Class";
+import { SoundcloudService } from "../providers/soundcloud-service";
+import { ActionSheetController } from "ionic-angular";
+import { SpotifyService } from "../providers/spotify-service";
 
 export class Song implements ISong {
 
@@ -12,6 +18,7 @@ export class Song implements ISong {
   private _duration: number;
   private _isPlayable: boolean;
   private _url: string;
+  private _playCount: number;
 
   constructor(id: string, songTitle: string, isPlayable: boolean) {
     this._id = id;
@@ -51,6 +58,18 @@ export class Song implements ISong {
     this._songTitle = value;
   }
 
+  setPlayCount(n: number){
+    this._playCount = n;
+  }
+
+  getPlayCountThousands():number{
+    return this._playCount / 1000000;
+  }
+
+  getPlayCount():number{
+    return this._playCount;
+  }
+
   getAlbumTitle(): string {
     return this._albumTitle;
   }
@@ -67,8 +86,21 @@ export class Song implements ISong {
     this._artists = value;
   }
 
-  getDuration(): number {
+  getDuration(): number { // duration in milliseconds
     return this._duration;
+  }
+
+  getDurationHours(): number{
+   let hour = Math.floor((this._duration / (1000*60*60) )%24);
+   return hour;
+  }
+
+  getDurationMinutes(): number {
+    return new Date(this._duration).getMinutes();
+  }
+
+  getDurationSeconds():number{
+    return new Date(this._duration).getSeconds();
   }
 
   setDuration(value: number) {
@@ -90,5 +122,74 @@ export class Song implements ISong {
   setUrl(value: string){
     this._url = value;
   }
+
+  play(miniPlayerRef: MiniPlayer, referrer: string, musicServiceRef: MusicService, playlist: Playlist, soundCloudServiceRef: SoundcloudService){
+
+
+    miniPlayerRef.setPlaying(this);
+    miniPlayerRef.setPlayingPlaylist(playlist);
+    miniPlayerRef.setReferrer(referrer);
+
+    if (referrer === "spotify") {
+      if (musicServiceRef.isPlayerInit()) {
+        musicServiceRef.pausePlayback();
+        musicServiceRef.resetAudio();
+        musicServiceRef.setAudio(this.getUrl());
+        musicServiceRef.startPlayback();
+      } else {
+        musicServiceRef.setAudio(this.getUrl());
+        musicServiceRef.startPlayback();
+      }
+    } else if (referrer === "soundcloud") {
+      soundCloudServiceRef.startStreaming(this.getId());
+    }
+
+  }
+
+  pressEvent(actionSheetCtrlRef: ActionSheetController, spotifyServiceRef: SpotifyService, playlist: Playlist = null, currentUser: Object = null) {
+
+
+
+    let buttons: Array<Object> = [
+      {
+        text: 'Add to playlist',
+        handler: () => {
+          console.log('Add to playlist clicked');
+          spotifyServiceRef.addToPlaylist(this.getId(), this.getSongTitle());
+
+        }
+      }
+    ];
+
+    // if user is owner
+    if (playlist !== null && currentUser !== null) {
+      if (playlist.getOwnerId() === currentUser['id']) {
+        buttons.push({
+          text: 'Remove from a playlist',
+          handler: () => {
+            console.log('Remove from a playlist clicked');
+            spotifyServiceRef.removeFromAPlaylistWithToasts(this.getId(), playlist.getId());
+          }
+        });
+      }
+    }
+
+    buttons.push({
+      text: 'Cancel',
+      role: 'cancel',
+      handler: () => {
+        console.log('Cancel clicked');
+      }
+    });
+
+
+    let actionSheet = actionSheetCtrlRef.create({
+      title: 'Song menu',
+      buttons: buttons
+    });
+    actionSheet.present();
+
+  }
+
 
 }

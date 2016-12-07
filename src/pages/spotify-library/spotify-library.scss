@@ -1,0 +1,68 @@
+spotify-library {
+
+  .userThumb {
+    max-height: 0;
+    max-width: 8rem;
+    transition: all 0.25s;
+    overflow:hidden;
+  }
+
+  .userThumb.show {
+    max-height: 8rem;
+  }
+
+  .playlist-spotify {
+    display: inline-block;
+    width: 50%;
+    width: calc(50% - 20px);
+    height: 0;
+    //padding-bottom: 56.25%; // for 16:9 ratio
+    padding-bottom: 50%;
+    padding-bottom: calc(50% - 20px);
+    position: relative;
+    box-sizing: border-box;
+    background-position: center;
+    background-size: cover;
+  }
+
+  .big {
+    width: 100%;
+    width: calc(100% - 20px);
+    padding-bottom: 100%;
+    padding-bottom: calc(100% - 20px);
+  }
+
+  @media (min-width: 768px) {
+    .playlist-spotify {
+      width: calc(33.33% - 20px);
+      padding-bottom: calc(33.33% - 20px);
+    }
+
+    .first {
+      width: 66.66%;
+      width: calc(66.66% - 20px);
+      padding-bottom: 66.66%;
+      padding-bottom: calc(66.66% - 20px);
+    }
+
+
+  }
+
+  .playlist-spotify ion-card-header {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    transform: translateY(-50%);
+    text-align: center;
+    font-size: 1.8rem;
+    white-space: normal;
+  }
+
+  .dark-layer {
+    background: rgba(0,0,0,0.6);
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 0; right: 0;
+  }
+
+}

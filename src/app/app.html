@@ -1,12 +1,12 @@
 <ion-menu [content]="content">
 
   <ion-header>
-    <ion-toolbar>
-      <ion-item no-lines>
+    <ion-toolbar color="primary">
+      <ion-item no-lines color="primary">
         <ion-avatar item-left>
-          <img src="assets/img/soundcloud-logo.jpg">
+          <img [src]="userAccountService?.getCurrentUser()?.getImage()?.length > 0 ? userAccountService?.getCurrentUser()?.getImage() : 'assets/img/sg-egg.png'">
         </ion-avatar>
-        <h2>Cher</h2>
+        <h2>{{ userAccountService?.getCurrentUser()?.getId() }}</h2>
       </ion-item>
     </ion-toolbar>
   </ion-header>
@@ -22,7 +22,9 @@
   </ion-content>
 
   <ion-footer>
-    <ion-item><ion-icon item-left name="log-out"></ion-icon><h2 (click)="logOut()">Logout</h2></ion-item>
+    <ion-item (click)="logOut()" color="primary">
+      <ion-icon item-left name="log-out"></ion-icon><h2>Logout</h2>
+    </ion-item>
   </ion-footer>
 
 </ion-menu>

@@ -1,10 +1,10 @@
-import {IUser} from "../interfaces/interfaces";
+import {IUser, SpotifyParams} from "../interfaces/interfaces";
 
 export class User implements IUser {
 
   id: string;
   image: string;
-  private _spotifyAccountId?: string;
+  //private _spotifyParams?: SpotifyParams;
   private _soundCloudAccountId?: string;
 
   constructor(id: string) {
@@ -15,7 +15,7 @@ export class User implements IUser {
     return this.id;
   }
 
-   private setId(value: string) {
+  setId(value: string) {
     this.id = value;
   }
 
@@ -27,20 +27,22 @@ export class User implements IUser {
     this.image = value;
   }
 
-  getSpotifyAccountId(): string {
-    return this._spotifyAccountId;
+  getSpotifyParams(): SpotifyParams {
+    //return this._spotifyParams;
+    return JSON.parse(window.localStorage.getItem("spotifyparams"));
   }
 
-  private setSpotifyAccountId(value: string) {
-    this._spotifyAccountId = value;
+  setSpotifyParams(value: SpotifyParams) {
+    //this._spotifyParams = value;
+    window.localStorage.setItem("spotifyparams", JSON.stringify(value));
   }
 
   getSoundCloudAccountId(): string {
     return this._soundCloudAccountId;
   }
 
-  private setSoundCloudAccountId(value: string) {
+  /*private setSoundCloudAccountId(value: string) {
     this._soundCloudAccountId = value;
-  }
+  }*/
 
 }
