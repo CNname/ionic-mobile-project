@@ -7,15 +7,25 @@ export namespace Handling {
 
   export class HandleJson {
 
-    static tracks(tracksArray: Array<any>): Song[] {
+    static songTime(){
+
+    }
+
+    static tracks(tracksArray: Array<any>, trackContext = ""): Song[] {
 
       console.log(tracksArray);
 
       let songs: Song[] = [];
 
+
       for (let i = 0; i < tracksArray.length; i++) {
 
-        let song: Song = new Song(tracksArray[i].id, tracksArray[i].name, tracksArray[i].isPlayable);
+        let track;
+
+        if (trackContext === "playlist") track = tracksArray[i]['track'];
+        else track = tracksArray[i];
+
+        let song: Song = new Song(track.id, track.name, track.isPlayable);
         let images: imageUrls = {
           large: {
             height: 600,
@@ -24,24 +34,24 @@ export namespace Handling {
           }
         };
 
-        for (let j=0; j<tracksArray[i].album.images.length; j++) {
-          if (j===0) images.large = tracksArray[i].album.images[j];
-          else if (j===1) images.medium = tracksArray[i].album.images[j];
-          else if (j===2) images.small = tracksArray[i].album.images[j];
+        for (let j=0; j<track.album.images.length; j++) {
+          if (j===0) images.large = track.album.images[j];
+          else if (j===1) images.medium = track.album.images[j];
+          else if (j===2) images.small = track.album.images[j];
         }
-
+        song.setDuration(30000);
         song.setAlbumImage(images);
-        song.setAlbumId(tracksArray[i].album.id);
-        song.setAlbumTitle(tracksArray[i].album.name);
-        song.setUrl(tracksArray[i].preview_url);
+        song.setAlbumId(track.album.id);
+        song.setAlbumTitle(track.album.name);
+        song.setUrl(track.preview_url);
 
         let artists: Artist[] = [];
 
-        for (let j = 0; j < tracksArray[i].artists.length; j++) {
+        for (let j = 0; j < track.artists.length; j++) {
           artists.push(new Artist(
-           tracksArray[i].artists[j].id,
-           tracksArray[i].artists[j].name,
-           tracksArray[i].artists[j].href
+           track.artists[j].id,
+           track.artists[j].name,
+           track.artists[j].href
           ))
          }
 
@@ -74,7 +84,7 @@ export namespace Handling {
         } else{
           images.large = "../../assets/img/soundcloud-logo.jpg";
         }
-
+        song.setDuration(tracksArray[i].duration);
         song.setAlbumImage(images);
         song.setAlbumId(tracksArray[i].id);
         song.setAlbumTitle(tracksArray[i].title);
@@ -98,9 +108,48 @@ export namespace Handling {
       return songs;
      }
 
-     // handle SoundCloud tracks and return Songs Array
-     static SoundCloudTrendingTracks(tracksArray: Array<any>): Song[]{
+    static SpotifyPlaylists(playlistArray: Array<any>): Playlist[] {
+      let playlists: Playlist[] = [];
 
+      //console.log("id: "tracksArray.);
+      //console.log(playlistArray);
+
+      for (let i = 0; i < playlistArray.length; i++) {
+
+        let playlist: Playlist = new Playlist(playlistArray[i].id, playlistArray[i].name, playlistArray[i].tracks.count, "spotify");
+
+        let images: imageUrls = {
+          large: {
+            height: 600,
+            width: 600,
+            url: "../../assets/img/sg-placeholder.jpg"
+          }
+        };
+
+
+        if(  playlistArray[i].images[0] != null) {
+          images.large = playlistArray[i].images[0];
+        }
+
+        /*if(playlistArray[i].tracks.length != 0){
+          let tracks: Song[] = this.SoundCloudTracks(playlistArray[i].tracks);
+          playlist.setSongs(tracks);
+        }*/
+        playlist.setPlaylistImage(images);
+        //playlist.setOwnerName(playlistArray[i].user.username);
+        playlist.setOwnerId(playlistArray[i].owner.id);
+
+        playlists.push(playlist);
+
+      }
+      //console.log(songs);
+      return playlists;
+    }
+
+     // handle SoundCloud tracks and return Songs Array
+     static SoundCloudTrendingTracks(collection: any): Song[]{
+
+       let tracksArray:Array<any> = collection.collection;
        let songs: Song[] = [];
 
        for (let i = 0; i < tracksArray.length; i++) {
@@ -120,6 +169,8 @@ export namespace Handling {
            images.large = "../../assets/img/soundcloud-logo.jpg";
          }
 
+
+         song.setPlayCount(tracksArray[i].track.playback_count)
          song.setAlbumImage(images);
          song.setAlbumId(tracksArray[i].track.id);
          song.setAlbumTitle(tracksArray[i].track.title);
@@ -141,8 +192,7 @@ export namespace Handling {
        }
        //console.log(songs);
        return songs;
-      }
-
+    }
 
     static SoundCloudPlaylists(playlistArray: Array<any>): Playlist[] {
       let playlists: Playlist[] = [];
@@ -152,7 +202,7 @@ export namespace Handling {
 
       for (let i = 0; i < playlistArray.length; i++) {
 
-        let playlist: Playlist = new Playlist(playlistArray[i].id, playlistArray[i].title, playlistArray[i].track_count);
+        let playlist: Playlist = new Playlist(playlistArray[i].id, playlistArray[i].title, playlistArray[i].track_count, "soundcloud");
 
         let images: imageUrls = {
           large: {

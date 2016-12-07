@@ -1,42 +1,64 @@
 
-<ion-header>
-  <ion-navbar class="bar-header">
-
-   </ion-navbar>
+<ion-header [ngSwitch]="referrer">
+  <ion-navbar color="primary" class="playlist-details" *ngSwitchCase="'spotify'">
+    <ion-title>{{ song?.getSongTitle() }}</ion-title>
+  </ion-navbar>
+  <ion-navbar color="2nd_orange" class="playlist-details" *ngSwitchDefault>
+    <ion-title color="light">{{ song?.getSongTitle() }}</ion-title>
+  </ion-navbar>
 </ion-header>
 
 
-<ion-content padding>
-
-  <div class="art-wrapper">
-    <img [src]="song?.getAlbumImage().large.url"/>
+<ion-content>
+  <div [ngSwitch]="referrer" class="art-wrapper">
+    <img *ngSwitchCase="'spotify'" [src]="song?.getAlbumImage().large.url"/>
+    <img *ngSwitchDefault [src]="song?.getAlbumImage().large"/>
   </div>
   <div class="albumInfo">
     <h3><b>{{ song?.getSongTitle() }}</b></h3>
     <h3>
-      <span *ngFor="let song of song?.getArtists(); let i = index">
-        <span *ngIf="i > 0"> / </span> {{ song?.getName() }}
+     <span *ngFor="let song of song?.getArtists(); let i = index">
+           <span *ngIf="i > 0"> / </span><a class="albumInfoLink" [href]="song.getHref()">  {{ song?.getName() }}</a>
       </span>
     </h3>
-    <h4>{{ song?.getAlbumTitle() }}</h4>
-  </div>
-  <div class="button-wrapper">
-    <ion-toolbar>
-      <ion-buttons class="playerButtons">
-        <button ion-button color="primary" (click)="previousSong()">
-          <ion-icon name="skip-backward"></ion-icon>
-        </button>
-        <button ion-button color="peakColor" (click)="pausePlayback()" >
-          <ion-icon name="pause"></ion-icon>
-        </button>
-        <button ion-button color="peakColor" (click)="startPlayback()">
-          <ion-icon name="play"></ion-icon>
-        </button>
-        <button ion-button color="primary" (click)="nextSong()">
-          <ion-icon name="skip-forward"></ion-icon>
-        </button>
-      </ion-buttons>
-    </ion-toolbar>
+    <div [ngSwitch]="referrer">
+      <h4 *ngSwitchCase="'spotify'">
+        <span *ngSwitchCase="'spotify'">{{ song?.getAlbumTitle() }}</span>
+      </h4>
+      <span *ngSwitchDefault></span>
+    </div>
   </div>
 
+
 </ion-content>
+<ion-footer>
+  <ion-toolbar class="librarySmallPlayer player" color="2nd_dark">
+  <p>
+
+  </p>
+  <ion-list class="librarySmallPlayer" no-lines>
+    <ion-item color="2nd_dark">
+
+      <div class="button-wrapper">
+        <ion-toolbar>
+          <ion-buttons class="playerButtons">
+            <button ion-button color="light" (click)="previousSong()">
+              <ion-icon name="skip-backward"></ion-icon>
+            </button>
+            <button ion-button color="2nd_orange" [hidden]="!checkPlaying()" (click)="pausePlayback()" >
+              <ion-icon name="pause"></ion-icon>
+            </button>
+            <button ion-button color="2nd_orange" [hidden]="checkPlaying()" (click)="startPlayback()">
+              <ion-icon name="play"></ion-icon>
+            </button>
+            <button ion-button color="light" (click)="nextSong()">
+              <ion-icon name="skip-forward"></ion-icon>
+            </button>
+          </ion-buttons>
+        </ion-toolbar>
+      </div>
+
+    </ion-item>
+  </ion-list>
+  </ion-toolbar>
+</ion-footer>

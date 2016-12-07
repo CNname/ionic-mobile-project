@@ -1,32 +1,20 @@
 <ion-header>
-  <ion-toolbar color="2nd_orange">
-      <button ion-button menuToggle>
-        <ion-icon name="menu"></ion-icon>
-      </button>
-      <ion-title class="streamgull-title" [hidden]="hideElement" (click)="hideElement = !hideElement" (click)="focusInput(input)">
-        SoundCloud&copy; Library
-      </ion-title>
-      <ion-buttons end>
-        <button ion-button color="darkGrey" class="larger" (click)="hideElement = !hideElement" (click)="focusInput(input)">
-          <ion-icon name="md-search"></ion-icon>
-        </button>
-      </ion-buttons>
-      <div [hidden]="!hideElement">
-          <ion-input #input class="librarySearch scSearch"  placeholder="Search songs and artists" (input)="getItemsByName($event)"></ion-input>
-      </div>
+  <ion-toolbar color="2nd_orange" [hidden]='true'>
+
   </ion-toolbar>
   <ion-toolbar no-border-top color="2nd_orange">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
       <ion-segment [(ngModel)]="playerNav" color="light">
-        <ion-segment-button value="home">
-          <ion-icon name="home"></ion-icon>
-        </ion-segment-button>
+
         <ion-segment-button value="trending">
            <ion-icon name="flame"></ion-icon>
         </ion-segment-button>
         <ion-segment-button value="playlists">
           <ion-icon name="list"></ion-icon>
         </ion-segment-button>
-        <ion-segment-button value="search">
+        <ion-segment-button value="search" (click)="hideElement = !hideElement" (click)="focusInput(sinput)">
           <ion-icon name="search"></ion-icon>
         </ion-segment-button>
       </ion-segment>
@@ -35,120 +23,97 @@
 
 <ion-content>
 
+
+  <div [hidden]="!hideElement">
+      <ion-input #sinput class="librarySearch scSearch"  placeholder="Search songs and artists" (input)="getItemsByName($event)"></ion-input>
+  </div>
+
   <div [ngSwitch]="playerNav">
 
-    <ion-list *ngSwitchCase="'home'">
-     <!-- feed -->
-    </ion-list>
-
-    <ion-list *ngSwitchCase="'trending'">
-      <ion-item-group>
-        <!--<ion-item-divider color="light">Top 50</ion-item-divider> -->
-        <h1>Top 50 lists</h1>
-        <ion-item-sliding #item no-lines>
-        <ion-item *ngFor="let item of trending" (click)="startNewPlayer(item)">
-          <ion-thumbnail item-left>
-            <img [src]="item.getAlbumImage().large">
-          </ion-thumbnail>
-          <h3><b>{{ item.getSongTitle() }}</b></h3>
-          <h3>
-            <span class="artist" *ngFor="let artist of item?.getArtists(); let i = index">
-              <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
-            </span>
-          </h3>
-          <h4>{{ item.getAlbumTitle() }}</h4>
-        </ion-item>
-        <ion-item-options side="right">
-          <button ion-button (click)="addToPlaylist(item)">
-            <ion-icon name="add"></ion-icon>
-          </button>
-          <button ion-button color="danger" (click)="share(item)">
-            <ion-icon (color)="primary" name="share-alt"></ion-icon>
-          </button>
-        </ion-item-options>
-      </ion-item-sliding>
-    </ion-item-group>
-    </ion-list>
-
-    <ion-list *ngSwitchCase="'playlists'">
-      <ion-card class="playlist"  *ngFor="let item of playlists" (click)="openPlaylist(item)" no-padding>
-        <ion-grid>
-          <ion-row no-padding>
-            <ion-col width-33>
-              <ion-thumbnail item-left style="width:100px;">
-                <img [src]="item.getPlaylistImage().large" style="width:100px;max-width:none;height:100%">
-              </ion-thumbnail>
-            </ion-col>
-            <ion-col width-67>
-              <ion-card-header>
-                {{ item.getName() }}
-              </ion-card-header>
-                <button ion-item>
-                  <ion-avatar item-left>
-                    <img [src]="item.getOwnerImage()">
-                  </ion-avatar>
-                  {{ item.getOwnerName() }}
-                </button>
+    <div *ngSwitchCase="'trending'" [style.padding-bottom]="miniPlayer.playing != null ? '65px':'0'">
+      <ion-list no-lines>
+          <ion-item-divider color="2nd_dark">
+            <img src='assets/img/powered_white.png' />
+          </ion-item-divider>
+          <ion-item-divider (click)="hideList = !hideList" color="light" (click)="loadCharts('all-music')">Top - All music genres</ion-item-divider>
+          <ion-item [hidden]='!hideList' *ngFor="let item of trending.getSongs()" (click)="item.play(miniPlayer, 'soundcloud', soundcloudService, trending, soundcloudService)">
+            <ion-thumbnail item-left>
+              <ion-img [src]="item.getAlbumImage().large"></ion-img>
+            </ion-thumbnail>
+            <h3><b>{{ item.getSongTitle() }}</b></h3>
+            <h3>
+              <span class="artist" *ngFor="let artist of item?.getArtists(); let i = index">
+                <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
+              </span>
+            </h3>
+            <p style="color: #5E7189;"><ion-icon name="eye"></ion-icon> {{   ( item.getPlayCountThousands() | number:'1.0-2' )  }} M</p>
+          </ion-item>
+          <ion-item-divider (click)="hideList2 = !hideList2" color="light" (click)="loadCharts('all-audio')">Top - All audio genres</ion-item-divider>
+          <ion-item [hidden]='!hideList2' *ngFor="let item of trendingAllAudio.getSongs()" (click)="item.play(miniPlayer, 'soundcloud', soundcloudService, trendingAllAudio, soundcloudService)">
+            <ion-thumbnail item-left>
+              <ion-img [src]="item.getAlbumImage().large"></ion-img>
+            </ion-thumbnail>
+            <h3><b>{{ item.getSongTitle() }}</b></h3>
+            <h3>
+              <span class="artist" *ngFor="let artist of item?.getArtists(); let i = index">
+                <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
+              </span>
+            </h3>
+            <p style="color: #5E7189;"><ion-icon name="eye"></ion-icon> {{   ( item.getPlayCountThousands() | number:'1.0-2' )  }} M</p>
+          </ion-item>
+      </ion-list>
+    </div>
+    <div  *ngSwitchCase="'playlists'">
+      <ion-list>
+        <ion-card class="playlist"  *ngFor="let item of playlists" (click)="openPlaylist(item)" no-padding>
+          <ion-grid>
+            <ion-row no-padding>
+              <ion-col class="scPlaylistColSmall" width-33>
+                <ion-thumbnail class="scPlaylist" item-left style="width:100px;">
+                  <img [src]="item.getPlaylistImage().large" style="height:100%; max-width:none; width: auto:">
+                </ion-thumbnail>
               </ion-col>
-          </ion-row>
-       </ion-grid>
-      </ion-card>
-    </ion-list>
+              <ion-col class="scPlaylistColLarge" width-67>
+                <ion-card-header class="scPlaylistCardHeader">
+                  {{ item.getName() }}
+                </ion-card-header>
+                  <button ion-item class="scPlaylistCardItem">
+                    <ion-avatar item-left>
+                      <img [src]="item.getOwnerImage()">
+                    </ion-avatar>
+                    {{ item.getOwnerName() }}
+                  </button>
+                </ion-col>
+            </ion-row>
+         </ion-grid>
+        </ion-card>
+      </ion-list>
+    </div>
+    <div *ngSwitchCase="'search'" [style.padding-bottom]="miniPlayer.playing != null ? '65px':'0'">
 
-    <ion-list no-lines *ngSwitchCase="'search'">
-      <p class="searchPlaceholder" [hidden]="items.length > 0" padding-left padding-right>Search results appear here... </p>
-      <ion-item-sliding #item no-lines>
-        <ion-item *ngFor="let item of items" (click)="startNewPlayer(item)">
-          <ion-thumbnail item-left>
-            <img [src]="item.getAlbumImage().large">
-          </ion-thumbnail>
-          <h3><b>{{ item.getSongTitle() }}</b></h3>
-          <h3>
-            <span class="artist" *ngFor="let artist of item?.getArtists(); let i = index">
-              <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
-            </span>
-          </h3>
-          <h4>{{ item.getAlbumTitle() }}</h4>
-        </ion-item>
-        <ion-item-options side="right">
-          <button ion-button (click)="addToPlaylist(item)">
-            <ion-icon name="add"></ion-icon>
-          </button>
-          <button ion-button color="danger" (click)="share(item)">
-            <ion-icon (color)="primary" name="share-alt"></ion-icon>
-          </button>
-        </ion-item-options>
-      </ion-item-sliding>
-    </ion-list>
-
-    <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
-      <ion-infinite-scroll-content
-        loadingSpinner="bubbles"
-        loadingText="Loading more results">
-      </ion-infinite-scroll-content>
-    </ion-infinite-scroll>
-
+      <ion-list no-lines>
+          <p class="searchPlaceholder" [hidden]="items?.getSongCount() > 0" padding-left padding-right>Search results appear here... </p>
+          <ion-item *ngFor="let item of items.getSongs()" (click)="item.play(miniPlayer, 'soundcloud', soundcloudService, items, soundcloudService)">
+            <ion-thumbnail item-left>
+              <ion-img [src]="item.getAlbumImage().large"></ion-img>
+            </ion-thumbnail>
+            <h3><b>{{ item.getSongTitle() }}</b></h3>
+            <h3>
+              <span class="artist" *ngFor="let artist of item?.getArtists(); let i = index">
+                <span *ngIf="i > 0"> / </span> {{ artist.getName() }}
+              </span>
+            </h3>
+            <h4> {{ ( item.getDurationHours() | number:'2.0-0') }}:{{ (item.getDurationMinutes() | number:'2.0-0') }}:{{ ( item.getDurationSeconds() | number:'2.0-0') }}</h4>
+          </ion-item>
+        </ion-list>
+        <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
+          <ion-infinite-scroll-content
+            loadingSpinner="bubbles"
+            loadingText="Loading more results">
+          </ion-infinite-scroll-content>
+        </ion-infinite-scroll>
+    </div>
   </div>
 </ion-content>
 
-<ion-footer [hidden]="!isPlaying">
-  <ion-toolbar class="librarySmallPlayer player" color="2nd_dark">
-    <ion-list class="librarySmallPlayer" no-lines>
-      <ion-item (click)='openPlayerPage(playing)' color="2nd_dark">
-        <h3><b>{{ playing?.getSongTitle() }}</b></h3>
-        <h3><span *ngFor="let playing of playing?.getArtists(); let i = index">
-          <span *ngIf="i > 0"> / </span> {{ playing?.getName() }}
-        </span></h3>
-
-        <ion-buttons end item-right>
-          <button ion-button color="2nd_orange" [hidden]="!pauseButton" (click)="pauseButton = !pauseButton" class="larger" (click)="pausePlayer()">
-            <ion-icon name="pause"></ion-icon>
-          </button>
-          <button ion-button color="2nd_orange" class="larger" [hidden]="pauseButton" (click)="pauseButton = !pauseButton" (click)="startPlayer()">
-            <ion-icon name="play"></ion-icon>
-          </button>
-        </ion-buttons>
-      </ion-item>
-    </ion-list>
-  </ion-toolbar>
-</ion-footer>
+<streamgull-miniplayer></streamgull-miniplayer>

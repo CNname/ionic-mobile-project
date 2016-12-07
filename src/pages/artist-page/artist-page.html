@@ -6,7 +6,7 @@
 -->
 <ion-header>
 
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-title>{{artist.getName() }}</ion-title>
   </ion-navbar>
 
@@ -16,8 +16,9 @@
 <ion-content>
   <img [src]="artist.getImages().large.url" padding>
   <ion-list>
-    <ion-item *ngFor="let track of popularTracks" (click)="startPlayer(track.getUrl())">
-      <ion-thumbnail item-left>
+    <ion-item *ngFor="let track of popularTracks?.getSongs()" (click)="track.play(miniPlayer, 'spotify', musicService, popularTracks, soundcloudService)" (press)="track.pressEvent(actionSheetCtrl, spotifyService, popularTracks, userAccountService.getSpotifyUser())">
+
+    <ion-thumbnail item-left>
         <img [src]="track.getAlbumImage().large.url">
       </ion-thumbnail>
       <h3><b>{{ track.getSongTitle() }}</b></h3>
@@ -30,3 +31,5 @@
     </ion-item>
   </ion-list>
 </ion-content>
+
+<streamgull-miniplayer></streamgull-miniplayer>

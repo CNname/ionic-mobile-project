@@ -1,13 +1,15 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, ViewController, ToastController } from 'ionic-angular';
+import { NavController, ToastController, MenuController } from 'ionic-angular';
 import { Song } from '../../classes/Song.class';
-import { UserAccountService } from '../../providers/user-account-service'
-import { User } from '../../classes/User.class'
-import { SoundcloudService } from '../../providers/soundcloud-service'
+import { UserAccountService } from '../../providers/user-account-service';
+//import { User } from '../../classes/User.class';
+import { SoundcloudService } from '../../providers/soundcloud-service';
 import { Handling } from "../../namespaces/handling";
-import { Playlist } from '../../classes/Playlist.Class'
-import { PlaylistDetails } from '../playlist-details/playlist-details'
-
+import { Playlist } from '../../classes/Playlist.Class';
+import { PlaylistDetails } from '../playlist-details/playlist-details';
+import { PlayerPage } from '../playerPage/playerPage';
+import { imageUrls } from "../../interfaces/interfaces";
+import { MiniPlayer } from '../../components/miniplayer'
 
 @Component({
   selector: 'page-soundcloud-library',
@@ -15,87 +17,135 @@ import { PlaylistDetails } from '../playlist-details/playlist-details'
 })
 export class SoundcloudLibrary {
     hideElement: boolean = false;
-    playerNav: string = "home";
+    hideList: boolean = false;
+    hideList2: boolean = false;
+    playerNav: string = "trending";
     isPlaying: boolean = false;
     pauseButton: boolean = false;
     playing: Song;
-    private tracks: any[] = [];
-    private playTrack: number = 0;
+    //private tracks: any[] = [];
+    //private playTrack: number = 0;
     public currentTrack: Song;
     searchCategory: string;
     trackItems: any;
     artistItems: any[] = [];
     timeout: any;
-    items: any[] = [];
+    items: Playlist;
     playlists: any[] = [];
-    private userAccountService: UserAccountService;
-    private soundcloudService: SoundcloudService;
-    private user: User;
+    //private user: User;
     next_href: string;
-    trending: any[] = [];
+    tr_music_next_href:string;
+    tr_audio_next_href:string;
+    trending: Playlist;
+    trendingAllAudio: Playlist;
+    time: number = 0;
+
+  @ViewChild(MiniPlayer) miniPlayer: MiniPlayer;
 
   constructor(public navCtrl: NavController,
-    userAccountService: UserAccountService,
-    soundcloudService: SoundcloudService,
+    public userAccountService: UserAccountService,
+    public soundcloudService: SoundcloudService,
+    public menuCtrl: MenuController,
     private toastController: ToastController) {
-      this.userAccountService = userAccountService;
-      this.soundcloudService = soundcloudService;
-      this.soundcloudService.getCharts("top", encodeURIComponent("soundcloud:genres:"+"all-music")).subscribe(res =>{
-        console.log(res);
-        this.trending = Handling.HandleJson.SoundCloudTrendingTracks(res.collection);
-      });
-      this.soundcloudService.getPlaylists().then(res =>{
-        console.log(res);
-          this.playlists = Handling.HandleJson.SoundCloudPlaylists(res);
-      });
+
+    this.soundcloudService.getPlaylists().then(res =>{
+        this.playlists = Handling.HandleJson.SoundCloudPlaylists(res);
+    });
+    this.items = new Playlist("searchPlaylist", "Search results", 0, "soundcloud");
+    this.trending = new Playlist("searchPlaylist", "Trending", 0, "soundcloud");
+    this.trendingAllAudio = new Playlist("searchPlaylist", "Trending", 0, "soundcloud");
   }
-
-  /*ionViewCanEnter(): boolean{
-    this.user = this.userAccountService.getCurrentUser();
-    if(this.user.getSoundCloudAccountId() == null){
-      //console.log(this.user.getId());
-      let toast = this.toastController.create({
-        message: 'You must first sign in to SoundCloud, you can do this in the settings',
-        duration: 5000,
-        position: 'bottom'
-      });
-      toast.present();
-      return false;
-    } else { return true; }
-
-  }*/
 
   ionViewWillLeave(){
     //this.soundcloudService.pauseStream();
   }
-  // this does not work..
+
+  loadCharts(category: string){
+
+    this.soundcloudService.getCharts("top", encodeURIComponent("soundcloud:genres:"+category)).subscribe(res =>{
+      if (category == 'all-music'){
+          if(res.next_href) {
+            this.tr_music_next_href = res.next_href;
+          } else this.tr_music_next_href = "";
+          let tracks = Handling.HandleJson.SoundCloudTrendingTracks(res);
+          this.trending.setSongs(tracks);
+          this.trending.setSongCount(tracks.length);
+      }else if (category == 'all-audio'){
+        if(res.next_href) {
+           this.tr_audio_next_href = res.next_href;
+         } else this.tr_audio_next_href = "";
+         let tracks = Handling.HandleJson.SoundCloudTrendingTracks(res);
+         this.trendingAllAudio.setSongCount(tracks.length);
+         this.trendingAllAudio.setSongs(tracks);
+
+      }
+    });
+  }
+
+  loadMoreFromChart(category: string){
+
+      if (category == 'all-music' && this.tr_music_next_href.length != 0){
+        this.soundcloudService.getMore(this.tr_music_next_href).subscribe(res => {
+
+          if(res.next_href){ this.tr_music_next_href = res.next_href;
+          } else{ this.tr_music_next_href = ""; }
+
+          let tracks = Handling.HandleJson.SoundCloudTrendingTracks(res);
+          this.trending.setSongs(tracks);
+          this.trending.setSongCount(tracks.length);
+        });
+      }else if(category == 'all-audio' && this.tr_audio_next_href.length != 0){
+        this.soundcloudService.getMore(this.tr_music_next_href).subscribe(res => {
+
+          if(res.next_href){ this.tr_audio_next_href = res.next_href;
+          } else{ this.tr_audio_next_href = ""; }
+
+          let tracks = Handling.HandleJson.SoundCloudTrendingTracks(res);
+          this.trendingAllAudio.setSongs(tracks);
+          this.trendingAllAudio.setSongCount(tracks.length);
+        });
+      }
+  }
+
+  login(){
+    this.soundcloudService.login();
+  }
+
   focusInput(input){
+    console.log(input);
     this.timeout = setTimeout(() =>{
       input.setFocus();
-    }, 500);
-    //console.log(input);
+    }, 1000);
+  }
+
+  togglemenu(){
+    if (this.playerNav === "home"){
+      this.menuCtrl.open();
+    }
   }
 
   doInfinite(infiniteScroll){
-    //console.log("end of a list, call more");
-    if(this.next_href.length != 0){
-      //console.log(this.next_href);
-      this.soundcloudService.getMore(this.next_href).subscribe(res => {
-        if(res.next_href){
-          this.next_href = res.next_href;
-          infiniteScroll.enable(true);
-        }else{
-          this.next_href = "";
-          infiniteScroll.enable(false);
-        }
-        let items: any[] = Handling.HandleJson.SoundCloudTracks(res.collection);
-        for(let i= 0; i < items.length; i++){
-          this.items.push(items[i]);
-        }
-        //console.log(this.items);
-      });
-    } else{
-      console.log('no more');
+    if (this.playerNav === "search"){
+      if(this.next_href.length != 0){
+        this.soundcloudService.getMore(this.next_href).subscribe(res => {
+          if(res.next_href){
+            this.next_href = res.next_href;
+            infiniteScroll.enable(true);
+          }else{
+            this.next_href = "";
+            infiniteScroll.enable(false);
+          }
+          let tracks = this.items.getSongs();
+          let items: any[] = Handling.HandleJson.SoundCloudTracks(res.collection);
+          for(let i= 0; i < items.length; i++){
+            tracks.push(items[i]);
+          }
+          this.items.setSongs(tracks);
+
+        });
+      } else{
+        console.log('no more');
+      }
     }
   }
 
@@ -104,47 +154,28 @@ export class SoundcloudLibrary {
 
     this.timeout = setTimeout(() => {
       let query:string = event.target.value;
-
+      let founditems: any;
     //  if(this.next_href.length == 0){ query = event.target.value;
     //  } else { query = this.next_href; }
-
       if(query.length >= 3){
         // activate search segment if not active
         if (this.playerNav !== "search") this.playerNav = "search";
         this.soundcloudService.searchForItem(encodeURIComponent(query)).then(res => {
-          //console.log(res);
+          console.log(res);
           if(res.next_href){
             this.next_href = res.next_href;
           }
-          this.items = Handling.HandleJson.SoundCloudTracks(res.collection);
+          founditems = Handling.HandleJson.SoundCloudTracks(res.collection);
+          this.items.setSongCount(founditems.length);
+          this.items.setSongs(founditems);
         });
+        this.hideElement = false;
       }
-    }, 3000);
+    }, 1000);
+
   }
-
-
 
   openPlaylist(item: Playlist){
-    this.navCtrl.push(PlaylistDetails, {item: item}).catch(()=> console.log('Something went wrong while opening playlist'));
-  }
-
-  openPlayerPage(item){
-    //console.log('player');
-  }
-
-  pausePlayer(){
-    this.soundcloudService.pauseStream();
-  }
-
-  startPlayer(){
-    this.soundcloudService.resumeStream();
-  }
-
-  startNewPlayer(item: Song){
-    this.isPlaying = true;
-    this.pauseButton = true;
-    this.playing = item;
-    this.soundcloudService.startStreaming(item.getId());
-
+    this.navCtrl.push(PlaylistDetails, {item: item, referrer: "soundcloud", miniPlayer: this.miniPlayer}).catch(()=> console.log('Something went wrong while opening playlist'));
   }
 }

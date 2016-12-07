@@ -9,12 +9,23 @@ export class Playlist implements IPlaylist {
   private _songs: Song[];
   private _albumImage: imageUrls;
   private _ownerName: string;
+  private _service: string; // spotify or soundcloud
   private _ownerImage : imageUrls;
+  private _next_href: string;
 
-  constructor(id: string, title: string, count: number){
+  constructor(id: string, title: string, count: number, service: string){
     this._id = id;
     this._name = title;
     this._songCount = count;
+    this._service = service;
+  }
+
+  setNext_href(href: string){
+    this._next_href = href;
+  }
+
+  getNext_href():string{
+    return this._next_href;
   }
 
   getId(): string {
@@ -79,6 +90,14 @@ export class Playlist implements IPlaylist {
 
   setPlaylistImage(value: imageUrls){
     this._albumImage = value;
+  }
+
+  setService(service: string) {
+    this._service = service;
+  }
+
+  getService(): string {
+    return this._service;
   }
 
 }

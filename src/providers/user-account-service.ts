@@ -3,7 +3,7 @@ import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 import {AuthenticationService} from "./authentication-service";
 import {User} from "../classes/User.class";
-import {firebaseUser} from "../interfaces/interfaces";
+import {firebaseUser, SpotifyParams} from "../interfaces/interfaces";
 
 /*
   Generated class for the UserAccountService provider.
@@ -46,6 +46,43 @@ export class UserAccountService {
     // delete if there is, then create a reference of a new image and upload to it
     let imageRef = storageRef.child(image.name);
     let uploadTask = imageRef.put(image).then(success).catch(error);
+  }
+
+  saveUsersSpotifyParams(params: SpotifyParams){
+    // TODO set params after currentuser is logged in to app
+    //this._currentUser.setSpotifyParams(params);
+
+    // quick and dirty: save params straight to localstorage from here
+    this.setSpotifyParams(params);
+
+  }
+
+  getSpotifyParams(): SpotifyParams {
+    //return this._spotifyParams;
+    return JSON.parse(window.localStorage.getItem("spotifyparams"));
+  }
+
+  setSpotifyParams(value: SpotifyParams) {
+    //this._spotifyParams = value;
+    window.localStorage.setItem("spotifyparams", JSON.stringify(value));
+  }
+
+  clearSpotifyParams() {
+    window.localStorage.removeItem("spotifyparams");
+  }
+
+  getSpotifyUser(): Object {
+    //return this._spotifyParams;
+    return JSON.parse(window.localStorage.getItem("spotifyUser"));
+  }
+
+  setSpotifyUser(value: Object) {
+    //this._spotifyParams = value;
+    window.localStorage.setItem("spotifyUser", JSON.stringify(value));
+  }
+
+  clearSpotifyUser() {
+    window.localStorage.removeItem("spotifyUser");
   }
 
 }

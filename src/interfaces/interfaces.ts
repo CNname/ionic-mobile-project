@@ -1,13 +1,13 @@
 import { Artist } from '../classes/Artist.class';
 import { Song } from '../classes/Song.class';
-import { User } from '../classes/User.class';
 import {MusicService} from "../providers/music-service";
 import {Observable} from "rxjs";
+import {Playlist} from "../classes/Playlist.Class";
 
 export interface IPlayer {
   musicService: MusicService;
   song: Song;
-  songs: Song[];
+  songs: Playlist;
   previousSong(): void;
   nextSong(): void;
   shuffle(): void;
@@ -45,6 +45,14 @@ export interface spotifyAuthConfig {
   redirectUri: string;
   scope?: string;
   state?: string;
+}
+
+export interface SpotifyParams {
+  accessToken: string;
+  expiresIn: number;
+  state: string;
+  tokenType: string;
+  tokenStart: number;
 }
 
 export interface imageUrls {

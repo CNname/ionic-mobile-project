@@ -31,23 +31,19 @@
 }
 .playerButtons{
   text-align: center;
-  background-color: #f5f5f5;
+  background-color: none;
   border: 0;
 }
 .playerButtons > button{
   /*border: 1px solid #000; */
-  margin: 10px;
+  margin: 0 10px;
   font-size: 30px;
-  background-color: #f5f5f5;
+  background-color: none;
 }
 .button-wrapper{
-  background-color: #f5f5f5 !important;
+  background-color: none;
   text-align: center;
 }
-.button-wrapper > ion-toolbar, .button-wrapper > ion-toolbar > .toolbar-background-md {
-  //background-color: #f5f5f5 !important;
-}
-
 .art-wrapper {
 
   text-align: center;
@@ -59,14 +55,26 @@
 
 .albumInfo{
   margin: 0 auto;
-  padding: 15px 15px 0 15px;
+  padding: 0 15px 0 15px;
   text-align: center;
   h3{
     font-size: 2rem;
   }
 }
 
-ion-thumbnail > img, .art-wrapper > img {
+.loadMore{
+  text-align: center;
+  margin: 0 auto;
+  p {
+    font-weight: bold;
+  }
+}
+
+.albumInfoLink{
+  text-decoration: none;
+}
+
+ion-thumbnail > ion-img, .art-wrapper > img {
     box-shadow: 2px 2px 3px #b6acac;
 }
 
@@ -80,8 +88,9 @@ ion-thumbnail > img, .art-wrapper > img {
   font-size: 18px;
   color: #fff;
   border-bottom: 3px solid #DCA07D;
-  max-width: 90%;
+  //max-width: 90%;
   margin: 0 auto;
+  background-color: #3d3f3c;
 }
 .scSearch{
   color: #f4f4f4 !important;

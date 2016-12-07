@@ -1,21 +1,22 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import 'rxjs/add/operator/map';
-import { Observable } from 'rxjs/Rx';
-import { Song } from '../classes/Song.class';
+import {SoundcloudService} from "./soundcloud-service";
 
 @Injectable()
 export class MusicService {
-  audioObject: any;
+  audioObject: any; // audio object for spotify
   isPlaying = false;
 
-  constructor() { }
+  constructor(public soundcloudService: SoundcloudService) { }
 
   setAudio(url: string){
     this.audioObject = new Audio(url);
   }
 
-  isPlayerInit(){
-    return typeof this.audioObject !== 'undefined';
+  isPlayerInit(): boolean{
+    return this.soundcloudService.getStatus() || typeof this.audioObject !== 'undefined';
+    /*if (this.soundcloudService.getStatus() || typeof this.audioObject !== 'undefined') return true;
+    return false;*/
   }
 
   startPlayback(){
@@ -27,7 +28,7 @@ export class MusicService {
     this.isPlaying = false;
   }
   getStatus(){
-    return this.isPlaying;
+    return this.soundcloudService.isPlaying() || this.isPlaying;
   }
   resetAudio(){
     this.audioObject.pause();
