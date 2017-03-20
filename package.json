@@ -1,5 +1,5 @@
 {
-  "name": "ionic-hello-world",
+  "name": "Streamgull",
   "author": "Ionic Framework",
   "homepage": "http://ionicframework.com/",
   "private": true,
@@ -26,7 +26,8 @@
     "zone.js": "0.6.26"
   },
   "devDependencies": {
-    "@ionic/app-scripts": "0.0.45",
+    "@ionic/app-scripts": "1.1.4",
+    "sw-toolbox": "^3.6.0",
     "typescript": "2.0.6"
   },
   "cordovaPlugins": [
